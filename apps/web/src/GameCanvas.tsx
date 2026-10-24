@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import Phaser from 'phaser';
 import type { Control, Snapshot } from './protocol';
+import { LocalPredictor } from './prediction';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -21,6 +22,10 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private keys!: Record<string, Phaser.Input.Keyboard.Key>;
       private draw!: Phaser.GameObjects.Graphics;
       private lastSent = 0;
+      private lastFrame = 0;
+      private lastInput = '';
+      private predictor = new LocalPredictor();
+      private lastServerSnapshot: Snapshot | null = null;
       private labels = new Map<string, Phaser.GameObjects.Text>();
       private positions = new Map<string, { x: number; y: number }>();
       private stars = Array.from({ length: 46 }, (_, i) => ({
@@ -47,10 +52,14 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           attack: keys.J.isDown || keys.Z.isDown || mobile.attack,
           skill: keys.K.isDown || keys.X.isDown || mobile.skill,
         };
-        if (time - this.lastSent >= 50) {
+        const inputKey = Object.values(input).map(value => Number(value)).join('');
+        if (inputKey !== this.lastInput || time - this.lastSent >= 50) {
           sendRef.current(input);
           this.lastSent = time;
+          this.lastInput = inputKey;
         }
+        const dt = this.lastFrame ? Math.min(.05, (time - this.lastFrame) / 1000) : 1 / 60;
+        this.lastFrame = time;
 
         const g = this.draw;
         g.clear();
@@ -87,6 +96,12 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
 
         const snapshot = snapshotRef.current;
         if (!snapshot) return;
+        const myself = snapshot.players.find(p => p.id === playerId);
+        if (myself) {
+          if (snapshot !== this.lastServerSnapshot) this.predictor.sync(myself.x, myself.y, input);
+          if (myself.hp > 0) this.predictor.advance(dt, input);
+        }
+        this.lastServerSnapshot = snapshot;
         const seen = new Set<string>();
         for (const enemy of snapshot.enemies) {
           const key = 'enemy-' + enemy.id;
@@ -111,8 +126,10 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         for (const player of snapshot.players) {
           const key = 'player-' + player.id;
           seen.add(key);
-          const p = this.smooth(key, player.x, player.y);
           const isYou = player.id === playerId;
+          const p = isYou && this.predictor.initialized
+            ? { x: this.predictor.x, y: this.predictor.y }
+            : this.smooth(key, player.x, player.y);
           g.fillStyle(0x0c1825, .35);
           g.fillEllipse(p.x, p.y + 1, 42, 9);
           g.fillStyle(isYou ? 0xf3c87f : player.color);
