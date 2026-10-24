@@ -23,11 +23,11 @@ function waitMessage(ws, predicate, timeoutMs = 12000) {
     ws.on('close', closed);
   });
 }
-async function join(name, room) {
+async function join(name, room, characterId) {
   const ws = new WebSocket(url, { origin, handshakeTimeout: 115000 });
   await new Promise((resolve, reject) => { ws.once('open', resolve); ws.once('error', reject); });
   const joined = waitMessage(ws, x => x.type === 'joined' || x.type === 'error');
-  ws.send(JSON.stringify({ type: 'join', name, room }));
+  ws.send(JSON.stringify({ type: 'join', name, room, characterId }));
   const msg = await joined;
   if (msg.type !== 'joined') { ws.terminate(); throw Error(msg.message || 'Join refused'); }
   return { ws, ...msg };
@@ -54,16 +54,20 @@ try {
   }
   if (!healthy) throw Error('Render health unavailable: ' + String(lastError));
   console.log('Health OK. Connecting WebSocket...');
-  a = await join('SmokeTestOne');
+  a = await join('SmokeTestOne', undefined, 'bunny');
   const together = waitMessage(a.ws, m => m.type === 'snapshot' && m.players?.length === 2);
-  b = await join('SmokeTestTwo', a.room);
+  b = await join('SmokeTestTwo', a.room, 'mana_bob');
   const lobbyState = await together;
   if (lobbyState.status !== 'lobby') throw Error('Expected staging lobby before combat');
+  const roster = new Map(lobbyState.players.map(p => [p.id, p.characterId]));
+  if (roster.get(a.id) !== 'bunny' || roster.get(b.id) !== 'mana_bob') {
+    throw Error('Render did not synchronize selected characters: ' + JSON.stringify([...roster]));
+  }
   if (a.room !== b.room) throw Error('Joined different rooms');
   const started = waitMessage(b.ws, msg => msg.type === 'snapshot' && msg.status === 'playing');
   a.ws.send(JSON.stringify({ type: 'start' }));
   await started;
-  console.log('PASS: two players met in lobby and host started room', a.room);
+  console.log('PASS: Bunny and Mana Seed selected, synchronized, and started in room', a.room);
 } finally {
   clearTimeout(abortTimer);
   a?.ws.terminate();
