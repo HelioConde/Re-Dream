@@ -86,3 +86,23 @@ test('personagens são registrados e podem ser trocados apenas no lobby', () => 
   assert.equal(room.selectCharacter('friend', 'wanderer'), false);
   assert.equal(room.snapshot().players[1].characterId, 'rose');
 });
+
+test('tentativa de personagem inválido não cria jogador', () => {
+  const room = new GameRoom('SKINS2');
+  assert.throws(() => room.addPlayer('bot', 'Inválido', 'unknown' as never), /Personagem inválido/);
+  assert.equal(room.size, 0);
+});
+
+test('escolhas diferentes não alteram física nem combate da sala', () => {
+  const room = new GameRoom('SKINS3');
+  room.addPlayer('a', 'Rosa', 'rose');
+  room.addPlayer('b', 'Viajante', 'wanderer');
+  room.start('a');
+  room.setInput('a', { left:false,right:true,jump:false,attack:false,skill:false });
+  room.setInput('b', { left:false,right:true,jump:false,attack:false,skill:false });
+  const before=room.snapshot().players.map(p=>p.x);
+  for(let i=0;i<10;i++) room.step(1/30);
+  const after=room.snapshot().players.map(p=>p.x);
+  assert.equal(after[0]-before[0],after[1]-before[1]);
+  assert.deepEqual(room.snapshot().players.map(p=>p.characterId),['rose','wanderer']);
+});
