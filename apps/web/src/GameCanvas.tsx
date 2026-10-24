@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
+import type { RefObject } from 'react';
 import Phaser from 'phaser';
 import type { Control, Snapshot } from './protocol';
 
 type Props = {
-  snapshotRef: React.RefObject<Snapshot | null>;
+  snapshotRef: RefObject<Snapshot | null>;
   playerId: string;
   sendInput: (input: Control) => void;
-  mobileRef: React.RefObject<Control>;
+  mobileRef: RefObject<Control>;
 };
 
 export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef }: Props) {
