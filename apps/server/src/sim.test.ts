@@ -12,6 +12,7 @@ test('sala permite quatro jogadores e bloqueia o quinto', () => {
 test('posição é simulada pelo servidor a partir dos controles', () => {
   const room = new GameRoom('TEST02');
   room.addPlayer('one', 'Aventureiro');
+  room.start('one');
   const x = room.snapshot().players[0].x;
   room.setInput('one', { left: false, right: true, jump: false, attack: false, skill: false });
   for (let i = 0; i < 10; i++) room.step(1 / 30);
@@ -41,4 +42,31 @@ test('ataque reduz a vida do inimigo apenas quando está ao alcance e à frente'
   enemy.x = 195;
   for (let i = 0; i < 12; i++) room.step(1 / 30);
   assert.ok(enemy.hp < hp);
+});
+
+test('lobby mantém os jogadores seguros até o líder iniciar', () => {
+  const room = new GameRoom('WAIT01');
+  room.addPlayer('host', 'Líder');
+  room.addPlayer('friend', 'Amigo');
+  room.setInput('host', { left:false, right:true, jump:false, attack:false, skill:false });
+  const before = room.snapshot().players[0].x;
+  for (let i=0; i<20; i++) room.step(1/30);
+  assert.equal(room.snapshot().status, 'lobby');
+  assert.equal(room.snapshot().players[0].x, before);
+  assert.equal(room.snapshot().enemies.length, 0);
+  assert.equal(room.start('friend'), false);
+  assert.equal(room.start('host'), true);
+  assert.equal(room.snapshot().status, 'playing');
+  assert.equal(room.snapshot().enemies.length, 3);
+  room.step(1/30);
+  assert.ok(room.snapshot().players[0].x > before);
+});
+
+test('liderança passa ao próximo membro do lobby quando o anfitrião sai', () => {
+  const room = new GameRoom('WAIT02');
+  room.addPlayer('host', 'Líder');
+  room.addPlayer('friend', 'Amigo');
+  room.removePlayer('host');
+  assert.equal(room.snapshot().hostId, 'friend');
+  assert.equal(room.start('friend'), true);
 });
