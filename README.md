@@ -114,3 +114,20 @@ O pacote `Little Dreamyland - Free Pack.zip` **não é usado**, porque sua licen
 **Mesmo combate e atributos** para ambos — estamos testando somente a aparência, não classes ou balanceamento. Outros pacotes da raiz foram deixados de fora da seleção por faltar mapeamento de animações e/ou verificação de licença. O pacote Little Dreamyland tem restrições de redistribuição e não deve ser publicado como sprites soltos sem autorização.
 
 **Teste manual sugerido:** abra dois navegadores; escolha Rosa no primeiro e Viajante no segundo; compartilhe o código; confira os dois personagens no lobby e ao iniciar a partida, caminhe para ambos os lados e troque a seleção antes de iniciar. Ao atualizar o navegador, a escolha deve continuar registrada localmente.
+
+## Nova seleção de personagens — protótipo não comercial
+
+A seleção agora oferece **14 aparências**: Rosa (Re:Dream), Viajante (`char free.zip`), Aventureiro Sprout (Cup Nooble), Bunny Guerreiro (Little Dreamyland), Fazendeiro Retrô e versão com Chapéu (SuperRetroRanch), duas aparências de paper-doll Mana Seed, além de Gato, Raposa, Coelhinho, Lobo, Panda e Coruja (Tiny Animals).
+
+O servidor sincroniza a escolha com os demais jogadores. Todos têm atributos iguais e a preferência permanece no `localStorage`.
+
+**Recursos e termos do protótipo:**
+- **Little Dreamyland Free** — Starmixu & Utaskuas. Uso em jogos *não comerciais* e crédito obrigatório; não redistribuir o pacote. Foram selecionadas somente sequências necessárias à pré-alfa.
+- **SuperRetroRanch Free Tier** — Gif. Uso não comercial. Não redistribuir as artes como arquivos/asset packs separados.
+- **Mana Seed Farmer Sprite Free Sample** — Seliel the Shaper. Composição de camadas do arquivo de amostra; licença específica deve ser confirmada antes de lançar/distribuir comercialmente.
+- **Sprout Lands** — Cup Nooble. Usado como protótipo não comercial; consultar atribuição e licença da página original.
+- **Tiny Animals** — Jedimei. Permite uso pessoal e comercial em jogos, mas não redistribuir os arquivos como pacote de assets.
+
+**Nenhum desses personagens ou arquivos de terceiros deve ser usado para treinar o PixelLab/IA sem permissão expressa.** Quando passarmos do protótipo para o jogo definitivo, vamos substituir as artes por personagens originais e rever as licenças.
+
+A Rosa tinha o movimento visual invertido: agora usa a direção natural do sprite voltada para a esquerda e espelha somente quando caminha à direita. O teste automatizado verifica essa regra.

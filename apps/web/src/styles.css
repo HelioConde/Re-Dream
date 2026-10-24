@@ -107,3 +107,16 @@
 .site-header nav button:focus-visible { outline: 2px solid #c7a6ff; outline-offset: 6px; border-radius: 3px; }
 .site-header nav button:disabled { opacity: .4; cursor: not-allowed; }
 .hero-buttons > button { font: inherit; font-size: 14px; font-weight: 800; }
+
+/* Browsable hero roster: keep the preview visible while exploring many avatars. */
+@media(min-width:851px){
+  .character-list{max-height:660px;overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#886ab7 #151b34;scrollbar-width:thin;padding:2px 8px 2px 2px}
+  .character-stage{align-self:start;position:sticky;top:26px}
+}
+.character-list .character-card{flex:none}
+.character-list .future-characters{flex:none}
+@media(max-width:850px){
+  .character-list{max-height:490px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#886ab7 #151b34}
+}
+.character-stage-art{overflow:hidden}
+.character-credit{line-height:1.8}

@@ -29,7 +29,7 @@ export default function CharacterSelect({
     <div className="select-heading">
       <span className="eyebrow">✧ RE:DREAM · SALÃO DOS HERÓIS</span>
       <h1>Escolha seu aventureiro</h1>
-      <p>Hoje é dia de brincar e experimentar. Selecione a aparência que deseja usar na masmorra.</p>
+      <p>Hoje é dia de brincar e experimentar. Experimente {CHARACTERS.length} aparências nesta versão, incluindo Mana Seed, Little Dreamyland e SuperRetroRanch.</p>
     </div>
     <div className="select-layout">
       <section className="character-list" aria-label="Personagens disponíveis">
@@ -49,8 +49,8 @@ export default function CharacterSelect({
         </button>)}
         <div className="future-characters">
           <span aria-hidden="true">✧</span>
-          <strong>Mais personagens depois</strong>
-          <p>Os demais pacotes serão adicionados após verificarmos as animações e os direitos de uso.</p>
+          <strong>Personagens próprios em breve</strong>
+          <p>Por enquanto usamos recursos de teste. O próximo passo é criar nossa própria equipe no PixelLab.</p>
         </div>
       </section>
       <section className="character-stage" aria-label="Prévia do personagem selecionado">
@@ -85,6 +85,8 @@ export default function CharacterSelect({
         <button type="submit" className="button button-primary" disabled={busy}>{busy ? 'Conectando...' : intent === 'join' ? 'Entrar com este personagem →' : 'Criar sala com este personagem →'}</button>
       </div>
     </form>
-    <p className="character-disclaimer">A escolha é apenas visual nesta pré-alfa: todos têm os mesmos atributos. Seus dados ficam salvos neste navegador.</p>
+    <p className="character-disclaimer">Pré-alfa não comercial: algumas opções têm somente pose estática ou movimentos incompletos.
+    Personagens usam os mesmos atributos. Preferências salvas no seu navegador, sem banco de dados.
+    Créditos de cada pacote disponíveis em "Ver origem dos sprites".</p>
   </main>;
 }
