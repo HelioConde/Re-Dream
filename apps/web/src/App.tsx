@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import GameCanvas from './GameCanvas';
 import CharacterSelect from './CharacterSelect';
-import { characterName } from './characters';
+import { CHARACTERS, characterName, getCharacter } from './characters';
 import type { CharacterId, Control, ServerMessage, Snapshot } from './protocol';
 import { clearLocalProfile, EMPTY_PROFILE, readLocalProfile, saveLocalProfile } from './localProfile';
 
@@ -230,8 +230,8 @@ export default function App() {
                 return <div className={'lobby-slot ' + (adventurer ? 'occupied' : '')} key={i} role="listitem">
                   <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'rose') : '')}
                     style={adventurer ? {
-                      backgroundImage: `url(${import.meta.env.BASE_URL}${adventurer.characterId === 'wanderer' ? 'sprites/imported/char/right.png' : 'sprites/rose-hero-real.webp'})`,
-                      backgroundSize: adventurer.characterId === 'wanderer' ? '800% 100%' : '400% 200%',
+                      backgroundImage: `url(${import.meta.env.BASE_URL}${getCharacter(adventurer.characterId).preview})`,
+                      backgroundSize: getCharacter(adventurer.characterId).artSize,
                     } : undefined}>{adventurer ? '' : '+'}</div>
                   <div className="lobby-slot-info"><strong>{adventurer?.name ?? 'Aguardando aventureiro'}</strong><span>{adventurer ? (adventurer.id === snapshot?.hostId ? 'Líder · ' : '') + characterName(adventurer.characterId) : 'Vaga disponível'}</span></div>
                   {adventurer && <span className="lobby-ready">Pronto</span>}
@@ -240,9 +240,13 @@ export default function App() {
             </div>
             <div className="lobby-pick">
               <span className="eyebrow">MEU PERSONAGEM · TROQUE ANTES DA PARTIDA</span>
-              <div className="lobby-pick-options">
-                <button type="button" className={'lobby-pick-choice '+(me?.characterId === 'rose' ? 'active' : '')} aria-pressed={me?.characterId === 'rose'} onClick={() => changeLobbyCharacter('rose')}>✧ Guerreira das Rosas</button>
-                <button type="button" className={'lobby-pick-choice '+(me?.characterId === 'wanderer' ? 'active' : '')} aria-pressed={me?.characterId === 'wanderer'} onClick={() => changeLobbyCharacter('wanderer')}>◇ Viajante</button>
+              <div className="lobby-pick-options" role="group" aria-label="Trocar personagem no lobby">
+                {CHARACTERS.map(character => <button
+                  type="button" key={character.id}
+                  className={'lobby-pick-choice '+(me?.characterId === character.id ? 'active' : '')}
+                  aria-pressed={me?.characterId === character.id}
+                  onClick={() => changeLobbyCharacter(character.id)}
+                >{character.name}</button>)}
               </div>
             </div>
             <div className="lobby-quest">
