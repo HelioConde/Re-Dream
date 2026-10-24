@@ -3,7 +3,23 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": { "dev": "vite --host 0.0.0.0", "build": "tsc --noEmit && vite build", "preview": "vite preview" },
-  "dependencies": { "phaser": "^4.0.0", "react": "^19.2.0", "react-dom": "^19.2.0" },
-  "devDependencies": { "@types/node": "^22.18.0", "@types/react": "^19.2.0", "@types/react-dom": "^19.2.0", "typescript": "^5.9.3", "vite": "^7.1.12" }
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "tsx --test src/localProfile.test.ts"
+  },
+  "dependencies": {
+    "phaser": "^4.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12",
+    "tsx": "^4.20.6"
+  }
 }

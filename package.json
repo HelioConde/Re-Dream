@@ -10,7 +10,7 @@
     "dev:web": "npm run dev -w @redream/web",
     "dev:server": "npm run dev -w @redream/server",
     "build": "npm run build -w @redream/web && npm run build -w @redream/server",
-    "test": "npm run test -w @redream/server",
+    "test": "npm run test -w @redream/server && npm run test -w @redream/web",
     "start:server": "npm run start -w @redream/server"
   },
   "devDependencies": { "concurrently": "^9.2.1" }
