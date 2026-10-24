@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import type { Control, Snapshot } from './protocol';
 import { LocalPredictor } from './prediction';
 import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
+import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -26,6 +27,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private lastFrame = 0;
       private lastInput = '';
       private predictor = new LocalPredictor();
+      private attackPlayback = new AttackPlayback();
       private lastServerSnapshot: Snapshot | null = null;
       private labels = new Map<string, Phaser.GameObjects.Text>();
       private avatars = new Map<string, Phaser.GameObjects.Image>();
@@ -162,11 +164,17 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           const immediateFacing = isYou
             ? (input.left && !input.right ? -1 : input.right && !input.left ? 1 : player.facing)
             : player.facing;
-          // Each player uses the character selected and validated by the server.
+          // Immediate cosmetic response on J, but hit registration stays on the server.
+          // Remote strikes come from the server's attack flash; a held J cannot
+          // restart the animation on every frame.
+          const attackElapsed = this.attackPlayback.update(
+            key, isYou, isYou && input.attack, player.flash,
+            freshSnapshot, player.hp > 0 && snapshot.status === 'playing', time,
+          );
+          const attacking = attackElapsed !== null;
           const animation = selectSprite(
             player.characterId, immediateFacing, moving,
-            player.flash > 0 || (isYou && input.attack),
-            isYou && input.skill, time,
+            attacking, isYou && input.skill, attackElapsed ?? time,
           );
           const {texture,frame} = animation;
           let avatar = this.avatars.get(key);
@@ -181,17 +189,27 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             if (avatar.texture.key !== texture) avatar.setTexture(texture, frame);
             avatar.setFrame(frame);
             avatar.setFlipX(animation.flipX);
-            avatar.setPosition(p.x, p.y + 6);
+            // Tiny anticipation and recoil only for the static animal art.
+            // No artificial animation frames are generated.
+            const isCat = player.characterId === 'cat';
+            const phase = attackElapsed === null ? 0 : attackElapsed / BASIC_ATTACK_ANIM_MS;
+            avatar.setRotation(isCat && attacking ? immediateFacing * 0.085 * Math.sin(phase * Math.PI) : 0);
+            avatar.setPosition(
+              p.x + (isCat && attacking ? immediateFacing * 8 * Math.sin(phase * Math.PI) : 0),
+              p.y + 6 - (isCat && attacking ? 4 * Math.sin(phase * Math.PI) : 0),
+            );
           } else {
             g.fillStyle(0x7269bf);
             g.fillRoundedRect(p.x - 13, p.y - 56, 26, 55, 6);
             g.fillStyle(0xffdebe);
             g.fillCircle(p.x, p.y - 62, 11);
           }
-          // Attack and skill graphics are transient feedback, not fabricated sprite frames.
-          if (player.flash > 0) {
-            g.lineStyle(4, 0xdba5fc, .9);
-            g.strokeCircle(p.x + immediateFacing * 24, p.y - 44, 24);
+          // The Bunny already has authentic sword frames; don't overlay a
+          // generic circle. Static animals receive a short directional claw
+          // swipe instead of a misleading fake character animation.
+          if (attacking && player.characterId !== 'bunny') {
+            this.drawSwipe(g, p.x, p.y, immediateFacing, attackElapsed! / BASIC_ATTACK_ANIM_MS,
+              player.characterId === 'cat');
           }
           this.healthbar(g, p.x - 24, p.y - 101, 48, player.hp / 100, 0x78d9a2);
           let label = this.labels.get(key);
@@ -209,10 +227,40 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           if (!seen.has(key)) { label.destroy(); this.labels.delete(key); }
         }
         for (const [key, sprite] of this.avatars) {
-          if (!seen.has(key)) { sprite.destroy(); this.avatars.delete(key); this.remoteMotion.delete(key); }
+          if (!seen.has(key)) {
+            sprite.destroy();
+            this.avatars.delete(key);
+            this.remoteMotion.delete(key);
+            this.attackPlayback.remove(key);
+          }
         }
         for (const key of this.positions.keys()) {
           if (!seen.has(key)) this.positions.delete(key);
+        }
+      }
+
+      private drawSwipe(
+        g: Phaser.GameObjects.Graphics, x: number, y: number,
+        facing: number, progress: number, cat: boolean,
+      ) {
+        const strength = Math.sin(Math.PI * Math.min(1, Math.max(0, progress)));
+        if (strength <= 0) return;
+        // Three parallel diagonal claw marks that travel forward and fade.
+        // Positioned above ground at the attacker's hands, not around the feet.
+        const trail = cat ? 33 : 23;
+        const startX = x + facing * (15 + trail * progress);
+        const tint = cat ? 0xc8b1ff : 0xb5e5ef;
+        for (let i = 0; i < 3; i++) {
+          const fromX = startX + facing * (i * 5);
+          const fromY = y - 29 - i * 12;
+          const toX = fromX + facing * (cat ? 49 : 36);
+          const toY = fromY - (cat ? 34 : 27);
+          g.lineStyle(11, 0x8b68d6, strength * 0.19);
+          g.lineBetween(fromX, fromY, toX, toY);
+          g.lineStyle(cat ? 4 : 3, tint, strength * 0.86);
+          g.lineBetween(fromX, fromY, toX, toY);
+          g.lineStyle(1.5, 0xffffff, strength * 0.9);
+          g.lineBetween(fromX + facing * 2, fromY - 3, toX - facing * 2, toY + 3);
         }
       }
 

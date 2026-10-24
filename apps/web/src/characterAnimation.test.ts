@@ -20,3 +20,15 @@ test('Mana Seed and animals do not invent animation frames',()=>{
   });
   assert.equal(selectSprite('fox',1,true,true,false,900).frame,0);
 });
+
+test('Coelho Guerreiro reproduz todos os 9 quadros de ataque em um golpe J', () => {
+  const frames = Array.from({ length: 9 }, (_, index) =>
+    selectSprite('bunny', 1, false, true, false, index * 330 / 9 + 1).frame,
+  );
+  assert.deepEqual(frames, [0,1,2,3,4,5,6,7,8]);
+  assert.equal(selectSprite('bunny',1,false,false,false,330).texture,'bunny_idle_right');
+});
+test('Gato Guerreiro mantém sprite original e espelha conforme a direção', () => {
+  assert.deepEqual(selectSprite('cat',1,false,true,false,80), {texture:'animal-cat',frame:0,flipX:false});
+  assert.deepEqual(selectSprite('cat',-1,false,true,false,80), {texture:'animal-cat',frame:0,flipX:true});
+});

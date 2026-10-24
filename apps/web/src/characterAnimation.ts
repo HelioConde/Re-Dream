@@ -1,5 +1,6 @@
 import type { CharacterId } from './protocol';
 import { directionalFrame, shouldFlipRose } from './spriteDirection';
+import { BASIC_ATTACK_ANIM_MS } from './attackPlayback';
 
 export type SpriteChoice = { texture: string; frame: number; flipX: boolean };
 
@@ -32,7 +33,7 @@ export function selectSprite(
   if (id === 'bunny') {
     const move = attacking ? 'attack' : moving ? 'run' : 'idle';
     const count = move==='attack' ? 9 : move==='run' ? 8 : 5;
-    const stepMs = move==='attack' ? 88 : move==='run' ? 110 : 185;
+    const stepMs = move==='attack' ? BASIC_ATTACK_ANIM_MS / 9 : move==='run' ? 110 : 185;
     return {texture: 'bunny_'+move+'_'+direction,
       frame:Math.floor(timeMs/stepMs)%count,flipX:false};
   }
