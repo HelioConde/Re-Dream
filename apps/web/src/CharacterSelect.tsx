@@ -40,7 +40,7 @@ export default function CharacterSelect({
           aria-pressed={selected === character.id}
           onClick={() => onSelect(character.id)}
         >
-          <span className={'character-thumbnail sprite-' + character.id} role="img" aria-label={'Sprite de ' + character.name}/>
+          <span className={'character-thumbnail sprite-' + character.id} style={{ backgroundImage: `url(${import.meta.env.BASE_URL}${character.preview})`, backgroundSize: character.artSize }} role="img" aria-label={'Sprite de ' + character.name}/>
           <span className="character-card-copy">
             <strong>{character.name}</strong>
             <small>{character.subtitle}</small>
@@ -56,7 +56,7 @@ export default function CharacterSelect({
       <section className="character-stage" aria-label="Prévia do personagem selecionado">
         <div className="character-stage-art">
           <span className="character-stage-moon" aria-hidden="true">✧</span>
-          <div key={chosen.id} className={'character-large sprite-' + chosen.id} role="img" aria-label={'Prévia de ' + chosen.name}/>
+          <div key={chosen.id} className={'character-large sprite-' + chosen.id} style={{ backgroundImage: `url(${import.meta.env.BASE_URL}${chosen.preview})`, backgroundSize: chosen.artSize }} role="img" aria-label={'Prévia de ' + chosen.name}/>
           <span className="character-stage-ground"/>
         </div>
         <div className="character-stage-details">
