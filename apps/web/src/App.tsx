@@ -20,7 +20,10 @@ export default function App() {
   const [localProfile, setLocalProfile] = useState(readLocalProfile);
   const [name, setName] = useState(() => readLocalProfile().nickname);
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterId>(() => readLocalProfile().characterId);
-  const [selectionIntent, setSelectionIntent] = useState<'create' | 'join' | null>(null);
+  // Direct links like /Re-Dream/#personagens open the selection immediately.
+  const [selectionIntent, setSelectionIntent] = useState<'create' | 'join' | null>(
+    () => typeof window !== 'undefined' && window.location.hash === '#personagens' ? 'create' : null,
+  );
   const [roomInput, setRoomInput] = useState('');
   const [connection, setConnection] = useState<Connection>('idle');
   const [error, setError] = useState('');
@@ -68,9 +71,34 @@ export default function App() {
     setRoom('');
     setConnection('idle');
     setSelectionIntent(null);
+    if (window.location.hash === '#personagens') window.location.hash = 'jogar';
   }, []);
 
   useEffect(() => () => { socketRef.current?.close(); }, []);
+
+  // Keep the browser back button and deep links in sync with the selection.
+  useEffect(() => {
+    const onHashChange = () => {
+      if (room) return;
+      if (window.location.hash === '#personagens') {
+        setSelectionIntent(previous => previous ?? 'create');
+      } else {
+        setSelectionIntent(null);
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, [room]);
+
+  const openCharacterSelect = (intent: 'create' | 'join') => {
+    if (room || connection === 'connecting') return;
+    setError('');
+    setSelectionIntent(intent);
+    if (window.location.hash !== '#personagens') {
+      window.location.hash = 'personagens';
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
 
   const connect = (requestedRoom: string) => {
     setError('');
@@ -148,8 +176,7 @@ export default function App() {
 
   const join = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    setSelectionIntent('join');
+    openCharacterSelect('join');
   };
   const chooseCharacter = (characterId: CharacterId) => {
     setSelectedCharacter(characterId);
@@ -178,7 +205,8 @@ export default function App() {
       <header className="site-header">
         <a className="brand" href="#inicio" aria-label="Re:Dream — início"><span className="brand-mark">✧</span><span>Re<span className="brand-accent">:</span>Dream</span></a>
         <nav aria-label="Navegação principal">
-          <a href="#inicio">Início</a><a href="#universo">Universo</a><a href="#jogar">Jogar</a>
+          <a href="#inicio">Início</a><a href="#universo">Universo</a>
+          <button type="button" onClick={() => openCharacterSelect('create')} disabled={Boolean(room)} aria-label="Abrir seleção de personagens">Personagens</button>
         </nav>
         <a className="github-link" href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">GitHub ↗</a>
       </header>
@@ -271,7 +299,7 @@ export default function App() {
           onSelect={chooseCharacter}
           onNickname={setName}
           onRoomCode={setRoomInput}
-          onBack={() => {setSelectionIntent(null);setError('');}}
+          onBack={() => {setSelectionIntent(null);setError('');window.location.hash='jogar';}}
           onConfirm={() => connect(selectionIntent === 'join' ? roomInput : '')}
         />
       ) : (
@@ -282,7 +310,7 @@ export default function App() {
               <span className="eyebrow">✦ UMA NOVA AVENTURA ESTÁ DESPERTANDO</span>
               <h1>Todo sonho merece <em>uma segunda chance.</em></h1>
               <p>Explore reinos esquecidos, domine combos e reúna seus amigos em um RPG de ação 2D cooperativo que nasce de um sonho antigo.</p>
-              <div className="hero-buttons"><a href="#jogar" className="button button-primary">Começar aventura <span>→</span></a><a href="#universo" className="button button-outline">Descobrir o mundo</a></div>
+              <div className="hero-buttons"><button type="button" onClick={() => openCharacterSelect('create')} className="button button-primary">✧ Selecionar personagem <span>→</span></button><a href="#universo" className="button button-outline">Descobrir o mundo</a></div>
               <div className="hero-details"><span><b>2D</b> ação e plataformas</span><span><b>4</b> jogadores por sala</span><span><b>α</b> pré-alfa</span></div>
             </div>
           </section>
@@ -306,7 +334,7 @@ export default function App() {
             <form className="join-card" onSubmit={join}>
               <div className="card-heading"><span className="card-icon">✧</span><div><h3>Entrar no Re:Dream</h3><p>Versão pré-alfa · gratuito</p></div></div>
               <label htmlFor="nickname">NOME DE AVENTUREIRO</label><input id="nickname" value={name} onChange={e => setName(e.target.value)} maxLength={20} minLength={2} placeholder="Seu apelido" autoComplete="nickname" required />
-              <button className="button button-primary button-full" type="button" onClick={() => {setError('');setSelectionIntent('create');}} disabled={connection === 'connecting'}>✦ Escolher personagem</button>
+              <button className="button button-primary button-full" type="button" onClick={() => openCharacterSelect('create')} disabled={connection === 'connecting'}>✦ Escolher personagem</button>
               <div className="or"><span>ou entre com um convite</span></div>
               <label htmlFor="roomcode">CÓDIGO DA SALA</label><div className="join-row"><input id="roomcode" value={roomInput} onChange={e => setRoomInput(e.target.value.toUpperCase())} maxLength={8} placeholder="Ex.: DREAM1"/><button className="button button-outline" type="submit" disabled={connection === 'connecting'}>Entrar →</button></div>
               {error && <p className="form-error" role="alert">{error}</p>}
