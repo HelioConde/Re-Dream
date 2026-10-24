@@ -3,7 +3,7 @@ import type { RefObject } from 'react';
 import Phaser from 'phaser';
 import type { Control, Snapshot } from './protocol';
 import { LocalPredictor } from './prediction';
-import { directionalFrame } from './spriteDirection';
+import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -38,6 +38,13 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       constructor() { super('dungeon'); }
       preload() {
         this.load.spritesheet('hero-rose', import.meta.env.BASE_URL + 'sprites/rose-hero-real.webp', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('hero-sprout',import.meta.env.BASE_URL+'sprites/imported/sprout/sprout-character.png',{frameWidth:16,frameHeight:16});
+        for(const id of prototypeAtlases) {
+          this.load.spritesheet(id,import.meta.env.BASE_URL+'sprites/prototype/'+id+'.png',{frameWidth:64,frameHeight:64});
+        }
+        for(const animal of animalIds) {
+          this.load.image('animal-'+animal,import.meta.env.BASE_URL+'sprites/imported/animals/'+animal+'.png');
+        }
         // Author-provided GIF animations are packed into two real 8-frame directional strips.
         this.load.spritesheet('hero-left', import.meta.env.BASE_URL + 'sprites/imported/char/left.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('hero-right', import.meta.env.BASE_URL + 'sprites/imported/char/right.png', { frameWidth: 64, frameHeight: 64 });
@@ -155,18 +162,13 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           const immediateFacing = isYou
             ? (input.left && !input.right ? -1 : input.right && !input.left ? 1 : player.facing)
             : player.facing;
-          // Every player renders their own server-approved visual selection.
-          // The Viajante already has authored left/right directions; Rosa only has
-          // a single direction in this pre-alpha, so that art can be flipped.
-          const rose = player.characterId === 'rose';
-          const authored = directionalFrame(immediateFacing, moving, time);
-          const beat = Math.floor(time / 130);
-          const frame = rose
-            ? (isYou && input.skill ? 7 :
-                player.flash > 0 || (isYou && input.attack) ? 5 + beat % 2 :
-                moving ? 2 + beat % 3 : beat % 2)
-            : authored.frame;
-          const texture = rose ? 'hero-rose' : authored.texture;
+          // Each player uses the character selected and validated by the server.
+          const animation = selectSprite(
+            player.characterId, immediateFacing, moving,
+            player.flash > 0 || (isYou && input.attack),
+            isYou && input.skill, time,
+          );
+          const {texture,frame} = animation;
           let avatar = this.avatars.get(key);
           if (!avatar && this.textures.exists(texture)) {
             avatar = this.add.image(p.x, p.y, texture, frame)
@@ -178,7 +180,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           if (avatar) {
             if (avatar.texture.key !== texture) avatar.setTexture(texture, frame);
             avatar.setFrame(frame);
-            avatar.setFlipX(rose && immediateFacing < 0);
+            avatar.setFlipX(animation.flipX);
             avatar.setPosition(p.x, p.y + 6);
           } else {
             g.fillStyle(0x7269bf);
