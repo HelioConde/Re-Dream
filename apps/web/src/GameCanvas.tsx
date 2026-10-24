@@ -158,6 +158,12 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             avatar.setFrame('hero-' + frame);
             avatar.setPosition(p.x, p.y + 6);
             avatar.setFlipX(player.facing < 0);
+          } else {
+            // Keep gameplay visible even if an art asset fails to load.
+            g.fillStyle(0xf3c87f);
+            g.fillRoundedRect(p.x - 14, p.y - 55, 28, 54, 8);
+            g.fillStyle(0xf7dcbb);
+            g.fillCircle(p.x, p.y - 61, 12);
           }
           this.healthbar(g, p.x - 24, p.y - 101, 48, player.hp / 100, 0x78d9a2);
           let label = this.labels.get(key);
