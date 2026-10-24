@@ -90,3 +90,20 @@
 .lobby-pick-choice:focus-visible{outline:2px solid #d9baff;outline-offset:3px}
 @media(max-width:850px){.select-layout{grid-template-columns:1fr}.character-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.future-characters{grid-column:1/-1;margin-top:0}.character-stage-art{min-height:280px}.character-large{width:214px;height:214px}}
 @media(max-width:560px){.character-select{padding:38px 15px 70px}.select-heading{margin-bottom:25px}.character-list{grid-template-columns:1fr}.character-card{min-height:107px}.character-stage-details{padding:23px}.character-enter{padding:22px 17px}.character-cta{flex-direction:column-reverse;align-items:stretch}.character-cta button{width:100%}}
+
+
+/* Primary navigation now exposes the character selection directly. */
+.site-header nav button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #d8c1ff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.site-header nav button:hover:not(:disabled),
+.site-header nav button:focus-visible { color: #fff; }
+.site-header nav button:focus-visible { outline: 2px solid #c7a6ff; outline-offset: 6px; border-radius: 3px; }
+.site-header nav button:disabled { opacity: .4; cursor: not-allowed; }
+.hero-buttons > button { font: inherit; font-size: 14px; font-weight: 800; }
