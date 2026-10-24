@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import GameCanvas from './GameCanvas';
 import type { Control, ServerMessage, Snapshot } from './protocol';
+import { clearLocalProfile, EMPTY_PROFILE, readLocalProfile, saveLocalProfile } from './localProfile';
 
 const configuredUrl = import.meta.env.VITE_WS_URL?.trim() || '';
 const websocketUrl = configuredUrl || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -14,7 +15,8 @@ function Feature({ icon, title, description }: { icon: string; title: string; de
 }
 
 export default function App() {
-  const [name, setName] = useState(() => localStorage.getItem('redream-name') || '');
+  const [localProfile, setLocalProfile] = useState(readLocalProfile);
+  const [name, setName] = useState(() => readLocalProfile().nickname);
   const [roomInput, setRoomInput] = useState('');
   const [connection, setConnection] = useState<Connection>('idle');
   const [error, setError] = useState('');
@@ -24,6 +26,32 @@ export default function App() {
   const socketRef = useRef<WebSocket | null>(null);
   const snapshotRef = useRef<Snapshot | null>(null);
   const mobileRef = useRef<Control>({ left: false, right: false, jump: false, attack: false, skill: false });
+  const recordedResult = useRef('');
+
+  // The server determines match results; the browser only keeps a local,
+  // non-authoritative summary for this prototype.
+  useEffect(() => {
+    if (!snapshot || snapshot.status === 'playing' || !room || !playerId) return;
+    const resultId = room + ':' + playerId;
+    if (recordedResult.current === resultId) return;
+    recordedResult.current = resultId;
+    const previous = readLocalProfile();
+    const updated = {
+      ...previous,
+      victories: previous.victories + Number(snapshot.status === 'victory'),
+      defeats: previous.defeats + Number(snapshot.status === 'defeat'),
+      lastPlayed: new Date().toISOString(),
+    };
+    saveLocalProfile(updated);
+    setLocalProfile(updated);
+  }, [snapshot?.status, room, playerId]);
+
+  const resetLocalHistory = () => {
+    clearLocalProfile();
+    setLocalProfile({ ...EMPTY_PROFILE });
+    setName('');
+    setRoomInput('');
+  };
 
   const disconnect = useCallback(() => {
     const ws = socketRef.current;
@@ -51,7 +79,9 @@ export default function App() {
       setError('O código da sala deve ter de 4 a 8 letras ou números.');
       return;
     }
-    localStorage.setItem('redream-name', safeName);
+    const saved = { ...readLocalProfile(), nickname: safeName };
+    saveLocalProfile(saved);
+    setLocalProfile(saved);
     socketRef.current?.close();
     setConnection('connecting');
     try {
@@ -65,6 +95,14 @@ export default function App() {
         if (message.type === 'joined') {
           setRoom(message.room);
           setRoomInput(message.room);
+          const updated = {
+            ...readLocalProfile(),
+            nickname: safeName,
+            lastRoom: message.room,
+            lastPlayed: new Date().toISOString(),
+          };
+          saveLocalProfile(updated);
+          setLocalProfile(updated);
           setPlayerId(message.id);
           setConnection('online');
         } else if (message.type === 'snapshot') {
@@ -160,7 +198,18 @@ export default function App() {
             <div className="features"><Feature icon="⚔" title="Combate que responde" description="Saltos, ataques e habilidades em masmorras 2D com física e combate controlados pelo servidor."/><Feature icon="♜" title="Jogue com amigos" description="Crie uma sala, compartilhe o código e avance ao lado de até três outros aventureiros."/><Feature icon="✧" title="Seu sonho, sua jornada" description="Três ondas de inimigos e um chefe na primeira missão. Mais mundos e classes estão a caminho."/></div>
           </section>
           <section id="jogar" className="play-section">
-            <div className="play-copy"><span className="eyebrow">✦ PORTAL DE AVENTUREIROS</span><h2>Pronto para atravessar o portal?</h2><p>Escolha um nome e crie uma sala para convidar seus amigos. Você também pode entrar usando um código recebido.</p><div className="online-tip"><span className={websocketUrl ? 'signal signal-ready' : 'signal'} />{websocketUrl ? 'Servidor configurado · conexão ao entrar' : 'Servidor multiplayer ainda não configurado nesta publicação'}</div></div>
+            <div className="play-copy"><span className="eyebrow">✦ PORTAL DE AVENTUREIROS</span><h2>Pronto para atravessar o portal?</h2><p>Escolha um nome e crie uma sala para convidar seus amigos. Você também pode entrar usando um código recebido.</p><div className="online-tip"><span className={websocketUrl ? 'signal signal-ready' : 'signal'} />{websocketUrl ? 'Servidor configurado · poderá despertar após um período inativo' : 'Servidor multiplayer ainda não configurado nesta publicação'}</div>
+              <section className="local-progress" aria-label="Minha jornada salva no navegador">
+                <div className="local-progress-title"><span>✧</span><h3>Minha jornada local</h3></div>
+                <div className="local-progress-stats">
+                  <div><strong>{localProfile.victories}</strong><span>Vitórias</span></div>
+                  <div><strong>{localProfile.defeats}</strong><span>Derrotas</span></div>
+                  <div><strong>{localProfile.lastRoom || '—'}</strong><span>Última sala</span></div>
+                </div>
+                <p>Salvo somente neste navegador (localStorage). Não é uma conta, não sincroniza entre aparelhos e não restaura salas encerradas.</p>
+                <button type="button" className="local-reset" onClick={resetLocalHistory}>Apagar meus dados locais</button>
+              </section>
+            </div>
             <form className="join-card" onSubmit={join}>
               <div className="card-heading"><span className="card-icon">✧</span><div><h3>Entrar no Re:Dream</h3><p>Versão pré-alfa · gratuito</p></div></div>
               <label htmlFor="nickname">NOME DE AVENTUREIRO</label><input id="nickname" value={name} onChange={e => setName(e.target.value)} maxLength={20} minLength={2} placeholder="Seu apelido" autoComplete="nickname" required />
