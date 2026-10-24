@@ -65,7 +65,17 @@ def run() -> None:
                 with Image.open(io.BytesIO(source.read(path))) as raw:
                     picture = raw.convert("RGBA")
                 if picture.size != (128, 128):
-                    raise SystemExit(f"Unexpected frame size {picture.size} for {path}")
+                    # Some PixelLab movement actions export at 172x172 or
+                    # larger to give limbs room. Fit the complete original
+                    # image within the target 128px cell without cropping.
+                    if picture.width > 512 or picture.height > 512:
+                        raise SystemExit(f"Unexpectedly large frame {picture.size}: {path}")
+                    original_size = picture.size
+                    picture.thumbnail((128, 128), Image.Resampling.NEAREST)
+                    normalized = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
+                    normalized.paste(picture, ((128 - picture.width) // 2, (128 - picture.height) // 2))
+                    picture = normalized
+                    print(f"Luci: normalize {animation} frame {idx} from {original_size} to 128x128")
                 sheet.paste(picture, (128 * idx, 0))
             sheet.save(DEST / f"{animation}.png", format="PNG", optimize=True)
             manifest["animations"][animation] = {
@@ -82,7 +92,10 @@ def run() -> None:
             with Image.open(io.BytesIO(source.read(path))) as raw:
                 image = raw.convert("RGBA")
             if image.size != (128, 128):
-                raise SystemExit(f"Unexpected size for {path}: {image.size}")
+                image.thumbnail((128, 128), Image.Resampling.NEAREST)
+                canvas = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
+                canvas.paste(image, ((128 - image.width) // 2, (128 - image.height) // 2))
+                image = canvas
             image.save(DEST / destination, format="PNG", optimize=True)
     (DEST / "manifest.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
