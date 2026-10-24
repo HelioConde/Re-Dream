@@ -1,0 +1,17 @@
+{
+  "name": "redream",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "workspaces": ["apps/web", "apps/server"],
+  "scripts": {
+    "dev": "concurrently -k -n WEB,WS -c cyan,magenta \"npm run dev -w @redream/web\" \"npm run dev -w @redream/server\"",
+    "dev:web": "npm run dev -w @redream/web",
+    "dev:server": "npm run dev -w @redream/server",
+    "build": "npm run build -w @redream/web && npm run build -w @redream/server",
+    "test": "npm run test -w @redream/server",
+    "start:server": "npm run start -w @redream/server"
+  },
+  "devDependencies": { "concurrently": "^9.2.1" }
+}

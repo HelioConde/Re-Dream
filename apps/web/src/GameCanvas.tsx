@@ -1,0 +1,181 @@
+import { useEffect, useRef } from 'react';
+import Phaser from 'phaser';
+import type { Control, Snapshot } from './protocol';
+
+type Props = {
+  snapshotRef: React.RefObject<Snapshot | null>;
+  playerId: string;
+  sendInput: (input: Control) => void;
+  mobileRef: React.RefObject<Control>;
+};
+
+export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef }: Props) {
+  const host = useRef<HTMLDivElement>(null);
+  const sendRef = useRef(sendInput);
+  sendRef.current = sendInput;
+
+  useEffect(() => {
+    if (!host.current) return;
+    class Dungeon extends Phaser.Scene {
+      private keys!: Record<string, Phaser.Input.Keyboard.Key>;
+      private draw!: Phaser.GameObjects.Graphics;
+      private lastSent = 0;
+      private labels = new Map<string, Phaser.GameObjects.Text>();
+      private positions = new Map<string, { x: number; y: number }>();
+      private stars = Array.from({ length: 46 }, (_, i) => ({
+        x: (i * 311 + 67) % 1280, y: (i * 113 + 31) % 520, phase: i * 0.73,
+      }));
+
+      constructor() { super('dungeon'); }
+      create() {
+        this.cameras.main.setBackgroundColor('#101935');
+        this.draw = this.add.graphics();
+        this.keys = this.input.keyboard!.addKeys(
+          'A,D,W,J,K,LEFT,RIGHT,UP,SPACE,Z,X',
+        ) as Record<string, Phaser.Input.Keyboard.Key>;
+        this.input.keyboard!.addCapture(['SPACE', 'UP', 'LEFT', 'RIGHT']);
+      }
+
+      update(time: number) {
+        const keys = this.keys;
+        const mobile = mobileRef.current;
+        const input: Control = {
+          left: keys.A.isDown || keys.LEFT.isDown || mobile.left,
+          right: keys.D.isDown || keys.RIGHT.isDown || mobile.right,
+          jump: keys.W.isDown || keys.UP.isDown || keys.SPACE.isDown || mobile.jump,
+          attack: keys.J.isDown || keys.Z.isDown || mobile.attack,
+          skill: keys.K.isDown || keys.X.isDown || mobile.skill,
+        };
+        if (time - this.lastSent >= 50) {
+          sendRef.current(input);
+          this.lastSent = time;
+        }
+
+        const g = this.draw;
+        g.clear();
+        g.fillGradientStyle(0x111830, 0x151f41, 0x34416a, 0x183959, 1);
+        g.fillRect(0, 0, 1280, 720);
+        g.fillStyle(0xd9c4ff, 0.16);
+        g.fillCircle(1070, 125, 86);
+        g.fillStyle(0xf6eaff, 0.88);
+        g.fillCircle(1070, 125, 51);
+        for (const s of this.stars) {
+          g.fillStyle(0xcbbfff, 0.28 + Math.sin(time * .0013 + s.phase) * .2);
+          g.fillCircle(s.x, s.y + Math.sin(time * .0008 + s.phase) * 7, 1.8);
+        }
+        g.fillStyle(0x25375a, .85);
+        g.fillTriangle(0, 510, 285, 205, 575, 510);
+        g.fillTriangle(305, 510, 655, 245, 1040, 510);
+        g.fillTriangle(795, 510, 1120, 270, 1280, 510);
+        g.fillStyle(0x1e4354, 1);
+        for (let i = 0; i < 18; i++) {
+          const x = i * 78;
+          g.fillRect(x, 382 + (i % 4) * 18, 17, 210);
+          g.fillCircle(x + 9, 385 + (i % 4) * 18, 48);
+        }
+        g.fillStyle(0x243b49);
+        g.fillRect(0, 600, 1280, 120);
+        g.fillStyle(0x8eb8a5);
+        g.fillRect(0, 596, 1280, 9);
+        for (const platform of [{ x: 220, y: 466, w: 220 }, { x: 690, y: 414, w: 250 }]) {
+          g.fillStyle(0x395566);
+          g.fillRoundedRect(platform.x, platform.y, platform.w, 20, 5);
+          g.fillStyle(0xa1cba5);
+          g.fillRoundedRect(platform.x, platform.y, platform.w, 7, 4);
+        }
+
+        const snapshot = snapshotRef.current;
+        if (!snapshot) return;
+        const seen = new Set<string>();
+        for (const enemy of snapshot.enemies) {
+          const key = 'enemy-' + enemy.id;
+          seen.add(key);
+          const p = this.smooth(key, enemy.x, enemy.y);
+          const size = enemy.boss ? 58 : 31;
+          g.fillStyle(enemy.boss ? 0xb65bce : 0x50b7ad);
+          g.fillEllipse(p.x, p.y - size * .7, size * 1.5, size * 1.3);
+          g.fillStyle(0xf7edf9);
+          g.fillCircle(p.x - size * .25, p.y - size * .8, size * .1);
+          g.fillCircle(p.x + size * .25, p.y - size * .8, size * .1);
+          g.fillStyle(0x241f41);
+          g.fillCircle(p.x - size * .25, p.y - size * .8, size * .05);
+          g.fillCircle(p.x + size * .25, p.y - size * .8, size * .05);
+          this.healthbar(g, p.x - size * .7, p.y - size * 1.7, size * 1.4, enemy.hp / enemy.maxHp, 0xed91e0);
+          if (enemy.flash > 0) {
+            g.lineStyle(4, 0xfff9e9, .85);
+            g.strokeCircle(p.x, p.y - size * .7, size * 1.1);
+          }
+        }
+
+        for (const player of snapshot.players) {
+          const key = 'player-' + player.id;
+          seen.add(key);
+          const p = this.smooth(key, player.x, player.y);
+          const isYou = player.id === playerId;
+          g.fillStyle(0x0c1825, .35);
+          g.fillEllipse(p.x, p.y + 1, 42, 9);
+          g.fillStyle(isYou ? 0xf3c87f : player.color);
+          g.fillRoundedRect(p.x - 14, p.y - 57, 28, 43, 8);
+          g.fillStyle(0xf7dcbb);
+          g.fillCircle(p.x, p.y - 65, 13);
+          g.fillStyle(0x252540);
+          g.fillEllipse(p.x, p.y - 74, 27, 12);
+          g.fillStyle(0x31334e);
+          g.fillRoundedRect(p.x - 14, p.y - 16, 11, 17, 3);
+          g.fillRoundedRect(p.x + 3, p.y - 16, 11, 17, 3);
+          g.lineStyle(5, 0xe3e9fc);
+          g.lineBetween(p.x + player.facing * 11, p.y - 47, p.x + player.facing * 38, p.y - 24);
+          if (player.flash > 0) {
+            g.lineStyle(5, 0xf8e6ad, .8);
+            g.beginPath();
+            g.arc(p.x + player.facing * 36, p.y - 37, 46, -1.2, 1.2);
+            g.strokePath();
+          }
+          this.healthbar(g, p.x - 24, p.y - 101, 48, player.hp / 100, 0x78d9a2);
+          let label = this.labels.get(key);
+          if (!label) {
+            label = this.add.text(0, 0, '', {
+              fontFamily: 'Arial', fontSize: '15px', color: '#ffffff',
+              stroke: '#192338', strokeThickness: 4,
+            }).setOrigin(.5);
+            this.labels.set(key, label);
+          }
+          label.setText(isYou ? player.name + ' ★' : player.name);
+          label.setPosition(p.x, p.y - 120);
+        }
+        for (const [key, label] of this.labels) {
+          if (!seen.has(key)) { label.destroy(); this.labels.delete(key); }
+        }
+        for (const key of this.positions.keys()) {
+          if (!seen.has(key)) this.positions.delete(key);
+        }
+      }
+
+      private smooth(key: string, x: number, y: number) {
+        let pos = this.positions.get(key);
+        if (!pos) { pos = { x, y }; this.positions.set(key, pos); }
+        pos.x += (x - pos.x) * .28;
+        pos.y += (y - pos.y) * .28;
+        return pos;
+      }
+
+      private healthbar(g: Phaser.GameObjects.Graphics, x: number, y: number, width: number, percent: number, color: number) {
+        g.fillStyle(0x152039, .86); g.fillRoundedRect(x - 2, y - 2, width + 4, 9, 4);
+        g.fillStyle(color); g.fillRoundedRect(x, y, Math.max(0, width * Math.max(0, percent)), 5, 2);
+      }
+    }
+    const game = new Phaser.Game({
+      type: Phaser.AUTO,
+      parent: host.current,
+      width: 1280,
+      height: 720,
+      backgroundColor: '#101935',
+      scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+      render: { antialias: true },
+      scene: [Dungeon],
+    });
+    return () => { game.destroy(true); };
+  }, [mobileRef, playerId, snapshotRef]);
+
+  return <div ref={host} className="game-canvas" role="img" aria-label="Masmorra cooperativa 2D" />;
+}
