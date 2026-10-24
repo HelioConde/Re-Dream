@@ -1,7 +1,8 @@
-export type CharacterId = 'rose' | 'wanderer';
+export const CHARACTER_IDS = ['rose', 'wanderer', 'sprout', 'bunny', 'retro', 'retrohat', 'mana_dapper', 'mana_bob', 'cat', 'fox', 'rabbit', 'wolf', 'panda', 'owl'] as const;
+export type CharacterId = typeof CHARACTER_IDS[number];
 export const DEFAULT_CHARACTER: CharacterId = 'rose';
 export const isCharacterId = (value: unknown): value is CharacterId =>
-  value === 'rose' || value === 'wanderer';
+  typeof value === 'string' && (CHARACTER_IDS as readonly string[]).includes(value);
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
 export type Player = {
   id: string; name: string; characterId: CharacterId; x: number; y: number; hp: number; score: number;

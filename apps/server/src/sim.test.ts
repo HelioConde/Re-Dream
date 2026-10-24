@@ -106,3 +106,16 @@ test('escolhas diferentes não alteram física nem combate da sala', () => {
   assert.equal(after[0]-before[0],after[1]-before[1]);
   assert.deepEqual(room.snapshot().players.map(p=>p.characterId),['rose','wanderer']);
 });
+
+test('todos os personagens de teste são aceitos e entradas forjadas rejeitadas', () => {
+  const room=new GameRoom('ROSTER');
+  for(const id of ['sprout','bunny','retro','retrohat','mana_dapper','mana_bob','cat','fox','rabbit','wolf','panda','owl'] as const){
+    assert.equal(room.selectCharacter('a',id),false);
+  }
+  room.addPlayer('a','Teste');
+  for(const id of ['sprout','bunny','retro','retrohat','mana_dapper','mana_bob','cat','fox','rabbit','wolf','panda','owl'] as const){
+    assert.equal(room.selectCharacter('a',id),true);
+    assert.equal(room.snapshot().players[0].characterId,id);
+  }
+  assert.equal(room.selectCharacter('a','fake-avatar'),false);
+});

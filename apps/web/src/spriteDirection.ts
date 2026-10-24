@@ -4,3 +4,8 @@ export function directionalFrame(facing: number, walking: boolean, elapsedMs: nu
   const frame = walking ? Math.floor(Math.max(elapsedMs, 0) / 105) % 8 : 0;
   return { texture, frame, flipX: false } as const;
 }
+
+/** Rose reference sprite faces left in its source image, so right-facing flips it. */
+export function shouldFlipRose(facing: number): boolean {
+  return facing > 0;
+}

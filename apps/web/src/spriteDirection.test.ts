@@ -12,3 +12,9 @@ test('left direction uses left author frames without flipping', () => {
 test('idle freezes on authored first frame', () => {
   assert.equal(directionalFrame(-1,false,1350).frame,0);
 });
+
+import { shouldFlipRose } from './spriteDirection.js';
+test('Rosa original olha à esquerda e só é espelhada ao andar para a direita', () => {
+  assert.equal(shouldFlipRose(-1),false);
+  assert.equal(shouldFlipRose(1),true);
+});
