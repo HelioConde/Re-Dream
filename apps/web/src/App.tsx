@@ -200,7 +200,11 @@ export default function App() {
               {Array.from({ length: 4 }, (_, i) => {
                 const adventurer = snapshot?.players[i];
                 return <div className={'lobby-slot ' + (adventurer ? 'occupied' : '')} key={i} role="listitem">
-                  <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'rose') : '')}>{adventurer ? '' : '+'}</div>
+                  <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'rose') : '')}
+                    style={adventurer ? {
+                      backgroundImage: `url(${import.meta.env.BASE_URL}${adventurer.characterId === 'wanderer' ? 'sprites/imported/char/right.png' : 'sprites/rose-hero-real.webp'})`,
+                      backgroundSize: adventurer.characterId === 'wanderer' ? '800% 100%' : '400% 200%',
+                    } : undefined}>{adventurer ? '' : '+'}</div>
                   <div className="lobby-slot-info"><strong>{adventurer?.name ?? 'Aguardando aventureiro'}</strong><span>{adventurer ? (adventurer.id === snapshot?.hostId ? 'Líder · ' : '') + characterName(adventurer.characterId) : 'Vaga disponível'}</span></div>
                   {adventurer && <span className="lobby-ready">Pronto</span>}
                 </div>;
