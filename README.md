@@ -101,3 +101,16 @@ A primeira personagem visual jogável é a **Vanguarda das Rosas**. O Phaser car
 O personagem de teste agora usa **os 8 quadros reais de caminhada para esquerda e os 8 quadros reais de caminhada para direita** extraídos de `char free.zip`. Não aplicamos `flipX`, pois o pacote possui as duas direções. O servidor continua autoritativo e a movimentação local permanece preditiva. Os sprites são carregados em `apps/web/public/sprites/imported/char/`. O arquivo original não fornece quadros de ataque, habilidades, salto ou morte; efeitos durante essas ações são provisórios e não se apresentam como animações originais. A licença do pacote deve ser verificada antes de uso comercial.
 
 O pacote `Little Dreamyland - Free Pack.zip` **não é usado**, porque sua licença restringe o uso a projetos não comerciais e não permite redistribuição do pacote. Os arquivos derivados anteriormente publicados por nosso importador foram excluídos. Se o ZIP original permanecer no repositório público, convém removê-lo da distribuição pública após manter uma cópia particular autorizada.
+
+
+## Tela de seleção de personagens (pré-alfa)
+
+**Fluxo:** página inicial → escolher personagem → criar/entrar em uma sala → lobby → líder inicia masmorra. Cada jogador escolhe independentemente e pode trocar de personagem no lobby antes do começo. O servidor valida a escolha e compartilha a aparência nos snapshots via WebSocket; a escolha também fica salva em `localStorage` sob `redream:profile:v1`. Não existe banco de dados.
+
+**Jogáveis neste momento:**
+- `rose` — **Guerreira das Rosas**: sprites ilustrados da personagem Re:Dream, por enquanto com oito quadros compactados.
+- `wanderer` — **Viajante**: oito quadros reais para caminhada à esquerda e oito para direita, do pacote `char free.zip`, sem espelhamento automático.
+
+**Mesmo combate e atributos** para ambos — estamos testando somente a aparência, não classes ou balanceamento. Outros pacotes da raiz foram deixados de fora da seleção por faltar mapeamento de animações e/ou verificação de licença. O pacote Little Dreamyland tem restrições de redistribuição e não deve ser publicado como sprites soltos sem autorização.
+
+**Teste manual sugerido:** abra dois navegadores; escolha Rosa no primeiro e Viajante no segundo; compartilhe o código; confira os dois personagens no lobby e ao iniciar a partida, caminhe para ambos os lados e troque a seleção antes de iniciar. Ao atualizar o navegador, a escolha deve continuar registrada localmente.
