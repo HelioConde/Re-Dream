@@ -140,7 +140,14 @@ export default function App() {
   };
 
   const join = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); connect(roomInput); };
-  const isPlaying = connection === 'online' && Boolean(room);
+  const isLobby = connection === 'online' && Boolean(room) && (!snapshot || snapshot.status === 'lobby');
+  const isPlaying = connection === 'online' && Boolean(room) && !!snapshot && snapshot.status !== 'lobby';
+  const isHost = snapshot?.hostId === playerId;
+  const beginDungeon = () => {
+    if (isHost && socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({ type: 'start' }));
+    }
+  };
   const me = snapshot?.players.find(player => player.id === playerId);
 
   return (
@@ -153,7 +160,45 @@ export default function App() {
         <a className="github-link" href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">GitHub ↗</a>
       </header>
 
-      {isPlaying ? (
+      {isLobby ? (
+        <main className="lobby-page" id="jogar">
+          <div className="lobby-ambient" aria-hidden="true">✧</div>
+          <div className="lobby-eyebrow">✦ PORTAL DE AVENTUREIROS</div>
+          <h1>Salão dos Sonhos</h1>
+          <p className="lobby-subtitle">Reúna sua equipe antes de atravessar o portal da masmorra.</p>
+          <section className="lobby-panel">
+            <div className="lobby-topbar">
+              <div><span className="eyebrow">SALA COOPERATIVA</span><h2>{room}</h2></div>
+              <button className="button button-outline" onClick={() => {
+                void navigator.clipboard?.writeText(room);
+              }}>Copiar convite ⧉</button>
+            </div>
+            <div className="lobby-slots" role="list" aria-label="Membros da equipe">
+              {Array.from({ length: 4 }, (_, i) => {
+                const adventurer = snapshot?.players[i];
+                return <div className={'lobby-slot ' + (adventurer ? 'occupied' : '')} key={i} role="listitem">
+                  <div className="lobby-avatar">{adventurer ? '✧' : '+'}</div>
+                  <div className="lobby-slot-info"><strong>{adventurer?.name ?? 'Aguardando aventureiro'}</strong><span>{adventurer ? (adventurer.id === snapshot?.hostId ? 'Líder da equipe' : 'Aventureiro') : 'Vaga disponível'}</span></div>
+                  {adventurer && <span className="lobby-ready">Pronto</span>}
+                </div>;
+              })}
+            </div>
+            <div className="lobby-quest">
+              <span className="lobby-quest-icon">♜</span>
+              <div><h3>Bosque dos Sonhos</h3><p>3 ondas de monstros · 1 chefão · Até 4 jogadores</p></div>
+              <span className="lobby-difficulty">Iniciante</span>
+            </div>
+            {error && <p className="form-error" role="alert">{error}</p>}
+            <div className="lobby-buttons">
+              <button className="button button-ghost" onClick={disconnect}>← Sair do lobby</button>
+              {isHost
+                ? <button className="button button-primary" onClick={beginDungeon} disabled={!snapshot}>✦ Iniciar aventura →</button>
+                : <span className="lobby-wait">Aguardando o líder iniciar a partida…</span>}
+            </div>
+          </section>
+          <p className="lobby-footnote">Cada jogador controla seu personagem. A masmorra só começa quando o líder escolher iniciar.</p>
+        </main>
+      ) : isPlaying ? (
         <main className="session" id="jogar">
           <div className="session-top">
             <div><span className="eyebrow">✦ MASMORRA COOPERATIVA</span><h1>Bosque dos Sonhos</h1><p>Etapa {snapshot?.wave || 1} / 3 · {snapshot?.players.length || 1}/4 aventureiros</p></div>
