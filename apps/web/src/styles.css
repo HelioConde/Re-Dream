@@ -14,3 +14,30 @@
 .local-reset{padding:5px 0;border:0;background:none;color:#ccb2f5;text-decoration:underline;text-underline-offset:3px;font-size:12px}
 .local-reset:hover{color:#fff}
 .local-reset:focus-visible{outline:2px solid #d2adff;outline-offset:5px;border-radius:3px}
+
+
+/* Multiplayer party lobby */
+.lobby-page{position:relative;max-width:990px;margin:0 auto;padding:63px 22px 100px;min-height:calc(100vh - 165px);text-align:center}
+.lobby-ambient{position:absolute;top:30px;left:50%;transform:translateX(-50%);pointer-events:none;font-size:320px;line-height:1;color:#9177d20b;z-index:-1}
+.lobby-eyebrow{color:#bf9efa;font-size:12px;letter-spacing:2.7px;font-weight:800}
+.lobby-page h1{font-family:Outfit,sans-serif;font-size:clamp(38px,5vw,62px);letter-spacing:-2px;margin:13px 0}
+.lobby-subtitle,.lobby-footnote{color:#aab3ce;font-size:14px;line-height:1.7}
+.lobby-panel{text-align:left;margin:40px auto 20px;max-width:820px;background:linear-gradient(145deg,#1a2344,#121b37);border:1px solid #b4a0df48;box-shadow:0 25px 95px #0006;border-radius:24px;padding:34px}
+.lobby-topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:24px;border-bottom:1px solid #ffffff17}
+.lobby-topbar h2{font:700 36px Outfit,sans-serif;letter-spacing:3px;color:#ebddff;margin:6px 0 0}
+.lobby-slots{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:25px 0}
+.lobby-slot{display:flex;align-items:center;min-width:0;gap:12px;padding:15px;border:1px dashed #77749d5c;border-radius:14px;background:#121b32}
+.lobby-slot.occupied{border-style:solid;border-color:#9c8bc150;background:#202944}
+.lobby-avatar{display:grid;place-items:center;width:48px;height:48px;flex-shrink:0;border-radius:12px;background:#baa3ef1d;color:#d7baf9;font-size:28px}
+.lobby-slot-info{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lobby-slot-info strong{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lobby-slot-info span{color:#9faac6;font-size:11px}
+.lobby-ready{color:#91dfbd;font-size:11px;margin-left:auto}
+.lobby-quest{display:flex;align-items:center;gap:15px;padding:19px;border:1px solid #9479bc34;background:#111b34;border-radius:15px}
+.lobby-quest-icon{font-size:32px;color:#c69afa}
+.lobby-quest h3{font:700 17px Outfit,sans-serif;margin:0 0 5px}
+.lobby-quest p{color:#a1abc4;font-size:12px;margin:0}
+.lobby-difficulty{margin-left:auto;color:#8de2ae;font-size:12px;font-weight:700}
+.lobby-buttons{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-top:28px}
+.lobby-wait{font-size:13px;color:#baaade}
+@media(max-width:650px){.lobby-page{padding:47px 16px 85px}.lobby-panel{padding:22px 16px}.lobby-topbar{flex-direction:column;align-items:stretch}.lobby-slots{grid-template-columns:1fr}.lobby-quest{flex-wrap:wrap}.lobby-difficulty{margin-left:0}.lobby-buttons{flex-direction:column-reverse;align-items:stretch}.lobby-buttons .button{width:100%}}
