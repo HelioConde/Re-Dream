@@ -57,9 +57,13 @@ try {
   a = await join('SmokeTestOne');
   const together = waitMessage(a.ws, m => m.type === 'snapshot' && m.players?.length === 2);
   b = await join('SmokeTestTwo', a.room);
-  await together;
+  const lobbyState = await together;
+  if (lobbyState.status !== 'lobby') throw Error('Expected staging lobby before combat');
   if (a.room !== b.room) throw Error('Joined different rooms');
-  console.log('PASS: two players synchronized in room', a.room);
+  const started = waitMessage(b.ws, msg => msg.type === 'snapshot' && msg.status === 'playing');
+  a.ws.send(JSON.stringify({ type: 'start' }));
+  await started;
+  console.log('PASS: two players met in lobby and host started room', a.room);
 } finally {
   clearTimeout(abortTimer);
   a?.ws.terminate();
