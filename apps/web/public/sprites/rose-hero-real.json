@@ -1,0 +1,32 @@
+{
+  "name": "Vanguarda das Rosas",
+  "format": "webp",
+  "size": [
+    256,
+    128
+  ],
+  "frameWidth": 64,
+  "frameHeight": 64,
+  "columns": 4,
+  "rows": 2,
+  "source": "Generated illustrated sprite sheet based on user's visual reference (1254x1254)",
+  "groups": {
+    "idle": [
+      0,
+      1
+    ],
+    "run": [
+      2,
+      3,
+      4
+    ],
+    "attack": [
+      5,
+      6
+    ],
+    "skill": [
+      7
+    ]
+  },
+  "notes": "Pre-alpha low-resolution optimized atlas. Maintain stable feet alignment; original 1254x1254 sheet remains in conversation attachments."
+}

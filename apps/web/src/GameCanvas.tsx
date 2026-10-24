@@ -35,15 +35,11 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
 
       constructor() { super('dungeon'); }
       preload() {
-        this.load.svg('hero-atlas', import.meta.env.BASE_URL + 'sprites/rose-vanguard-atlas.svg', { width: 512, height: 256 });
+        this.load.spritesheet('hero-real', import.meta.env.BASE_URL + 'sprites/rose-hero-real.webp', { frameWidth: 64, frameHeight: 64 });
       }
       create() {
-        const atlas = this.textures.get('hero-atlas');
-        if (atlas.key === 'hero-atlas') {
-          for (let i = 0; i < 8; i++) {
-            atlas.add('hero-' + i, 0, (i % 4) * 128, Math.floor(i / 4) * 128, 128, 128);
-          }
-        }
+        // Eight real illustrated frames: idle 0-1, running 2-4, strike 5-6, skill 7.
+        // Same 64x64 logical frame, consistent origin and scale for every animation.
         this.cameras.main.setBackgroundColor('#101935');
         this.draw = this.add.graphics();
         this.keys = this.input.keyboard!.addKeys(
@@ -140,10 +136,10 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           const p = isYou && this.predictor.initialized
             ? { x: this.predictor.x, y: this.predictor.y }
             : this.smooth(key, player.x, player.y);
-          // Render the original rose-themed art atlas instead of placeholder geometry.
+          // Original illustrated rose warrior, cropped from the generated sprite reference.
           let avatar = this.avatars.get(key);
-          if (!avatar && this.textures.exists('hero-atlas')) {
-            avatar = this.add.image(p.x, p.y, 'hero-atlas', 'hero-0')
+          if (!avatar && this.textures.exists('hero-real')) {
+            avatar = this.add.image(p.x, p.y, 'hero-real', 0)
               .setOrigin(.5, 1)
               .setDisplaySize(108, 108)
               .setDepth(3);
@@ -155,7 +151,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             let frame = moving ? 2 + beat % 3 : beat % 2;
             if (player.flash > 0 || (isYou && input.attack)) frame = 5 + beat % 2;
             if (isYou && input.skill) frame = 7;
-            avatar.setFrame('hero-' + frame);
+            avatar.setFrame(frame);
             avatar.setPosition(p.x, p.y + 6);
             avatar.setFlipX(player.facing < 0);
           } else {
