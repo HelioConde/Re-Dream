@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "tsx --test src/localProfile.test.ts"
+    "test": "tsx --test src/*.test.ts"
   },
   "dependencies": {
     "phaser": "^4.0.0",
