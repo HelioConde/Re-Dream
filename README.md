@@ -85,3 +85,12 @@ O servidor inicial mantém as salas em memória em **uma instância** e atualiza
 ## Direito autoral
 
 Re:Dream é original e independente. Não utilizar sprites, personagens, músicas, logos, mapas ou outros materiais de Grand Chase.
+
+
+## Lobby e movimento responsivo
+
+Antes da masmorra, cada grupo entra no **Salão dos Sonhos**. O líder cria e compartilha o código, acompanha até quatro participantes e inicia a missão quando o grupo estiver reunido. Não existem inimigos ativos no lobby.
+
+O personagem controlado pelo usuário usa **previsão local**: o movimento e o salto são desenhados instantaneamente no navegador, enquanto o servidor continua responsável pelo combate e corrige diferenças grandes. Os outros jogadores recebem posições pela rede e passam por suavização.
+
+A primeira personagem visual jogável é a **Vanguarda das Rosas** (atlas vetorial de oito quadros em `apps/web/public/sprites/rose-vanguard-atlas.svg`), criada como uma base original inspirada na referência enviada. É uma arte inicial: as animações ilustradas completas ainda devem ser refinadas para evitar recortes e diferenças de silhueta.
