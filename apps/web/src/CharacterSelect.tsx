@@ -25,7 +25,7 @@ export default function CharacterSelect({
   const chosen = CHARACTERS.find(c => c.id === selected) || CHARACTERS[0];
   const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); onConfirm(); };
 
-  return <main className="character-select" id="jogar">
+  return <main className="character-select" id="personagens">
     <div className="select-heading">
       <span className="eyebrow">✧ RE:DREAM · SALÃO DOS HERÓIS</span>
       <h1>Escolha seu aventureiro</h1>
