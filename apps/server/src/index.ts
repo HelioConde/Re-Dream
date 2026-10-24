@@ -45,7 +45,7 @@ wss.on('connection', ws => {
   ws.on('pong', () => { peer.alive = true; });
   send(ws, { type: 'welcome', id: peer.id });
   ws.on('message', raw => {
-    if (raw.length > 512) { ws.close(1009, 'Mensagem muito grande'); return; }
+    if (Buffer.byteLength(raw.toString(), 'utf8') > 512) { ws.close(1009, 'Mensagem muito grande'); return; }
     const now = Date.now();
     if (now - peer.window > 1000) { peer.window = now; peer.count = 0; }
     if (++peer.count > 50) { ws.close(1008, 'Limite de mensagens excedido'); return; }
