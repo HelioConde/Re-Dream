@@ -69,6 +69,8 @@ wss.on('connection', ws => {
       peer.room = room;
       send(ws, { type: 'joined', id: peer.id, room: code });
       send(ws, room.snapshot());
+    } else if (msg.type === 'start' && peer.room) {
+      if (!peer.room.start(peer.id)) send(ws, { type: 'error', message: 'Somente o líder pode iniciar uma sala no lobby.' });
     } else if (msg.type === 'input' && peer.room) {
       peer.room.setInput(peer.id, msg as unknown as Control);
     }
