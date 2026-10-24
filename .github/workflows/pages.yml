@@ -28,7 +28,7 @@ jobs:
       - name: Build
         env:
           GITHUB_PAGES: 'true'
-          VITE_WS_URL: ${{ vars.VITE_WS_URL }}
+          VITE_WS_URL: ${{ vars.VITE_WS_URL || 'wss://re-dream.onrender.com/ws' }}
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
