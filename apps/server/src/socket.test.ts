@@ -81,7 +81,11 @@ test('duas conexões WebSocket compartilham a mesma sala e veem movimento autori
     assert.notEqual(first.id, second.id);
     const snapshot = await bothVisible;
     assert.equal(snapshot.players?.length, 2);
+    assert.equal((snapshot as Message & { status?: string }).status, 'lobby');
     const startX = snapshot.players?.find(p => p.id === first.id)?.x ?? 0;
+    const started = waitFor(first.ws, m => (m as Message & { status?: string }).status === 'playing');
+    first.ws.send(JSON.stringify({ type: 'start' }));
+    await started;
     const moved = waitFor(first.ws, m => m.type === 'snapshot' && (
       (m.players?.find(p => p.id === first.id)?.x ?? startX) > startX + 15
     ), 7000);
