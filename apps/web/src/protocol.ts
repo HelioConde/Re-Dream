@@ -5,7 +5,7 @@ export type Player = {
 };
 export type Enemy = { id: number; x: number; y: number; hp: number; maxHp: number; boss: boolean; flash: number };
 export type Snapshot = {
-  type: 'snapshot'; room: string; status: 'playing' | 'victory' | 'defeat';
+  type: 'snapshot'; room: string; status: 'lobby' | 'playing' | 'victory' | 'defeat'; hostId: string;
   wave: number; players: Player[]; enemies: Enemy[]; remaining: number;
 };
 export type ServerMessage =
