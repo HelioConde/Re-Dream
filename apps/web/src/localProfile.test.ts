@@ -22,7 +22,7 @@ describe('localStorage de Re:Dream', () => {
   it('persiste o apelido, sala e histórico apenas no navegador', () => {
     const storage = memoryStorage();
     const profile = {
-      nickname: 'Aventureira', lastRoom: 'ABC123',
+      nickname: 'Aventureira', characterId: 'wanderer' as const, lastRoom: 'ABC123',
       victories: 2, defeats: 1, lastPlayed: '2026-10-24T10:00:00.000Z',
     };
     saveLocalProfile(profile, storage);
@@ -34,15 +34,17 @@ describe('localStorage de Re:Dream', () => {
     const storage = memoryStorage();
     storage.setItem('redream-name', 'Conde');
     assert.equal(readLocalProfile(storage).nickname, 'Conde');
+    assert.equal(readLocalProfile(storage).characterId, 'rose');
   });
 
   it('não confia em números negativos, datas inválidas ou valores malformados', () => {
     const storage = memoryStorage();
     storage.setItem(PROFILE_KEY, JSON.stringify({
-      nickname: 'X'.repeat(100), lastRoom: '<script>', victories: -3, defeats: '10', lastPlayed: 'invalid',
+      nickname: 'X'.repeat(100), characterId: 'unknown', lastRoom: '<script>', victories: -3, defeats: '10', lastPlayed: 'invalid',
     }));
     const p = readLocalProfile(storage);
     assert.equal(p.nickname.length, 20);
+    assert.equal(p.characterId, 'rose');
     assert.equal(p.lastRoom, '');
     assert.equal(p.victories, 0);
     assert.equal(p.defeats, 0);

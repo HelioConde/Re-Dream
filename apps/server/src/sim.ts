@@ -1,8 +1,12 @@
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
 export type Status = 'lobby' | 'playing' | 'victory' | 'defeat';
+export const CHARACTER_IDS = ['rose', 'wanderer'] as const;
+export type CharacterId = typeof CHARACTER_IDS[number];
+export const isCharacterId = (value: unknown): value is CharacterId =>
+  value === 'rose' || value === 'wanderer';
 
 type Fighter = {
-  id: string; name: string; x: number; y: number; vx: number; vy: number;
+  id: string; name: string; characterId: CharacterId; x: number; y: number; vx: number; vy: number;
   grounded: boolean; hp: number; score: number; facing: number; flash: number; color: number;
   nextAttack: number; nextSkill: number; controls: Control;
 };
@@ -29,16 +33,24 @@ export class GameRoom {
 
   get size() { return this.players.size; }
 
-  addPlayer(id: string, name: string): void {
+  addPlayer(id: string, name: string, characterId: CharacterId = 'rose'): void {
+    if (!isCharacterId(characterId)) throw new Error('Personagem inválido.');
     if (this.players.size >= 4) throw new Error('Esta sala está cheia (máximo de 4 jogadores).');
     if (this.status !== 'lobby') throw new Error('A aventura já começou. Aguarde uma nova sala.');
     if (!this.hostId) this.hostId = id;
     const slot = this.players.size;
     this.players.set(id, {
-      id, name: name.trim().slice(0, 20), x: 140 + slot * 76, y: FLOOR,
+      id, name: name.trim().slice(0, 20), characterId, x: 140 + slot * 76, y: FLOOR,
       vx: 0, vy: 0, grounded: true, hp: 100, score: 0, facing: 1, flash: 0,
       color: COLORS[slot], nextAttack: 0, nextSkill: 0, controls: { ...EMPTY },
     });
+  }
+
+  selectCharacter(id: string, characterId: unknown): boolean {
+    const player = this.players.get(id);
+    if (!player || this.status !== 'lobby' || !isCharacterId(characterId)) return false;
+    player.characterId = characterId;
+    return true;
   }
 
   removePlayer(id: string) {
@@ -173,8 +185,8 @@ export class GameRoom {
       hostId: this.hostId,
       wave: this.wave,
       remaining: this.enemies.length,
-      players: [...this.players.values()].map(({ id, name, x, y, hp, score, facing, flash, color }) =>
-        ({ id, name, x: Math.round(x), y: Math.round(y), hp, score, facing, flash, color })),
+      players: [...this.players.values()].map(({ id, name, characterId, x, y, hp, score, facing, flash, color }) =>
+        ({ id, name, characterId, x: Math.round(x), y: Math.round(y), hp, score, facing, flash, color })),
       enemies: this.enemies.map(({ id, x, y, hp, maxHp, boss, flash }) =>
         ({ id, x: Math.round(x), y: Math.round(y), hp, maxHp, boss, flash })),
     };

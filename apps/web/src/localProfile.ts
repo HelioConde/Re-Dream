@@ -1,9 +1,12 @@
+import { DEFAULT_CHARACTER, isCharacterId, type CharacterId } from './protocol';
+
 /**
  * Local-only prototype progress. Never a trusted source for server-side stats,
  * currencies, inventory, or authentication.
  */
 export type LocalProfile = {
   nickname: string;
+  characterId: CharacterId;
   lastRoom: string;
   victories: number;
   defeats: number;
@@ -16,6 +19,7 @@ export const PROFILE_KEY = 'redream:profile:v1';
 
 export const EMPTY_PROFILE: LocalProfile = {
   nickname: '',
+  characterId: DEFAULT_CHARACTER,
   lastRoom: '',
   victories: 0,
   defeats: 0,
@@ -43,6 +47,7 @@ export function readLocalProfile(storage = browserStorage()): LocalProfile {
     const obj = parsed as Record<string, unknown>;
     return {
       nickname: typeof obj.nickname === 'string' ? obj.nickname.slice(0, 20) : '',
+      characterId: isCharacterId(obj.characterId) ? obj.characterId : DEFAULT_CHARACTER,
       lastRoom: typeof obj.lastRoom === 'string' && /^[A-Z0-9]{4,8}$/.test(obj.lastRoom) ? obj.lastRoom : '',
       victories: safeCount(obj.victories),
       defeats: safeCount(obj.defeats),

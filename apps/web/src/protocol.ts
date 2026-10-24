@@ -1,6 +1,10 @@
+export type CharacterId = 'rose' | 'wanderer';
+export const DEFAULT_CHARACTER: CharacterId = 'rose';
+export const isCharacterId = (value: unknown): value is CharacterId =>
+  value === 'rose' || value === 'wanderer';
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
 export type Player = {
-  id: string; name: string; x: number; y: number; hp: number; score: number;
+  id: string; name: string; characterId: CharacterId; x: number; y: number; hp: number; score: number;
   facing: number; flash: number; color: number;
 };
 export type Enemy = { id: number; x: number; y: number; hp: number; maxHp: number; boss: boolean; flash: number };

@@ -72,3 +72,17 @@ test('liderança passa ao próximo membro do lobby quando o anfitrião sai', () 
   assert.equal(room.snapshot().hostId, 'friend');
   assert.equal(room.start('friend'), true);
 });
+
+test('personagens são registrados e podem ser trocados apenas no lobby', () => {
+  const room = new GameRoom('SKINS1');
+  room.addPlayer('rose', 'Rose', 'rose');
+  room.addPlayer('friend', 'Friend', 'wanderer');
+  assert.deepEqual(room.snapshot().players.map(player => player.characterId), ['rose', 'wanderer']);
+  assert.equal(room.selectCharacter('friend', 'rose'), true);
+  assert.equal(room.snapshot().players[1].characterId, 'rose');
+  assert.equal(room.selectCharacter('friend', 'hacked'), false);
+  assert.equal(room.selectCharacter('unknown', 'wanderer'), false);
+  assert.equal(room.start('rose'), true);
+  assert.equal(room.selectCharacter('friend', 'wanderer'), false);
+  assert.equal(room.snapshot().players[1].characterId, 'rose');
+});

@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
-import { GameRoom, type Control } from './sim.js';
+import { GameRoom, isCharacterId, type Control } from './sim.js';
 
 const port = Number(process.env.PORT || 3001);
 const allowedOrigins = new Set((process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean));
@@ -60,15 +60,22 @@ wss.on('connection', ws => {
       if (name.length < 2) { send(ws, { type: 'error', message: 'Apelido inválido.' }); return; }
       const supplied = typeof msg.room === 'string' ? msg.room.trim().toUpperCase() : '';
       if (supplied && !/^[A-Z0-9]{4,8}$/.test(supplied)) { send(ws, { type: 'error', message: 'Código da sala inválido.' }); return; }
+      if (msg.characterId !== undefined && !isCharacterId(msg.characterId)) {
+        send(ws, { type: 'error', message: 'Personagem inválido.' }); return;
+      }
+      const selectedCharacter = isCharacterId(msg.characterId) ? msg.characterId : 'rose';
       const code = supplied || makeCode();
       let room = rooms.get(code);
       if (!room && supplied) { send(ws, { type: 'error', message: 'Sala não encontrada.' }); return; }
       if (!room) { room = new GameRoom(code); rooms.set(code, room); }
-      try { room.addPlayer(peer.id, name); }
+      try { room.addPlayer(peer.id, name, selectedCharacter); }
       catch (err) { send(ws, { type: 'error', message: (err as Error).message }); return; }
       peer.room = room;
       send(ws, { type: 'joined', id: peer.id, room: code });
       send(ws, room.snapshot());
+    } else if (msg.type === 'select' && peer.room) {
+      if (!peer.room.selectCharacter(peer.id, msg.characterId))
+        send(ws, { type: 'error', message: 'Não é possível trocar de personagem agora.' });
     } else if (msg.type === 'start' && peer.room) {
       if (!peer.room.start(peer.id)) send(ws, { type: 'error', message: 'Somente o líder pode iniciar uma sala no lobby.' });
     } else if (msg.type === 'input' && peer.room) {
