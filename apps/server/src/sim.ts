@@ -1,5 +1,5 @@
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
-export type Status = 'playing' | 'victory' | 'defeat';
+export type Status = 'lobby' | 'playing' | 'victory' | 'defeat';
 
 type Fighter = {
   id: string; name: string; x: number; y: number; vx: number; vy: number;
@@ -19,20 +19,20 @@ const COLORS = [0x9ba9ed, 0x91cbbb, 0xf0a6c5, 0xe7c078];
 export class GameRoom {
   readonly players = new Map<string, Fighter>();
   enemies: Mob[] = [];
-  status: Status = 'playing';
+  status: Status = 'lobby';
+  hostId = '';
   wave = 1;
   private now = 0;
   private mobCounter = 0;
 
-  constructor(public readonly code: string) {
-    this.spawnWave();
-  }
+  constructor(public readonly code: string) {}
 
   get size() { return this.players.size; }
 
   addPlayer(id: string, name: string): void {
     if (this.players.size >= 4) throw new Error('Esta sala está cheia (máximo de 4 jogadores).');
-    if (this.status !== 'playing') throw new Error('Esta masmorra já foi encerrada. Crie uma nova sala.');
+    if (this.status !== 'lobby') throw new Error('A aventura já começou. Aguarde uma nova sala.');
+    if (!this.hostId) this.hostId = id;
     const slot = this.players.size;
     this.players.set(id, {
       id, name: name.trim().slice(0, 20), x: 140 + slot * 76, y: FLOOR,
@@ -41,7 +41,18 @@ export class GameRoom {
     });
   }
 
-  removePlayer(id: string) { this.players.delete(id); }
+  removePlayer(id: string) {
+    this.players.delete(id);
+    if (this.hostId === id) this.hostId = this.players.keys().next().value ?? '';
+  }
+
+  start(playerId: string): boolean {
+    if (this.status !== 'lobby' || this.hostId !== playerId || this.size === 0) return false;
+    this.wave = 1;
+    this.spawnWave();
+    this.status = 'playing';
+    return true;
+  }
 
   setInput(id: string, controls: Control) {
     const player = this.players.get(id);
@@ -159,6 +170,7 @@ export class GameRoom {
       type: 'snapshot' as const,
       room: this.code,
       status: this.status,
+      hostId: this.hostId,
       wave: this.wave,
       remaining: this.enemies.length,
       players: [...this.players.values()].map(({ id, name, x, y, hp, score, facing, flash, color }) =>
