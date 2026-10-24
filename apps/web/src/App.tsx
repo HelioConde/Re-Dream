@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import GameCanvas from './GameCanvas';
-import type { Control, ServerMessage, Snapshot } from './protocol';
+import CharacterSelect from './CharacterSelect';
+import { characterName } from './characters';
+import type { CharacterId, Control, ServerMessage, Snapshot } from './protocol';
 import { clearLocalProfile, EMPTY_PROFILE, readLocalProfile, saveLocalProfile } from './localProfile';
 
 const configuredUrl = import.meta.env.VITE_WS_URL?.trim() || '';
@@ -17,6 +19,8 @@ function Feature({ icon, title, description }: { icon: string; title: string; de
 export default function App() {
   const [localProfile, setLocalProfile] = useState(readLocalProfile);
   const [name, setName] = useState(() => readLocalProfile().nickname);
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterId>(() => readLocalProfile().characterId);
+  const [selectionIntent, setSelectionIntent] = useState<'create' | 'join' | null>(null);
   const [roomInput, setRoomInput] = useState('');
   const [connection, setConnection] = useState<Connection>('idle');
   const [error, setError] = useState('');
@@ -31,7 +35,7 @@ export default function App() {
   // The server determines match results; the browser only keeps a local,
   // non-authoritative summary for this prototype.
   useEffect(() => {
-    if (!snapshot || snapshot.status === 'playing' || !room || !playerId) return;
+    if (!snapshot || (snapshot.status !== 'victory' && snapshot.status !== 'defeat') || !room || !playerId) return;
     const resultId = room + ':' + playerId;
     if (recordedResult.current === resultId) return;
     recordedResult.current = resultId;
@@ -50,6 +54,7 @@ export default function App() {
     clearLocalProfile();
     setLocalProfile({ ...EMPTY_PROFILE });
     setName('');
+    setSelectedCharacter('rose');
     setRoomInput('');
   };
 
@@ -62,6 +67,7 @@ export default function App() {
     setPlayerId('');
     setRoom('');
     setConnection('idle');
+    setSelectionIntent(null);
   }, []);
 
   useEffect(() => () => { socketRef.current?.close(); }, []);
@@ -79,7 +85,7 @@ export default function App() {
       setError('O código da sala deve ter de 4 a 8 letras ou números.');
       return;
     }
-    const saved = { ...readLocalProfile(), nickname: safeName };
+    const saved = { ...readLocalProfile(), nickname: safeName, characterId: selectedCharacter };
     saveLocalProfile(saved);
     setLocalProfile(saved);
     socketRef.current?.close();
@@ -87,7 +93,7 @@ export default function App() {
     try {
       const socket = new WebSocket(websocketUrl);
       socketRef.current = socket;
-      socket.onopen = () => socket.send(JSON.stringify({ type: 'join', name: safeName, room: normalizedRoom || undefined }));
+      socket.onopen = () => socket.send(JSON.stringify({ type: 'join', name: safeName, room: normalizedRoom || undefined, characterId: selectedCharacter }));
       socket.onmessage = event => {
         let message: ServerMessage;
         try { message = JSON.parse(event.data) as ServerMessage; } catch { return; }
@@ -98,6 +104,7 @@ export default function App() {
           const updated = {
             ...readLocalProfile(),
             nickname: safeName,
+            characterId: selectedCharacter,
             lastRoom: message.room,
             lastPlayed: new Date().toISOString(),
           };
@@ -139,7 +146,23 @@ export default function App() {
     mobileRef.current = { ...mobileRef.current, [key]: pressed };
   };
 
-  const join = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); connect(roomInput); };
+  const join = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setSelectionIntent('join');
+  };
+  const chooseCharacter = (characterId: CharacterId) => {
+    setSelectedCharacter(characterId);
+    const updated = { ...readLocalProfile(), characterId };
+    saveLocalProfile(updated);
+    setLocalProfile(updated);
+  };
+  const changeLobbyCharacter = (characterId: CharacterId) => {
+    if (socketRef.current?.readyState !== WebSocket.OPEN || snapshot?.status !== 'lobby') return;
+    chooseCharacter(characterId);
+    socketRef.current.send(JSON.stringify({ type: 'select', characterId }));
+  };
+
   const isLobby = connection === 'online' && Boolean(room) && (!snapshot || snapshot.status === 'lobby');
   const isPlaying = connection === 'online' && Boolean(room) && !!snapshot && snapshot.status !== 'lobby';
   const isHost = snapshot?.hostId === playerId;
@@ -177,11 +200,18 @@ export default function App() {
               {Array.from({ length: 4 }, (_, i) => {
                 const adventurer = snapshot?.players[i];
                 return <div className={'lobby-slot ' + (adventurer ? 'occupied' : '')} key={i} role="listitem">
-                  <div className="lobby-avatar">{adventurer ? '✧' : '+'}</div>
-                  <div className="lobby-slot-info"><strong>{adventurer?.name ?? 'Aguardando aventureiro'}</strong><span>{adventurer ? (adventurer.id === snapshot?.hostId ? 'Líder da equipe' : 'Aventureiro') : 'Vaga disponível'}</span></div>
+                  <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'rose') : '')}>{adventurer ? '' : '+'}</div>
+                  <div className="lobby-slot-info"><strong>{adventurer?.name ?? 'Aguardando aventureiro'}</strong><span>{adventurer ? (adventurer.id === snapshot?.hostId ? 'Líder · ' : '') + characterName(adventurer.characterId) : 'Vaga disponível'}</span></div>
                   {adventurer && <span className="lobby-ready">Pronto</span>}
                 </div>;
               })}
+            </div>
+            <div className="lobby-pick">
+              <span className="eyebrow">MEU PERSONAGEM · TROQUE ANTES DA PARTIDA</span>
+              <div className="lobby-pick-options">
+                <button type="button" className={'lobby-pick-choice '+(me?.characterId === 'rose' ? 'active' : '')} aria-pressed={me?.characterId === 'rose'} onClick={() => changeLobbyCharacter('rose')}>✧ Guerreira das Rosas</button>
+                <button type="button" className={'lobby-pick-choice '+(me?.characterId === 'wanderer' ? 'active' : '')} aria-pressed={me?.characterId === 'wanderer'} onClick={() => changeLobbyCharacter('wanderer')}>◇ Viajante</button>
+              </div>
             </div>
             <div className="lobby-quest">
               <span className="lobby-quest-icon">♜</span>
@@ -224,8 +254,22 @@ export default function App() {
               {([['attack','⚔'],['skill','✦']] as const).map(([key,label]) => <button key={key} className="touch-key touch-attack" aria-label={key} onPointerDown={e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); touch(key,true); }} onPointerUp={() => touch(key,false)} onPointerCancel={() => touch(key,false)} onLostPointerCapture={() => touch(key,false)}>{label}</button>)}
             </div>
           </div>
-          <section className="party-card"><h2>Aventureiros da sala</h2><div className="party-members">{snapshot?.players.map(player => <div className="party-member" key={player.id}><span className="party-avatar">✧</span><span>{player.name}{player.id === playerId ? ' (você)' : ''}</span><span>{player.hp > 0 ? '♥ ' + player.hp : 'Caído'}</span></div>)}</div></section>
+          <section className="party-card"><h2>Aventureiros da sala</h2><div className="party-members">{snapshot?.players.map(player => <div className="party-member" key={player.id}><span className="party-avatar">✧</span><span>{player.name}{player.id === playerId ? ' (você)' : ''} · {characterName(player.characterId)}</span><span>{player.hp > 0 ? '♥ ' + player.hp : 'Caído'}</span></div>)}</div></section>
         </main>
+      ) : selectionIntent ? (
+        <CharacterSelect
+          selected={selectedCharacter}
+          nickname={name}
+          roomCode={roomInput}
+          intent={selectionIntent}
+          busy={connection === 'connecting'}
+          error={error}
+          onSelect={chooseCharacter}
+          onNickname={setName}
+          onRoomCode={setRoomInput}
+          onBack={() => {setSelectionIntent(null);setError('');}}
+          onConfirm={() => connect(selectionIntent === 'join' ? roomInput : '')}
+        />
       ) : (
         <main id="inicio">
           <section className="hero">
@@ -258,7 +302,7 @@ export default function App() {
             <form className="join-card" onSubmit={join}>
               <div className="card-heading"><span className="card-icon">✧</span><div><h3>Entrar no Re:Dream</h3><p>Versão pré-alfa · gratuito</p></div></div>
               <label htmlFor="nickname">NOME DE AVENTUREIRO</label><input id="nickname" value={name} onChange={e => setName(e.target.value)} maxLength={20} minLength={2} placeholder="Seu apelido" autoComplete="nickname" required />
-              <button className="button button-primary button-full" type="button" onClick={() => connect('')} disabled={connection === 'connecting'}>{connection === 'connecting' ? 'Conectando...' : '✦ Criar nova sala'}</button>
+              <button className="button button-primary button-full" type="button" onClick={() => {setError('');setSelectionIntent('create');}} disabled={connection === 'connecting'}>✦ Escolher personagem</button>
               <div className="or"><span>ou entre com um convite</span></div>
               <label htmlFor="roomcode">CÓDIGO DA SALA</label><div className="join-row"><input id="roomcode" value={roomInput} onChange={e => setRoomInput(e.target.value.toUpperCase())} maxLength={8} placeholder="Ex.: DREAM1"/><button className="button button-outline" type="submit" disabled={connection === 'connecting'}>Entrar →</button></div>
               {error && <p className="form-error" role="alert">{error}</p>}
