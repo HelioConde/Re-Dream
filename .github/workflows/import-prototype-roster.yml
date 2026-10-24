@@ -1,0 +1,30 @@
+name: Prepare temporary noncommercial character roster
+on:
+  push:
+    paths:
+      - 'scripts/import_prototype_roster.py'
+      - '.github/workflows/import-prototype-roster.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install Pillow==11.3.0
+      - name: Extract selected frames and attach artist credits
+        run: python scripts/import_prototype_roster.py
+      - name: Commit only selected game frame strips
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/public/sprites/prototype
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(prototype): add selected Bunny, Retro and Mana Seed frames with credits"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
