@@ -27,9 +27,9 @@ export default function CharacterSelect({
 
   return <main className="character-select" id="personagens">
     <div className="select-heading">
-      <span className="eyebrow">✧ RE:DREAM · SALÃO DOS HERÓIS</span>
-      <h1>Escolha seu aventureiro</h1>
-      <p>Hoje é dia de brincar e experimentar. Experimente {CHARACTERS.length} aparências nesta versão, incluindo Mana Seed, Little Dreamyland e SuperRetroRanch.</p>
+      <span className="eyebrow">✧ RE:DREAM · SELEÇÃO DE AVENTUREIRO</span>
+      <h1>Escolha seu personagem</h1>
+      <p>Selecione um dos {CHARACTERS.length} personagens provisórios e prepare sua aventura cooperativa. O Fighter original substituirá as opções de teste quando os sprites estiverem prontos.</p>
     </div>
     <div className="select-layout">
       <section className="character-list" aria-label="Personagens disponíveis">
@@ -49,8 +49,8 @@ export default function CharacterSelect({
         </button>)}
         <div className="future-characters">
           <span aria-hidden="true">✧</span>
-          <strong>Personagens próprios em breve</strong>
-          <p>Por enquanto usamos recursos de teste. O próximo passo é criar nossa própria equipe no PixelLab.</p>
+          <strong>Fighter original em produção</strong>
+          <p>A base e a primeira armadura foram criadas no PixelLab. As animações equipadas ainda precisam ser exportadas.</p>
         </div>
       </section>
       <section className="character-stage" aria-label="Prévia do personagem selecionado">
@@ -82,7 +82,7 @@ export default function CharacterSelect({
       {error && <p className="form-error" role="alert">{error}</p>}
       <div className="character-cta">
         <button type="button" className="button button-ghost" onClick={onBack}>← Voltar</button>
-        <button type="submit" className="button button-primary" disabled={busy}>{busy ? 'Conectando...' : intent === 'join' ? 'Entrar com este personagem →' : 'Criar sala com este personagem →'}</button>
+        <button type="submit" className="button button-primary" disabled={busy}>{busy ? 'Conectando...' : intent === 'join' ? 'CONFIRMAR E ENTRAR →' : 'CONFIRMAR E CRIAR SALA →'}</button>
       </div>
     </form>
     <p className="character-disclaimer">Pré-alfa não comercial: algumas opções têm somente pose estática ou movimentos incompletos.
