@@ -1,0 +1,98 @@
+{
+  "bunny_idle_left": {
+    "path": "sprites/prototype/bunny_idle_left.png",
+    "width": 64,
+    "height": 64,
+    "frames": 5
+  },
+  "bunny_idle_right": {
+    "path": "sprites/prototype/bunny_idle_right.png",
+    "width": 64,
+    "height": 64,
+    "frames": 5
+  },
+  "bunny_run_left": {
+    "path": "sprites/prototype/bunny_run_left.png",
+    "width": 64,
+    "height": 64,
+    "frames": 8
+  },
+  "bunny_run_right": {
+    "path": "sprites/prototype/bunny_run_right.png",
+    "width": 64,
+    "height": 64,
+    "frames": 8
+  },
+  "bunny_attack_left": {
+    "path": "sprites/prototype/bunny_attack_left.png",
+    "width": 64,
+    "height": 64,
+    "frames": 9
+  },
+  "bunny_attack_right": {
+    "path": "sprites/prototype/bunny_attack_right.png",
+    "width": 64,
+    "height": 64,
+    "frames": 9
+  },
+  "retro_idle_left": {
+    "path": "sprites/prototype/retro_idle_left.png",
+    "width": 64,
+    "height": 64,
+    "frames": 1
+  },
+  "retro_idle_right": {
+    "path": "sprites/prototype/retro_idle_right.png",
+    "width": 64,
+    "height": 64,
+    "frames": 1
+  },
+  "retro_walk_left": {
+    "path": "sprites/prototype/retro_walk_left.png",
+    "width": 64,
+    "height": 64,
+    "frames": 3
+  },
+  "retro_walk_right": {
+    "path": "sprites/prototype/retro_walk_right.png",
+    "width": 64,
+    "height": 64,
+    "frames": 3
+  },
+  "retrohat_idle_left": {
+    "path": "sprites/prototype/retrohat_idle_left.png",
+    "width": 64,
+    "height": 64,
+    "frames": 1
+  },
+  "retrohat_idle_right": {
+    "path": "sprites/prototype/retrohat_idle_right.png",
+    "width": 64,
+    "height": 64,
+    "frames": 1
+  },
+  "retrohat_walk_left": {
+    "path": "sprites/prototype/retrohat_walk_left.png",
+    "width": 64,
+    "height": 64,
+    "frames": 3
+  },
+  "retrohat_walk_right": {
+    "path": "sprites/prototype/retrohat_walk_right.png",
+    "width": 64,
+    "height": 64,
+    "frames": 3
+  },
+  "mana_dapper": {
+    "path": "sprites/prototype/mana_dapper.png",
+    "width": 64,
+    "height": 64,
+    "frames": 1
+  },
+  "mana_bob": {
+    "path": "sprites/prototype/mana_bob.png",
+    "width": 64,
+    "height": 64,
+    "frames": 1
+  }
+}
