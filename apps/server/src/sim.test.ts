@@ -22,6 +22,7 @@ test('posição é simulada pelo servidor a partir dos controles', () => {
 test('salto usa gravidade e colisão no chão', () => {
   const room = new GameRoom('TEST03');
   room.addPlayer('one', 'Aventureiro');
+  room.start('one');
   room.setInput('one', { left: false, right: false, jump: true, attack: false, skill: false });
   room.step(1 / 30);
   assert.ok(room.snapshot().players[0].y < 596);
@@ -33,6 +34,7 @@ test('salto usa gravidade e colisão no chão', () => {
 test('ataque reduz a vida do inimigo apenas quando está ao alcance e à frente', () => {
   const room = new GameRoom('TEST04');
   room.addPlayer('one', 'Aventureiro');
+  room.start('one');
   const enemy = room.enemies[0];
   const hp = enemy.hp;
   enemy.x = 1000;
