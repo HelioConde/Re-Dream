@@ -35,9 +35,24 @@ async function join(name, room) {
 let a, b;
 try {
   console.log('Checking health at', httpUrl.toString());
-  const response = await fetch(httpUrl, { signal: controller.signal });
-  const health = await response.json();
-  if (!response.ok || !health.ok) throw Error('Health check failed: ' + response.status);
+  let healthy = false;
+  let lastError;
+  // Free Render services may be asleep or briefly redeploying.
+  for (let attempt = 1; attempt <= 7 && !controller.signal.aborted; attempt++) {
+    try {
+      const response = await fetch(httpUrl, { signal: controller.signal });
+      if (!response.ok) throw Error('HTTP ' + response.status);
+      const health = await response.json();
+      if (!health.ok) throw Error('Health endpoint reported unavailable');
+      healthy = true;
+      break;
+    } catch (err) {
+      lastError = err;
+      console.warn('Health attempt', attempt, 'failed:', String(err));
+      if (attempt < 7 && !controller.signal.aborted) await new Promise(resolve => setTimeout(resolve, 2500 * attempt));
+    }
+  }
+  if (!healthy) throw Error('Render health unavailable: ' + String(lastError));
   console.log('Health OK. Connecting WebSocket...');
   a = await join('SmokeTestOne');
   const together = waitMessage(a.ws, m => m.type === 'snapshot' && m.players?.length === 2);
