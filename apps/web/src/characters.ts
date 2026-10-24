@@ -1,7 +1,7 @@
 import type { CharacterId } from './protocol';
 export type CharacterDef = {
   id: CharacterId; name: string; subtitle: string; description: string;
-  origin: string; preview: string; artSize: string;
+  origin: string; preview: string; artSize: string; previewPosition?: string;
 };
 export const CHARACTERS: readonly CharacterDef[] = [
   { id: 'rose', name: "Guerreira das Rosas", subtitle: "Magia sombria",
@@ -12,7 +12,7 @@ export const CHARACTERS: readonly CharacterDef[] = [
     preview: 'sprites/imported/char/right.png', artSize: '800% 100%' },
   { id: 'sprout', name: "Aventureiro Sprout", subtitle: "Pixel aventureiro",
     description: "Quatro direções do atlas Sprout Lands; quadros originais.", origin: "Sprout Lands Basic — Cup Nooble; teste não comercial",
-    preview: 'sprites/imported/sprout/sprout-character.png', artSize: '1200% 1200%' },
+    preview: 'sprites/imported/sprout/sprout-character.png', artSize: '1200% 1200%', previewPosition: '9.09% 9.09%' },
   { id: 'bunny', name: "Coelho Guerreiro", subtitle: "Little Dreamyland",
     description: "Animações originais de parado, corrida e espada. Uso permitido apenas no protótipo não comercial.", origin: "Little Dreamyland Free — Starmixu & Utaskuas (créditos obrigatórios)",
     preview: 'sprites/prototype/bunny_idle_right.png', artSize: '500% 100%' },

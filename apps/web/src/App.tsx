@@ -232,6 +232,7 @@ export default function App() {
                     style={adventurer ? {
                       backgroundImage: `url(${import.meta.env.BASE_URL}${getCharacter(adventurer.characterId).preview})`,
                       backgroundSize: getCharacter(adventurer.characterId).artSize,
+                      backgroundPosition: getCharacter(adventurer.characterId).previewPosition || '0 0',
                     } : undefined}>{adventurer ? '' : '+'}</div>
                   <div className="lobby-slot-info"><strong>{adventurer?.name ?? 'Aguardando aventureiro'}</strong><span>{adventurer ? (adventurer.id === snapshot?.hostId ? 'Líder · ' : '') + characterName(adventurer.characterId) : 'Vaga disponível'}</span></div>
                   {adventurer && <span className="lobby-ready">Pronto</span>}
