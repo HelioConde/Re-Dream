@@ -1,0 +1,51 @@
+{
+  "characters": {
+    "char": {
+      "archive": "char free.zip",
+      "animations": {
+        "left": {
+          "path": "sprites/imported/char/left.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frames": 8
+        },
+        "right": {
+          "path": "sprites/imported/char/right.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "frames": 8
+        }
+      }
+    },
+    "bunny": {
+      "archive": "Little Dreamyland - Free Pack.zip",
+      "animations": {
+        "idle": {
+          "path": "sprites/imported/bunny/idle.png",
+          "width": 240,
+          "height": 192
+        },
+        "run": {
+          "path": "sprites/imported/bunny/run.png",
+          "width": 384,
+          "height": 192
+        },
+        "attack": {
+          "path": "sprites/imported/bunny/attack.png",
+          "width": 432,
+          "height": 192
+        },
+        "skill": {
+          "path": "sprites/imported/bunny/skill.png",
+          "width": 432,
+          "height": 192
+        },
+        "death": {
+          "path": "sprites/imported/bunny/death.png",
+          "width": 576,
+          "height": 192
+        }
+      }
+    }
+  }
+}
