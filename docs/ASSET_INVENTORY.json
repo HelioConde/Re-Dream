@@ -1,0 +1,2412 @@
+{
+  "19.07a - Gentle Forest 3.0a ($0 palettes).zip": {
+    "name": "19.07a - Gentle Forest 3.0a ($0 palettes).zip",
+    "files": 34,
+    "license_notices": [
+      {
+        "file": "gentle forest readme.txt",
+        "excerpt": "There are 3 downloads for Gentle Forest, depending on how much money you spend on it.\r\nThe free download has the tileset in 3 colors, plus any additional files (like the tree wall).\r\nThe $5 and $10 downloads have 3 and 4 more color palettes, respectively.\r\n\r\nHere are the names of the color palettes:\r\n\r\n$0 (free) download\r\nThese are all inspired by levels from Seiken Densetsu 3.\r\n\tv01 \"rabite forest\"\r\n\tv02 \"jungle of illusion\"\r\n\tv03 \"moonlight forest\"\r\n\r\n$5 download\r\nThese are original palettes by yours truly (Seliel the Shaper)\r\n\tv04 \"crystal\"\r\n\tv05 \"sulfur\"\r\n\tv06 \"redwood\"\r\n\r\n$10 download\r\nThese are also my original palettes, but these are inspired by my seasonal forest collection.\r\nYou can find those here (they are much more robust tilesets): https://itch.io/s/33657/-forest-of-seasons-bundle\r\n\tv07 \"spring\"\r\n\tv08 \"summer\"\r\n\tv09 \"autumn\"\r\n\tv10 \"winter\"\r\n\r\n----------------------------------------------------------------------\r\n\r\nThank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [
+      {
+        "path": "48x48 resize/gentle animations (48x48 resize) v01.png",
+        "size": [
+          288,
+          624
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "48x48 resize/gentle animations (48x48 resize) v02.png",
+        "size": [
+          288,
+          624
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "48x48 resize/gentle animations (48x48 resize) v03.png",
+        "size": [
+          288,
+          624
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "gentle animations/gentle water sparkles A v01.png",
+        "size": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "gentle animations/gentle water sparkles A v02.png",
+        "size": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "gentle animations/gentle water sparkles A v03.png",
+        "size": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "gentle animations/gentle waterfall A v01.png",
+        "size": [
+          96,
+          160
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "gentle animations/gentle waterfall A v02.png",
+        "size": [
+          96,
+          160
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "gentle animations/gentle waterfall A v03.png",
+        "size": [
+          96,
+          160
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "map samples/animated sample 1.gif",
+        "size": [
+          766,
+          596
+        ],
+        "frames": 12,
+        "format": "GIF"
+      },
+      {
+        "path": "map samples/animated sample 2.gif",
+        "size": [
+          624,
+          480
+        ],
+        "frames": 6,
+        "format": "GIF"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "19.07c - Treasure Chests 1.2a.zip": {
+    "name": "19.07c - Treasure Chests 1.2a.zip",
+    "files": 2,
+    "license_notices": [
+      {
+        "file": "readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [],
+    "other_examples": [
+      "treasure chests.png"
+    ],
+    "error": null
+  },
+  "20.05b - Breakable Pots 1.1a.zip": {
+    "name": "20.05b - Breakable Pots 1.1a.zip",
+    "files": 6,
+    "license_notices": [
+      {
+        "file": "readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [],
+    "other_examples": [
+      "breakable pots (yellow).png",
+      "breakable pots (gray).png",
+      "breakable pots (red).png",
+      "breakable pots (white).png",
+      "breakable pots.png"
+    ],
+    "error": null
+  },
+  "FREE 64 Tiny Animals – 32x32 Pixel Art Pack.zip": {
+    "name": "FREE 64 Tiny Animals – 32x32 Pixel Art Pack.zip",
+    "files": 65,
+    "license_notices": [
+      {
+        "file": "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/README_FREE_64_Tiny_Animals.md",
+        "excerpt": "# FREE 64 Tiny Animals – 32x32 Pixel Art Pack\n\nA cute collection of **64 tiny pixel-art animals**, made for cozy games, RPGs, farming games, survival games, adventure games, prototypes, and more.\n\nEvery animal is designed at **32x32 pixels** in a clean, readable pixel-art style.\n\n## Included\n\n- 64 unique tiny animals\n- 32x32 pixel sprites\n- Transparent PNG files\n- Individual animal sprites\n- Sprite sheet\n- Clean, consistent pixel-art style\n- Ready to use in game engines such as Godot, Unity, GameMaker, Construct, RPG Maker, and more\n\n## Animals\n\nThe pack includes a wide mix of animals such as:\n\nCats, dogs, rabbits, chickens, cows, pigs, sheep, goats, foxes, wolves, deer, bears, owls, squirrels, hedgehogs, ducks, geese, parrots, frogs, turtles, otters, fish, crabs, lions, tigers, elephants, pandas, crocodiles, mice, bats, bees, butterflies, snails, raccoons, alpacas, llamas, penguins, seals, axolotls, beavers and more.\n\n## License\n\nYou may use these assets in both **personal and commercial projects**.\n\nYou may:\n- use and edit the sprites in your games and projects\n- recolor or modify them\n- use them in free or paid games\n\nYou may not:\n- resell or redistribute the original files as your own asset pack\n- upload the raw assets to another asset marketplace\n- claim the original artwork as your own\n\nCredit is appreciated, but not required.\n\nSuggested credit:\n\n**Tiny Animals by Jedimei"
+      }
+    ],
+    "characters": [],
+    "other_examples": [
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/duck.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/eagle owl.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/falcon.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/goose.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/parrot.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/pigeon.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/raven.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Birds/sparrow.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Cute Animals/alpaca.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Cute Animals/axolotl.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Cute Animals/beaver.png",
+      "FREE 64 Tiny Animals – 32x32 Pixel Art Pack/Cute Animals/llama.png"
+    ],
+    "error": null
+  },
+  "FREE Mana Seed Character Base Demo 2.0.zip": {
+    "name": "FREE Mana Seed Character Base Demo 2.0.zip",
+    "files": 365,
+    "license_notices": [
+      {
+        "file": "readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon or Ko-fi page!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper"
+      }
+    ],
+    "characters": [
+      {
+        "path": "weapon sprites/one_0108_v01.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/one_0108_v02.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/one_0108_v03.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/one_0108_v04.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/one_0108_v05.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/shd_0108_v01.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/shd_0108_v02.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/shd_0108_v03.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/shd_0108_v04.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/shd_0108_v05.png",
+        "size": [
+          256,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "weapon sprites/sword & shield effect sprites.png",
+        "size": [
+          640,
+          256
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "Little Dreamyland - Free Pack.zip": {
+    "name": "Little Dreamyland - Free Pack.zip",
+    "files": 31,
+    "license_notices": [
+      {
+        "file": "Little Dreamyland - Free Pack/LICENSE.txt",
+        "excerpt": "Hey there! Thanks for downloading the Little Dreamyland Free Version Pack! \r\nCreated and collaborated with: Starmixu & Utaskuas\r\n\r\n=======================================================================================================================================================\r\n\r\n[License - Little Dreamyland Free Version Pack]\r\n- You can modify the assets.\r\nYou're welcome to modify, tweak, or expand upon these assets to fit your project's needs. You can also use them as inspiration for your own creations.\r\n\r\n- Free for non-commercial projects.\r\nYou're welcome to use these assets in non-commercial projects, but they cannot be used for anything related to NFTs or AI training.\r\n\r\n- Redistributing or reselling is not permitted.\r\nYou may not resell or share this asset pack as it is, even with modifications.\r\n\r\n=======================================================================================================================================================\r\n\r\n[Credit is required]\r\n- Please give proper credit to Starmixu & Utaskuas when using these assets. Example:\"Assets from Little Dreamyland by Starmixu & Utaskuas.\"\r\n- If you're publishing on itch.io, a link back to the asset page would be greatly appreciated, but you can credit in a way that best suits your project.\r\n\r\n========================================================================================================"
+      },
+      {
+        "file": "Little Dreamyland - Free Pack/Tileset/Readme_AutoTile.txt",
+        "excerpt": "The Grass Tile and Grass Tile with Water in this asset support the AutoTile feature, making level design more efficient. The AutoTile system used is based on the reference from: https://michagamedev.wordpress.com/."
+      }
+    ],
+    "characters": [
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Animals/CHICKEN/Chicken_Idle.png",
+        "size": [
+          384,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Animals/COW/Cow_Idle.png",
+        "size": [
+          384,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Characters/Bunny/DEATH/Bunny_Death.png",
+        "size": [
+          576,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Characters/Bunny/HOE/Bunny_Hoe.png",
+        "size": [
+          432,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Characters/Bunny/IDLE/Bunny_Idle.png",
+        "size": [
+          240,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Characters/Bunny/RUN/Bunny_Run.png",
+        "size": [
+          384,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Characters/Bunny/SCYTHE/Bunny_Scythe.png",
+        "size": [
+          432,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Characters/Bunny/SWORD/Bunny_Sword.png",
+        "size": [
+          432,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Characters/Bunny/WATERING CAN/Bunny_WateringCan.png",
+        "size": [
+          432,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/BAT/Bat hit.png",
+        "size": [
+          96,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/BAT/Bat idle.png",
+        "size": [
+          192,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/BAT/Bat_Attack.png",
+        "size": [
+          240,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/BAT/Bat_Death.png",
+        "size": [
+          240,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/SLIME/Slime_Attack.png",
+        "size": [
+          384,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/SLIME/Slime_Death.png",
+        "size": [
+          192,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/SLIME/Slime_Hurt.png",
+        "size": [
+          96,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Enemies/SLIME/Slime_Idle.png",
+        "size": [
+          384,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Little Dreamyland - Free Pack/Sprites/Sprite_Shadow.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "Mana Seed Farmer Sprite Free Sample.zip": {
+    "name": "Mana Seed Farmer Sprite Free Sample.zip",
+    "files": 31,
+    "license_notices": [
+      {
+        "file": "Farmer Sprite System readme.txt",
+        "excerpt": "Hi, thanks for picking up the Mana Seed Farmer Sprite System!\r\n\r\nThis is a complete paper doll system for your player sprite in a slice-of-life farming sim style game.\r\nIt features a variety of animations, hairstyles, outfits, props, and effects, as well as comprehensive guides to help you deploy them correctly.\r\n\r\nYou may add your own original hairstyle and outfit layers to this system for use in your own game.\r\nIf you would like to sell those original assets on itchio, please thoroughly read \"Selling Mana Seed Compatible Assets.txt\" for restrictions and contact info.\r\n\r\n------------------------------------------------\r\n\r\nPlease note: this is not a quick and easy plug-and-play RPG Maker-type asset.\r\nExperience with a more powerful game engine is required to be able to use the Mana Seed Farmer Sprite System.\r\nSomething like Unity, Godot, GameMaker Studio, Unreal Engine, or your own custom game engine.\r\nYou'll need to build animations with frames from different parts of the sheet (out of sequential order).\r\nYou'll need to flip some frames within the same animation.\r\nYou'll need to attach props and effects from separate sheets and line them up appropriately.\r\nYou'll need to move those props behind or in front of the character sprite as necessary.\r\nYou'll need as many as 20 layers to use everything as intended.\r\nYou'll need to assemble a paper-doll system in your game engine if yo"
+      },
+      {
+        "file": "Mana Seed readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [
+      {
+        "path": "_supporting files/farmer base cell reference.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/01body/fbas_1body_human_00.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/03fot1/fbas_03fot1_shoes_00a.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/04lwr1/fbas_04lwr1_longpants_00a.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/05shrt/fbas_05shrt_shortshirtboobs_00a.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/05shrt/fbas_05shrt_shortshirt_00a.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/13hair/fbas_13hair_bob1_00a.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/13hair/fbas_13hair_dapper_00a.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/14head/fbas_14head_cowboyhat_00d.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "farmer base sheets/fbas_blank_sheet.png",
+        "size": [
+          1024,
+          1024
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "PostApocalypse_AssetPack_v1.1.2.zip": {
+    "name": "PostApocalypse_AssetPack_v1.1.2.zip",
+    "files": 1387,
+    "license_notices": [
+      {
+        "file": "LICENSE.txt",
+        "excerpt": "License:  \r\n\r\nBy downloading or using this asset pack, you agree to the following terms:\r\n\r\n Free for Non-Commercial Use:\r\n  You may use this asset for free in non-commercial projects.\r\n\r\n Commercial Use Requires Payment:\r\n  To use this asset in a commercial project (any project that earns money or promotes something that earns money), you must pay at least $2 USD, or more if you wish.\r\n\r\n No Redistribution:\r\n   You may not redistribute this asset, whether in their original form or modified.\r\n\r\n Credit (Optional but Appreciated):\r\n   Giving credit is not required, but it's appreciated. If you'd like to credit me, you can give link to this page - \"https://thelazystone.itch.io/post-apocalyptic-pixel-art-asset-pack​\" or mention my username - \"TheLazyStone\"."
+      }
+    ],
+    "characters": [
+      {
+        "path": "Objects/Buildable/Reinforced/Animation/Gif/Reinforced-wooden-wall_Gates-closingH_openingV.gif",
+        "size": [
+          16,
+          25
+        ],
+        "frames": 7,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Buildable/Reinforced/Animation/Gif/Reinforced-wooden-wall_Gates-openingH_closingV.gif",
+        "size": [
+          16,
+          25
+        ],
+        "frames": 7,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Buildable/Reinforced/Animation/Reinforced-wooden-wall_Gates-closingH_openingV-Sheet7.png",
+        "size": [
+          112,
+          25
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Buildable/Reinforced/Animation/Reinforced-wooden-wall_Gates-openingH_closingV-Sheet7.png",
+        "size": [
+          112,
+          25
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Buildable/Wooden/Animations/Gif/Wooden-wall_Gates-closingH_openingV.gif",
+        "size": [
+          16,
+          25
+        ],
+        "frames": 7,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Buildable/Wooden/Animations/Gif/Wooden-wall_Gates-openingH_closingV.gif",
+        "size": [
+          16,
+          25
+        ],
+        "frames": 7,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Buildable/Wooden/Animations/Wooden-wall_Gates-closingH_openingV-Sheet7.png",
+        "size": [
+          112,
+          25
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Buildable/Wooden/Animations/Wooden-wall_Gates-openingH_closingV-Sheet7.png",
+        "size": [
+          112,
+          25
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Bleak-Yellow/Grass_3_Stepping-On-Animation_Bleak-Yellow-Sheet2.png",
+        "size": [
+          32,
+          15
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Bleak-Yellow/Grass_3_Stepping-On-Animation_Bleak-Yellow.gif",
+        "size": [
+          16,
+          15
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Bleak-Yellow/Grass_4_Stepping-On-Animation_Bleak-Yellow-Sheet2.png",
+        "size": [
+          32,
+          11
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Bleak-Yellow/Grass_4_Stepping-On-Animation_Bleak-Yellow.gif",
+        "size": [
+          16,
+          11
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Bleak-Yellow/Grass_5_Stepping-On-Animation_Bleak-Yellow-Sheet2.png",
+        "size": [
+          32,
+          14
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Bleak-Yellow/Grass_5_Stepping-On-Animation_Bleak-Yellow.gif",
+        "size": [
+          16,
+          14
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Bleak-Yellow/Tree-trunk_2_grass_Bleak-Yellow.png",
+        "size": [
+          32,
+          12
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Dark-Green/Grass_3_Stepping-On-Animation_Dark-Green-Sheet2.png",
+        "size": [
+          32,
+          15
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Dark-Green/Grass_3_Stepping-On-Animation_Dark-Green.gif",
+        "size": [
+          16,
+          15
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Dark-Green/Grass_4_Stepping-On-Animation_Dark-Green-Sheet2.png",
+        "size": [
+          32,
+          11
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Dark-Green/Grass_4_Stepping-On-Animation_Dark-Green.gif",
+        "size": [
+          16,
+          11
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Dark-Green/Grass_5_Stepping-On-Animation_Dark-Green-Sheet2.png",
+        "size": [
+          32,
+          14
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Dark-Green/Grass_5_Stepping-On-Animation_Dark-Green.gif",
+        "size": [
+          16,
+          14
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Dark-Green/Tree-trunk_2_grass_Dark-Green.png",
+        "size": [
+          32,
+          12
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Downspout_Rainwater-Sheet3.png",
+        "size": [
+          30,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Gif/Downspout_Rainwater.gif",
+        "size": [
+          10,
+          9
+        ],
+        "frames": 3,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Gif/Puddle-Splash_1_Small.gif",
+        "size": [
+          5,
+          5
+        ],
+        "frames": 4,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Gif/Puddle-Splash_2_Squished.gif",
+        "size": [
+          6,
+          5
+        ],
+        "frames": 4,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Gif/Puddle-Splash_3_Normal.gif",
+        "size": [
+          6,
+          6
+        ],
+        "frames": 4,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Gif/Rain-drop-splash_1_Small.gif",
+        "size": [
+          5,
+          9
+        ],
+        "frames": 5,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Gif/Rain-drop-splash_2_Big.gif",
+        "size": [
+          7,
+          9
+        ],
+        "frames": 5,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Downspout_Rainwater/Downspout_Rainwater1.png",
+        "size": [
+          10,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Downspout_Rainwater/Downspout_Rainwater2.png",
+        "size": [
+          10,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Downspout_Rainwater/Downspout_Rainwater3.png",
+        "size": [
+          10,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_1/Rain-drop-splash_1_Small1.png",
+        "size": [
+          5,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_1/Rain-drop-splash_1_Small2.png",
+        "size": [
+          5,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_1/Rain-drop-splash_1_Small3.png",
+        "size": [
+          5,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_1/Rain-drop-splash_1_Small4.png",
+        "size": [
+          5,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_1/Rain-drop-splash_1_Small5.png",
+        "size": [
+          5,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_2/Rain-drop-splash_2_Big1.png",
+        "size": [
+          7,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_2/Rain-drop-splash_2_Big2.png",
+        "size": [
+          7,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_2/Rain-drop-splash_2_Big3.png",
+        "size": [
+          7,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_2/Rain-drop-splash_2_Big4.png",
+        "size": [
+          7,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/PNG Frames/Rain-drop-splash_2/Rain-drop-splash_2_Big5.png",
+        "size": [
+          7,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Puddle-Splash_1_Small-Sheet4.png",
+        "size": [
+          20,
+          5
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Puddle-Splash_2_Squished-Sheet4.png",
+        "size": [
+          24,
+          5
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Puddle-Splash_3_Normal-Sheet4.png",
+        "size": [
+          24,
+          6
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Rain-drop-splash_1_Small-Sheet5.png",
+        "size": [
+          25,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Puddles-And-Water-Anim/Animations/Rain-drop-splash_2_Big-Sheet5.png",
+        "size": [
+          35,
+          9
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Flowers_Mashrooms_Other-nature-stuff/Tree-trunk_1_Green.png",
+        "size": [
+          30,
+          11
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Green/Grass_3_Stepping-On-Animation_Green-Sheet2.png",
+        "size": [
+          32,
+          15
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Green/Grass_3_Stepping-On-Animation_Green.gif",
+        "size": [
+          16,
+          15
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Green/Grass_4_Stepping-On-Animation_Green-Sheet2.png",
+        "size": [
+          32,
+          11
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Green/Grass_4_Stepping-On-Animation_Green.gif",
+        "size": [
+          16,
+          11
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Green/Grass_5_Stepping-On-Animation_Green-Sheet2.png",
+        "size": [
+          32,
+          14
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Nature/Green/Grass_5_Stepping-On-Animation_Green.gif",
+        "size": [
+          16,
+          14
+        ],
+        "frames": 2,
+        "format": "GIF"
+      },
+      {
+        "path": "Objects/Nature/Green/Tree-trunk_2_grass_Green.png",
+        "size": [
+          32,
+          12
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Overgrown/Car_5_Overgrown_Tractor/Bleak-Yellow/Car_5_Overgrown_Bleak-Yellow_Tractor_Side.png",
+        "size": [
+          42,
+          30
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Overgrown/Car_5_Overgrown_Tractor/Bleak-Yellow/Car_5_Overgrown_Bleak-Yellow_Tractor_Up.png",
+        "size": [
+          27,
+          35
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Overgrown/Car_5_Overgrown_Tractor/Dark-Green/Car_5_Overgrown_Dark-Green_Tractor_Side.png",
+        "size": [
+          42,
+          30
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Overgrown/Car_5_Overgrown_Tractor/Dark-Green/Car_5_Overgrown_Dark-Green_Tractor_Up.png",
+        "size": [
+          27,
+          35
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Overgrown/Car_5_Overgrown_Tractor/Green/Car_5_Overgrown_Green_Tractor_Side.png",
+        "size": [
+          42,
+          30
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Overgrown/Car_5_Overgrown_Tractor/Green/Car_5_Overgrown_Green_Tractor_Up.png",
+        "size": [
+          27,
+          35
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Rust/Car_5_Rust_Tractor/Car_5_Rust_Tractor_Side.png",
+        "size": [
+          41,
+          30
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Objects/Vehicles/Rust/Car_5_Rust_Tractor/Car_5_Rust_Tractor_Up.png",
+        "size": [
+          23,
+          35
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "UI/Menu/Checkmark-Body.png",
+        "size": [
+          7,
+          7
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_down_attack-Sheet4.png",
+        "size": [
+          80,
+          25
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_down_idle-and-run-Sheet6.png",
+        "size": [
+          102,
+          11
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_side-left_attack-Sheet4.png",
+        "size": [
+          112,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_side-left_Death-Sheet6.png",
+        "size": [
+          108,
+          13
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_side-left_idle-and-run-Sheet6.png",
+        "size": [
+          96,
+          13
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_side_attack-Sheet4.png",
+        "size": [
+          112,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_side_Death-Sheet6.png",
+        "size": [
+          108,
+          13
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_side_idle-and-run-Sheet6.png",
+        "size": [
+          96,
+          13
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_up_attack-Sheet4.png",
+        "size": [
+          80,
+          25
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Bat_up_idle-and-run-Sheet6.png",
+        "size": [
+          96,
+          14
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_down_attack.gif",
+        "size": [
+          20,
+          25
+        ],
+        "frames": 4,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_down_idle-and-run.gif",
+        "size": [
+          17,
+          11
+        ],
+        "frames": 6,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_side-left_attack.gif",
+        "size": [
+          28,
+          16
+        ],
+        "frames": 4,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_side-left_Death.gif",
+        "size": [
+          18,
+          13
+        ],
+        "frames": 6,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_side-left_idle-and-run.gif",
+        "size": [
+          16,
+          13
+        ],
+        "frames": 6,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_side_attack.gif",
+        "size": [
+          28,
+          16
+        ],
+        "frames": 4,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_side_Death.gif",
+        "size": [
+          18,
+          13
+        ],
+        "frames": 6,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_side_idle-and-run.gif",
+        "size": [
+          16,
+          13
+        ],
+        "frames": 6,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_up_attack.gif",
+        "size": [
+          20,
+          25
+        ],
+        "frames": 4,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Bat/Gif/Bat_up_idle-and-run.gif",
+        "size": [
+          16,
+          14
+        ],
+        "frames": 6,
+        "format": "GIF"
+      },
+      {
+        "path": "Character/Guns/Bullets/Gun-bullet_Bullet.png",
+        "size": [
+          2,
+          1
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Guns/Bullets/Gun-bullet_Casing.png",
+        "size": [
+          2,
+          1
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Guns/Bullets/Gun-bullet_Whole.png",
+        "size": [
+          4,
+          1
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Guns/Bullets/Pistol-bullet_Bullet.png",
+        "size": [
+          1,
+          1
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Guns/Bullets/Pistol-bullet_Casting.png",
+        "size": [
+          1,
+          1
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Character/Guns/Bullets/Pistol-bullet_Whole.png",
+        "size": [
+          2,
+          1
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "Sprout Lands - Sprites - Basic pack.zip": {
+    "name": "Sprout Lands - Sprites - Basic pack.zip",
+    "files": 43,
+    "license_notices": [],
+    "characters": [
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png",
+        "size": [
+          96,
+          576
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Spritesheet.png",
+        "size": [
+          192,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Characters/Egg_And_Nest.png",
+        "size": [
+          64,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Characters/Free Chicken Sprites.png",
+        "size": [
+          64,
+          32
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Characters/Free Cow Sprites.png",
+        "size": [
+          96,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Characters/Tools.png",
+        "size": [
+          96,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic Furniture.png",
+        "size": [
+          144,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic Grass Biom things 1.png",
+        "size": [
+          144,
+          80
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic Plants.png",
+        "size": [
+          96,
+          32
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic tools and meterials.png",
+        "size": [
+          48,
+          32
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic_Furniture.png",
+        "size": [
+          144,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic_Grass_Biom_things.png",
+        "size": [
+          144,
+          80
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic_Plants.png",
+        "size": [
+          96,
+          32
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Basic_tools_and_meterials.png",
+        "size": [
+          48,
+          32
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Chest.png",
+        "size": [
+          240,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Egg item.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Egg_item.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Free_Chicken_House.png",
+        "size": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Paths.png",
+        "size": [
+          64,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Simple Milk and grass item.png",
+        "size": [
+          64,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Simple_Milk_and_grass_item.png",
+        "size": [
+          64,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Wood Bridge.png",
+        "size": [
+          80,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Objects/Wood_Bridge.png",
+        "size": [
+          80,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Sprout Lands color pallet/Sprout Lands defautlt palette snip.PNG",
+        "size": [
+          236,
+          371
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - Sprites - Basic pack/Sprout Lands color pallet/Sprout Lands defautlt palette.png",
+        "size": [
+          16,
+          7
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "Sprout Lands - UI Pack - Basic pack.zip": {
+    "name": "Sprout Lands - UI Pack - Basic pack.zip",
+    "files": 47,
+    "license_notices": [],
+    "characters": [
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/emojis-free/emoji style ui/Inventory_Blocks_Spritesheet.png",
+        "size": [
+          144,
+          144
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/emojis-free/emoji style ui/Inventory_Herat_Spritesheet.png",
+        "size": [
+          112,
+          336
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/emojis-free/emoji style ui/Inventory_Light_Herat_Spritesheet.png",
+        "size": [
+          112,
+          336
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/emojis-free/emoji style ui/Inventory_Spritesheet.png",
+        "size": [
+          368,
+          336
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/emojis-free/Emoji_Spritesheet_Free.png",
+        "size": [
+          160,
+          608
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Small Square Buttons.png",
+        "size": [
+          32,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Square Buttons 19x26.png",
+        "size": [
+          128,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Square Buttons 26x19.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/buttons/Square Buttons 26x26.png",
+        "size": [
+          96,
+          192
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/dialog box big.png",
+        "size": [
+          176,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/dialog box character finished talking click to continue indicator - spritesheet .png",
+        "size": [
+          112,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/dialog box medium.png",
+        "size": [
+          128,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/dialog box small.png",
+        "size": [
+          112,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/dialog box.png",
+        "size": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/Emotes/Teemo Basic emote animations sprite sheet.png",
+        "size": [
+          160,
+          480
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/Premade dialog box  big.png",
+        "size": [
+          304,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/Premade dialog box medium.png",
+        "size": [
+          240,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Dialouge UI/Premade dialog box small.png",
+        "size": [
+          176,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Icons/All Icons.png",
+        "size": [
+          288,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Icons/special icons/Small Happines-Sadness icons.png",
+        "size": [
+          96,
+          32
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Icons/special icons/Special Icons.png",
+        "size": [
+          112,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Icons/white icons.png",
+        "size": [
+          96,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Mouse sprites/Catpaw holding Mouse icon.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Mouse sprites/Catpaw Mouse icon.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Mouse sprites/Catpaw pointing Mouse icon.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Mouse sprites/Triangle Mouse icon 1.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Mouse sprites/Triangle Mouse icon 2.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Mouse sprites/Triangle Mouse icon 3.png",
+        "size": [
+          16,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Setting menu.png",
+        "size": [
+          256,
+          144
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/Sprite sheet for Basic Pack.png",
+        "size": [
+          896,
+          240
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/UI Big Play Button.png",
+        "size": [
+          192,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Lands - UI Pack - Basic pack/Sprite sheets/UI Settings Buttons.png",
+        "size": [
+          128,
+          240
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "Sprout Sorry pack.zip": {
+    "name": "Sprout Sorry pack.zip",
+    "files": 130,
+    "license_notices": [],
+    "characters": [
+      {
+        "path": "Sprout Sorry pack/Early Access/Dungeon Pack/enemies/bat_animations.png",
+        "size": [
+          192,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Dungeon Pack/enemies/small_bat_animations.png",
+        "size": [
+          192,
+          64
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Dungeon Pack/enemies/small_green_slime_animations.png",
+        "size": [
+          456,
+          304
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Ocean Pack/Fish Sprites.png",
+        "size": [
+          160,
+          80
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Ocean Pack/fishing animation back.png",
+        "size": [
+          1536,
+          288
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Ocean Pack/fishing animation front.png",
+        "size": [
+          1536,
+          288
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Ocean Pack/fishing animation side.png",
+        "size": [
+          1536,
+          288
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Plant update 2/Bee/bee_spritesheet.png",
+        "size": [
+          128,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Plant update 2/Bee/small_bee_spritesheet.png",
+        "size": [
+          128,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Plant update 2/frog/frog_spritesheet.png",
+        "size": [
+          224,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Plant update 2/frog/frog_spritesheet2.png",
+        "size": [
+          224,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Sprout winter/fire animation.png",
+        "size": [
+          256,
+          16
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Sprout winter/winter sprites.png",
+        "size": [
+          240,
+          144
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Early Access/Village pack/houses/wooden_door_spritesheet.png",
+        "size": [
+          384,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Tests/free_character_spritesheet_by-cupnooble.png",
+        "size": [
+          128,
+          96
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "Sprout Sorry pack/Tests/test character test .gif",
+        "size": [
+          432,
+          400
+        ],
+        "frames": 8,
+        "format": "GIF"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "Sprout-Lands-Tilemap-0.2.0.zip": {
+    "name": "Sprout-Lands-Tilemap-0.2.0.zip",
+    "files": 57,
+    "license_notices": [
+      {
+        "file": "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/ATTRIBUTION.md",
+        "excerpt": "# Attribution\n## Collaborators\n\n### Art\n[Cup Nooble](https://cupnooble.itch.io/)\n\n### Code and Documentation\n[Maaack](https://maaack.itch.io/)\n\n## Tools\n#### Godot\nAuthor: [Juan Linietsky, Ariel Manzur, and contributors](https://godotengine.org/contact)  \nSource: [godotengine.org](https://godotengine.org/)  \nLicense: [MIT License](https://github.com/godotengine/godot/blob/master/LICENSE.txt) \n\n#### Visual Studio Code\nAuthor: [Microsoft](https://opensource.microsoft.com/)  \nSource: [github: vscode](https://github.com/microsoft/vscode)  \nLicense: [MIT License](https://github.com/microsoft/vscode/blob/main/LICENSE.txt)\n\n#### Git\nAuthor: [Linus Torvalds](https://github.com/torvalds)  \nSource: [git-scm.com](https://git-scm.com/downloads)  \nLicense: [GNU General Public License version 2](https://opensource.org/licenses/GPL-2.0)\n"
+      },
+      {
+        "file": "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/LICENSE.txt",
+        "excerpt": "Copyright (c) 2024-present Marek Belski.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+      },
+      {
+        "file": "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/README.md",
+        "excerpt": "# Sprout Lands Tilemap\nFor Godot 4.3. Made in collaboration with [Cup Nooble](https://cupnooble.itch.io/).\n\n[Example on itch.io](https://maaack.itch.io/harvest-hill-gwj-62-edition)  \n![Example Screenshot](/addons/sprout_lands_tilemap/media/Example_Screenshot_1.png)  \n\n## Use Case\nStart building worlds with the free [Sprout Lands Asset Pack](https://cupnooble.itch.io/sprout-lands-asset-pack) right away.\n\n## Requirements\n1. Download and run [Godot](https://godotengine.org/).\n2. Start a new project and have it open.\n  \n## Installation\n\n### GitHub\n\n\n1.  Download the latest release version from [GitHub](https://github.com/Maaack/Sprout-Lands-Tilemap/releases/latest).  \n2.  Extract the contents of the archive.\n3.  Move the `addons/sprout_lands_tilemap` folder into your project's `addons/` folder.  \n4.  Open/Reload the project.  \n5.  Enable the plugin from the Project Settings > Plugins tab.  \n    If it's enabled for the first time,\n    1.  A dialogue window will appear asking to copy the example scenes out of `addons/`.\n\n## Usage\n\nThe example scene can be opened and worked in directly. If you'd rather start from scratch, here are the instructions.\n\n1. Start a new scene with a Node2D.  \n![Clicking on 2D Scene](/addons/sprout_lands_tilemap/media/Usage_Screenshot_1.png)\n2. Instantiate a custom scene as a node.  \n![Instatiate a Custom Scene](/addons/sprout_lands_tilemap/media/Usage_Scree"
+      }
+    ],
+    "characters": [],
+    "other_examples": [
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Basic Furniture.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Basic Grass Biom things 1.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Basic Plants.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Basic tools and meterials.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Chest.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Egg item.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Free_Chicken_House.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Paths.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Simple Milk and grass item.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Objects/Wood Bridge.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Tilesets/Fences.png",
+      "Sprout-Lands-Tilemap-0.2.0/addons/sprout_lands_tilemap/assets/Tilesets/Grass.png"
+    ],
+    "error": null
+  },
+  "Sprout-Lands-UI-0.2.0.zip": {
+    "name": "Sprout-Lands-UI-0.2.0.zip",
+    "files": 14,
+    "license_notices": [
+      {
+        "file": "Sprout-Lands-UI-0.2.0/addons/sprout_lands_ui/ATTRIBUTION.md",
+        "excerpt": "# Attribution\n## Collaborators\n\n### Art\n[Cup Nooble](https://cupnooble.itch.io/)\n\n### Code and Documentation\n[Maaack](https://maaack.itch.io/)\n\n## Tools\n#### Godot\nAuthor: [Juan Linietsky, Ariel Manzur, and contributors](https://godotengine.org/contact)  \nSource: [godotengine.org](https://godotengine.org/)  \nLicense: [MIT License](https://github.com/godotengine/godot/blob/master/LICENSE.txt) \n\n#### Visual Studio Code\nAuthor: [Microsoft](https://opensource.microsoft.com/)  \nSource: [github: vscode](https://github.com/microsoft/vscode)  \nLicense: [MIT License](https://github.com/microsoft/vscode/blob/main/LICENSE.txt)\n\n#### Git\nAuthor: [Linus Torvalds](https://github.com/torvalds)  \nSource: [git-scm.com](https://git-scm.com/downloads)  \nLicense: [GNU General Public License version 2](https://opensource.org/licenses/GPL-2.0)\n"
+      },
+      {
+        "file": "Sprout-Lands-UI-0.2.0/addons/sprout_lands_ui/LICENSE.txt",
+        "excerpt": "Copyright (c) 2024-present Marek Belski.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+      },
+      {
+        "file": "Sprout-Lands-UI-0.2.0/addons/sprout_lands_ui/README.md",
+        "excerpt": "# Sprout Lands UI\nFor Godot 4.*. Made in collaboration with [Cup Nooble](https://cupnooble.itch.io/).\n\n[Example on itch.io](https://maaack.itch.io/harvest-hill-gwj-62-edition)  \n\n## Use Case\nStyle buttons and UI elements with the [Sprout Lands UI Pack](https://cupnooble.itch.io/sprout-lands-ui-pack) right away.\n\n## Requirements\n1. Download and run [Godot](https://godotengine.org/).\n2. Start a new project and have it open.\n  \n## Installation\n\n### GitHub\n\n\n1.  Download the latest release version from [GitHub](https://github.com/Maaack/Sprout-Lands-Tilemap/releases/latest).  \n2.  Extract the contents of the archive.\n3.  Move the `addons/sprout_lands_ui` folder into your project's `addons/` folder.  \n4.  Open/Reload the project.  \n5.  Enable the plugin from the Project Settings > Plugins tab.  \n    If it's enabled for the first time,\n    1.  A dialogue window will appear asking to copy the contents out of `addons/`.\n    2.  Another window will appear asking to set the projects custom theme.\n\n## Links\n[Attribution](/addons/sprout_lands_ui/ATTRIBUTION.md)  \n[Code License](/addons/sprout_lands_ui/LICENSE.txt)  \n"
+      }
+    ],
+    "characters": [
+      {
+        "path": "Sprout-Lands-UI-0.2.0/addons/sprout_lands_ui/content/assets/Sprite sheet for Basic Pack.png",
+        "size": [
+          896,
+          240
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "SuperRetroRanch_FreeTier_v34.zip": {
+    "name": "SuperRetroRanch_FreeTier_v34.zip",
+    "files": 765,
+    "license_notices": [
+      {
+        "file": "assets_premium_preview/user_interfaces/fonts/roboto/LICENSE",
+        "excerpt": "                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n    "
+      },
+      {
+        "file": "info/License_SuperRetroRanch_FreeTier.txt",
+        "excerpt": "Are you using those assets ?  Well, thank you ! Please mind the section below. \r\n\r\n\r\n✔️ You can :\r\n - Use the assets for non-commercial projects only (Free Tier).\r\n - Adapt and/or modify the assets to match your project.\r\n\r\n❌ You can NOT :\r\n - Distribute or sell those assets directly (even modified).\r\n - Claim the asset yours.\r\n - Use the assets for a NFT/metaverse/IA project.\r\n\r\nDepending of your project, I appreciate if you can encrypt your assets data when distributing on the internet (to prevent theft).\r\nAlso, if possible, I appreciate the credit 'Gif'\r\n"
+      }
+    ],
+    "characters": [
+      {
+        "path": "assets/characters/males/male_01/hoe/male_01_hat_hoe_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/hoe/male_01_hoe_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/idle/male_01_hat_idle_32x32.png",
+        "size": [
+          32,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/idle/male_01_idle_32x32.png",
+        "size": [
+          32,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/shovel/male_01_hat_shovel_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/shovel/male_01_shovel_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/walk/male_01_hat_walk_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/walk/male_01_walk_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/water/male_01_hat_water_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "assets/characters/males/male_01/water/male_01_water_32x32_3frames.png",
+        "size": [
+          96,
+          128
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "char free.zip": {
+    "name": "char free.zip",
+    "files": 3,
+    "license_notices": [],
+    "characters": [
+      {
+        "path": "char free/char_walk_left.gif",
+        "size": [
+          32,
+          32
+        ],
+        "frames": 8,
+        "format": "GIF"
+      },
+      {
+        "path": "char free/char_walk_right.gif",
+        "size": [
+          32,
+          32
+        ],
+        "frames": 8,
+        "format": "GIF"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "mana seed seasonal forest sample (autumn).zip": {
+    "name": "mana seed seasonal forest sample (autumn).zip",
+    "files": 4,
+    "license_notices": [
+      {
+        "file": "Mana Seed readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [
+      {
+        "path": "seasonal water animations/autumn water sparkles B 16x16.png",
+        "size": [
+          64,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "seasonal water animations/autumn waterfall B 16x16.png",
+        "size": [
+          128,
+          160
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "mana seed seasonal forest sample (spring).zip": {
+    "name": "mana seed seasonal forest sample (spring).zip",
+    "files": 4,
+    "license_notices": [
+      {
+        "file": "Mana Seed readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [
+      {
+        "path": "seasonal water animations/spring water sparkles B.png",
+        "size": [
+          64,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "seasonal water animations/spring waterfall B.png",
+        "size": [
+          128,
+          160
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "mana seed seasonal forest sample (summer).zip": {
+    "name": "mana seed seasonal forest sample (summer).zip",
+    "files": 4,
+    "license_notices": [
+      {
+        "file": "Mana Seed readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [
+      {
+        "path": "seasonal water animations/summer water sparkles B 16x16.png",
+        "size": [
+          64,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "seasonal water animations/summer waterfall B 16x16.png",
+        "size": [
+          128,
+          160
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  },
+  "mana seed seasonal forest sample (winter).zip": {
+    "name": "mana seed seasonal forest sample (winter).zip",
+    "files": 4,
+    "license_notices": [
+      {
+        "file": "Mana Seed readme.txt",
+        "excerpt": "Thank you for purchasing one of my game assets!\r\n\r\nPlease check out my website:\r\nhttps://selieltheshaper.weebly.com/\r\n\r\nYou can find the full collection on itch.io:\r\nhttps://seliel-the-shaper.itch.io/\r\n\r\nIf you need any help figuring things out, have any questions, or just want to see what I'm up to, please visit my Patreon, Ko-fi, or Twitter!\r\nhttps://www.patreon.com/selieltheshaper\r\nhttps://ko-fi.com/selieltheshaper\r\nhttps://twitter.com/SelieltheShaper"
+      }
+    ],
+    "characters": [
+      {
+        "path": "seasonal water animations/winter water sparkles B 16x16.png",
+        "size": [
+          64,
+          48
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "path": "seasonal water animations/winter waterfall B 16x16.png",
+        "size": [
+          128,
+          160
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "other_examples": [],
+    "error": null
+  }
+}
