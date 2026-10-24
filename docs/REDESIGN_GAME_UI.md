@@ -44,3 +44,21 @@ Executar npm test e npm run build na raiz. Verificar navegação por teclado, la
 - A física do treino foi recriada no cliente para testes; resultados do treino não são autoritativos e não afetam partidas.
 - Em Windows, para testar localmente, instale Pillow com pip e execute python scripts/import_luci_sprites.py antes de npm run dev; no GitHub Actions a importação ocorre automaticamente.
 - Animações equipadas e equipamentos modulares permanecem pendentes, não foram inventados ou substituídos por arte provisória.
+
+## Correção de escala do Luci (Idle/Walk/Run versus Attack)
+
+A exportação do PixelLab mistura quadros 172×172 (idle, walk, run, salto, dash),
+176×176 (walk legado) e 128×128 (combos). O importador antigo reduzia todos os
+quadros grandes para 128×128, fazendo o personagem diminuir durante a
+caminhada/corrida e crescer visualmente ao atacar.
+
+O importador agora preserva cada pixel em escala original, posiciona todas as
+poses em células transparentes iguais de 192×192 e usa um ponto de referência
+de chão por animação, sem recentralizar os quadros durante o movimento.
+O Phaser desenha TODAS as animações do Luci com o mesmo fator de escala
+170/128; a origem da física não muda. O importador recusa quadros maiores
+ou cuja movimentação não caiba sem cortes, em vez de deformar o personagem.
+O CI executa testes com quadros artificiais 128×128 e 172×172 para verificar
+ausência de reescala, baseline comum e manutenção de translação entre quadros.
+
+A armadura estática Fighter_Iniciante_01 ainda não foi animada.

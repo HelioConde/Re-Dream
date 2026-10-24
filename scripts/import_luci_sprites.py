@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Import authentic Luci pixel-art frames from the authored PixelLab ZIP.
 
-Builds horizontal 128x128 spritesheets for East-facing actions. West uses
-Phaser flipX, not duplicated data. No synthesis of missing frames or armor.
+Packs original frames into consistent 192x192 transparent cells WITHOUT
+resizing the art. The larger PixelLab movement canvases and smaller attack
+canvases therefore render at the same world-space pixel density.
+West uses Phaser flipX; no frames or equipment are synthesized.
 """
 from __future__ import annotations
 import io
@@ -33,6 +35,61 @@ FRAMES_PER_SECOND = {
 REQUIRED = {"idle_east", "walk_east", "run_east", "attack_1_east", "attack_2_east", "attack_4_east"}
 LOOP = {"idle_east", "walk_east", "run_east", "guard_east", "sit_east"}
 MAX_ZIP_UNCOMPRESSED = 100 * 1024 * 1024
+CELL_SIZE = 192
+GROUND_LINE = CELL_SIZE - 12  # Stable transparent-space foot baseline.
+
+
+def pack_action_frames(source: zipfile.ZipFile, frames: list[tuple[int, str]]) -> Image.Image:
+    """Keep original pixels at 1:1 scale and anchor an action as a whole.
+
+    The FIRST pose determines the shared translation, never each individual
+    frame. This preserves the timing, ground movement and reach of the artist's
+    original animation, while preventing idle/walk from shrinking next to hits.
+    """
+    frames_rgba: list[Image.Image] = []
+    for _, path in frames:
+        with Image.open(io.BytesIO(source.read(path))) as raw:
+            picture = raw.convert("RGBA")
+        if max(picture.size) > CELL_SIZE:
+            raise ValueError(f"{path}: native frame {picture.size} exceeds {CELL_SIZE}px; refusing to rescale/crop")
+        if picture.getchannel("A").getbbox() is None:
+            raise ValueError(f"{path}: empty animation frame")
+        frames_rgba.append(picture)
+
+    # Align the first pose's visible center and feet across different canvas
+    # sizes. Never change source artwork dimensions or normalize per frame.
+    first = frames_rgba[0].getchannel("A").getbbox()
+    assert first is not None
+    first_x = (first[0] + first[2]) / 2
+    delta_x = round(CELL_SIZE / 2 - first_x)
+    delta_y = GROUND_LINE - first[3]
+
+    # Move the entire animation without clipping any nontransparent pixels.
+    # If its animated reach needs more canvas, fail visibly instead of losing
+    # hands, hair, boots or attack poses.
+    bounds = [img.getchannel("A").getbbox() for img in frames_rgba]
+    assert all(b is not None for b in bounds)
+    left = min(b[0] for b in bounds if b is not None)
+    right = max(b[2] for b in bounds if b is not None)
+    top = min(b[1] for b in bounds if b is not None)
+    bottom = max(b[3] for b in bounds if b is not None)
+    if right - left > CELL_SIZE or bottom - top > CELL_SIZE:
+        raise ValueError(f"{frames[0][1]}: animation range cannot fit in {CELL_SIZE}px without clipping")
+    delta_x = max(-left, min(CELL_SIZE - right, delta_x))
+    delta_y = max(-top, min(CELL_SIZE - bottom, delta_y))
+
+    sheet = Image.new("RGBA", (CELL_SIZE * len(frames_rgba), CELL_SIZE), (0, 0, 0, 0))
+    for index, picture in enumerate(frames_rgba):
+        original_bbox = picture.getchannel("A").getbbox()
+        assert original_bbox is not None
+        sheet.paste(picture, (index * CELL_SIZE + delta_x, delta_y))
+        placed = sheet.crop((index * CELL_SIZE, 0, (index + 1) * CELL_SIZE, CELL_SIZE))
+        if placed.getchannel("A").getbbox() != (
+            original_bbox[0] + delta_x, original_bbox[1] + delta_y,
+            original_bbox[2] + delta_x, original_bbox[3] + delta_y,
+        ):
+            raise ValueError(f"{frames[index][1]}: detected a clipped frame")
+    return sheet
 
 
 def run() -> None:
@@ -40,7 +97,9 @@ def run() -> None:
         raise SystemExit(f"Required Luci archive missing: {ARCHIVE}")
     manifest: dict[str, object] = {
         "name": "Luci", "class": "Fighter", "direction": "east",
-        "frameWidth": 128, "frameHeight": 128,
+        "frameWidth": CELL_SIZE, "frameHeight": CELL_SIZE,
+        "renderScale": 170 / 128,
+        "groundLine": GROUND_LINE,
         "origin": ARCHIVE.name, "animations": {},
         "armor": {"state": "Fighter_Iniciante_01", "animated": False},
     }
@@ -60,23 +119,7 @@ def run() -> None:
             indices = [idx for idx, _ in frames]
             if indices != list(range(len(indices))):
                 raise SystemExit(f"Missing/duplicate frame in {animation}: {indices}")
-            sheet = Image.new("RGBA", (128 * len(frames), 128), (0, 0, 0, 0))
-            for idx, (_, path) in enumerate(frames):
-                with Image.open(io.BytesIO(source.read(path))) as raw:
-                    picture = raw.convert("RGBA")
-                if picture.size != (128, 128):
-                    # Some PixelLab movement actions export at 172x172 or
-                    # larger to give limbs room. Fit the complete original
-                    # image within the target 128px cell without cropping.
-                    if picture.width > 512 or picture.height > 512:
-                        raise SystemExit(f"Unexpectedly large frame {picture.size}: {path}")
-                    original_size = picture.size
-                    picture.thumbnail((128, 128), Image.Resampling.NEAREST)
-                    normalized = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
-                    normalized.paste(picture, ((128 - picture.width) // 2, (128 - picture.height) // 2))
-                    picture = normalized
-                    print(f"Luci: normalize {animation} frame {idx} from {original_size} to 128x128")
-                sheet.paste(picture, (128 * idx, 0))
+            sheet = pack_action_frames(source, frames)
             sheet.save(DEST / f"{animation}.png", format="PNG", optimize=True)
             manifest["animations"][animation] = {
                 "frames": len(frames),

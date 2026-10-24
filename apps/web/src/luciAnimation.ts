@@ -1,6 +1,12 @@
 import { BASIC_ATTACK_ANIM_MS } from './attackPlayback';
 import type { SpriteChoice } from './characterAnimation';
 
+// A single transparent cell size for every authentic Luci animation.
+// The importer never shrinks a larger PixelLab canvas to 128x128.
+export const LUCI_FRAME_SIZE = 192;
+export const LUCI_WORLD_PIXEL_SCALE = 170 / 128;
+export const LUCI_DISPLAY_SIZE = LUCI_FRAME_SIZE * LUCI_WORLD_PIXEL_SCALE;
+
 export const LUCI_FRAME_COUNTS = {
   idle_east: 9,
   walk_east: 8,

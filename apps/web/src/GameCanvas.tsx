@@ -5,7 +5,7 @@ import type { Control, Snapshot } from './protocol';
 import { LocalPredictor } from './prediction';
 import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
-import { LUCI_ANIMATION_KEYS, selectLuciAnimation, LuciComboTracker } from './luciAnimation';
+import { LUCI_ANIMATION_KEYS, LUCI_FRAME_SIZE, LUCI_DISPLAY_SIZE, selectLuciAnimation, LuciComboTracker } from './luciAnimation';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -44,7 +44,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         for (const key of LUCI_ANIMATION_KEYS) {
           this.load.spritesheet('luci_' + key,
             import.meta.env.BASE_URL + 'sprites/luci/' + key + '.png',
-            { frameWidth: 128, frameHeight: 128 });
+            { frameWidth: LUCI_FRAME_SIZE, frameHeight: LUCI_FRAME_SIZE });
         }
         this.load.spritesheet('hero-rose', import.meta.env.BASE_URL + 'sprites/rose-hero-real.webp', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('hero-sprout',import.meta.env.BASE_URL+'sprites/imported/sprout/sprout-character.png',{frameWidth:16,frameHeight:16});
@@ -204,7 +204,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           if (!avatar && this.textures.exists(texture)) {
             avatar = this.add.image(p.x, p.y, texture, frame)
               .setOrigin(.5, 1)
-              .setDisplaySize(player.characterId === 'luci' ? 170 : 108, player.characterId === 'luci' ? 170 : 108)
+              .setDisplaySize(player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108, player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108)
               .setDepth(3);
             this.avatars.set(key, avatar);
           }
@@ -212,7 +212,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             if (avatar.texture.key !== texture) avatar.setTexture(texture, frame);
             avatar.setFrame(frame);
             avatar.setFlipX(animation.flipX);
-            avatar.setDisplaySize(player.characterId === 'luci' ? 170 : 108, player.characterId === 'luci' ? 170 : 108);
+            avatar.setDisplaySize(player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108, player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108);
             // Tiny anticipation and recoil only for the static animal art.
             // No artificial animation frames are generated.
             const isCat = player.characterId === 'cat';
