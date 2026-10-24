@@ -58,6 +58,24 @@ Endereço esperado do frontend: **https://helioconde.github.io/Re-Dream/**.
 
 Se futuramente você usar uma hospedagem PHP, os arquivos estáticos compilados do React podem ser servidos nela; o processo de WebSocket ainda precisará de hospedagem compatível.
 
+## Dados locais (sem banco de dados)
+
+Nesta etapa, o navegador salva **apelido**, **última sala**, **vitórias**, **derrotas** e **data da última sessão** no \`localStorage\` (chave \`redream:profile:v1\`). O site contém a seção "Minha jornada local" e a opção para apagar os dados. O perfil não é sincronizado entre navegadores ou dispositivos.
+
+As salas, inimigos, vida e movimentação continuam em **memória no servidor WebSocket**; o navegador nunca decide os danos. **Recarregar a página encerra a conexão.** Uma sala sem jogadores ou reiniciada no Render desaparece. Não existe salvamento de inventário ou contas; dados de \`localStorage\` não são confiáveis para moedas ou progressão competitiva.
+
+Para testar: abra duas janelas (uma anônima, se quiser perfis independentes), crie uma sala na primeira e entre pelo código na segunda. Depois mova os personagens, ataque e confirme a sincronização.
+
+### Testes automáticos
+
+\`\`\`bash
+npm test            # física, regras, perfil local e duas conexões WebSocket no servidor de teste
+npm run build       # compilação das aplicações
+node scripts/smoke-live.mjs  # testa /health e duas conexões WSS no Render publicado
+\`\`\`
+
+O GitHub Actions inclui um workflow separado em [Live smoke test](.github/workflows/live-smoke.yml), acionado manualmente ou quando seu script é alterado. Para testes externos, Render Free pode estar dormindo e demorar para responder.
+
 ## Escalabilidade e limitações
 
 O servidor inicial mantém as salas em memória em **uma instância** e atualiza a simulação 30 vezes por segundo, enviando snapshots 10 vezes por segundo. Possui limite de participantes, verificação básica da origem (quando configurada), de payload e de taxa de mensagens. O cliente envia botões pressionados; o servidor decide posições e danos.
