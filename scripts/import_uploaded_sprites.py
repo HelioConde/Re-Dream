@@ -13,15 +13,11 @@ doc=root/"docs";doc.mkdir(parents=True,exist_ok=True)
 sets={
  "char":("char free.zip",{
   "left":"char free/char_walk_left.gif",
-  "right":"char free/char_walk_right.gif"}),
- "bunny":("Little Dreamyland - Free Pack.zip",{
-  "idle":"Little Dreamyland - Free Pack/Sprites/Characters/Bunny/IDLE/Bunny_Idle.png",
-  "run":"Little Dreamyland - Free Pack/Sprites/Characters/Bunny/RUN/Bunny_Run.png",
-  "attack":"Little Dreamyland - Free Pack/Sprites/Characters/Bunny/SWORD/Bunny_Sword.png",
-  "skill":"Little Dreamyland - Free Pack/Sprites/Characters/Bunny/SCYTHE/Bunny_Scythe.png",
-  "death":"Little Dreamyland - Free Pack/Sprites/Characters/Bunny/DEATH/Bunny_Death.png"})}
+  "right":"char free/char_walk_right.gif"})
+}
+
 manifest={"characters":{}}
-audit=["# Auditoria de sprites enviados","","Pacotes originais na raiz do repositório. Nenhum quadro é inventado.",""]
+audit=["# Auditoria de sprites enviados","","Quadros extraídos dos GIFs enviados, sem inventar frames. O pacote char free não contém licença; confirmar direitos de distribuição antes de uso comercial.","","O pacote Little Dreamyland NÃO é importado por ter licença não comercial e restrição de redistribuição.",""]
 preview=Image.new("RGB",(1100,1000),"#1c2037")
 draw=ImageDraw.Draw(preview)
 y=10

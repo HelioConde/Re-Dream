@@ -3,6 +3,7 @@ import type { RefObject } from 'react';
 import Phaser from 'phaser';
 import type { Control, Snapshot } from './protocol';
 import { LocalPredictor } from './prediction';
+import { directionalFrame } from './spriteDirection';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -28,6 +29,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private lastServerSnapshot: Snapshot | null = null;
       private labels = new Map<string, Phaser.GameObjects.Text>();
       private avatars = new Map<string, Phaser.GameObjects.Image>();
+      private remoteMotion = new Map<string, { x: number; until: number }>();
       private positions = new Map<string, { x: number; y: number }>();
       private stars = Array.from({ length: 46 }, (_, i) => ({
         x: (i * 311 + 67) % 1280, y: (i * 113 + 31) % 520, phase: i * 0.73,
@@ -35,11 +37,13 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
 
       constructor() { super('dungeon'); }
       preload() {
-        this.load.spritesheet('hero-real', import.meta.env.BASE_URL + 'sprites/rose-hero-real.webp', { frameWidth: 64, frameHeight: 64 });
+        // Author-provided GIF animations are packed into two real 8-frame directional strips.
+        this.load.spritesheet('hero-left', import.meta.env.BASE_URL + 'sprites/imported/char/left.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('hero-right', import.meta.env.BASE_URL + 'sprites/imported/char/right.png', { frameWidth: 64, frameHeight: 64 });
       }
       create() {
-        // Eight real illustrated frames: idle 0-1, running 2-4, strike 5-6, skill 7.
-        // Same 64x64 logical frame, consistent origin and scale for every animation.
+        // Two actual eight-frame directional walk GIFs, with a consistent 64x64 layout.
+        // The ZIP has no attack/death poses; do not invent or mislabel frames.
         this.cameras.main.setBackgroundColor('#101935');
         this.draw = this.add.graphics();
         this.keys = this.input.keyboard!.addKeys(
@@ -107,6 +111,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           if (snapshot !== this.lastServerSnapshot) this.predictor.sync(myself.x, myself.y, input);
           if (myself.hp > 0) this.predictor.advance(dt, input);
         }
+        const freshSnapshot = snapshot !== this.lastServerSnapshot;
         this.lastServerSnapshot = snapshot;
         const seen = new Set<string>();
         for (const enemy of snapshot.enemies) {
@@ -136,30 +141,43 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           const p = isYou && this.predictor.initialized
             ? { x: this.predictor.x, y: this.predictor.y }
             : this.smooth(key, player.x, player.y);
-          // Original illustrated rose warrior, cropped from the generated sprite reference.
+          // Use the exact original walk-left and walk-right frame sequences.
+          // No sprite mirroring: both directions exist in the supplied ZIP.
+          if (freshSnapshot && !isYou) {
+            const previous = this.remoteMotion.get(key);
+            const moved = !!previous && Math.abs(previous.x - player.x) > 0.5;
+            this.remoteMotion.set(key, { x: player.x, until: moved ? time + 220 : time - 1 });
+          }
+          const moving = isYou
+            ? input.left !== input.right
+            : time < (this.remoteMotion.get(key)?.until ?? 0);
+          const immediateFacing = isYou
+            ? (input.left && !input.right ? -1 : input.right && !input.left ? 1 : player.facing)
+            : player.facing;
+          const animation = directionalFrame(immediateFacing, moving, time);
           let avatar = this.avatars.get(key);
-          if (!avatar && this.textures.exists('hero-real')) {
-            avatar = this.add.image(p.x, p.y, 'hero-real', 0)
+          if (!avatar && this.textures.exists(animation.texture)) {
+            avatar = this.add.image(p.x, p.y, animation.texture, animation.frame)
               .setOrigin(.5, 1)
               .setDisplaySize(108, 108)
               .setDepth(3);
             this.avatars.set(key, avatar);
           }
           if (avatar) {
-            const moving = isYou ? input.left || input.right : Math.abs(player.x - p.x) > 3;
-            const beat = Math.floor(time / 130);
-            let frame = moving ? 2 + beat % 3 : beat % 2;
-            if (player.flash > 0 || (isYou && input.attack)) frame = 5 + beat % 2;
-            if (isYou && input.skill) frame = 7;
-            avatar.setFrame(frame);
+            if (avatar.texture.key !== animation.texture) avatar.setTexture(animation.texture, animation.frame);
+            avatar.setFrame(animation.frame);
+            avatar.setFlipX(false);
             avatar.setPosition(p.x, p.y + 6);
-            avatar.setFlipX(player.facing < 0);
           } else {
-            // Keep gameplay visible even if an art asset fails to load.
-            g.fillStyle(0xf3c87f);
-            g.fillRoundedRect(p.x - 14, p.y - 55, 28, 54, 8);
-            g.fillStyle(0xf7dcbb);
-            g.fillCircle(p.x, p.y - 61, 12);
+            g.fillStyle(0x7269bf);
+            g.fillRoundedRect(p.x - 13, p.y - 56, 26, 55, 6);
+            g.fillStyle(0xffdebe);
+            g.fillCircle(p.x, p.y - 62, 11);
+          }
+          // Attack and skill graphics are transient feedback, not fabricated sprite frames.
+          if (player.flash > 0) {
+            g.lineStyle(4, 0xdba5fc, .9);
+            g.strokeCircle(p.x + immediateFacing * 24, p.y - 44, 24);
           }
           this.healthbar(g, p.x - 24, p.y - 101, 48, player.hp / 100, 0x78d9a2);
           let label = this.labels.get(key);
@@ -177,7 +195,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           if (!seen.has(key)) { label.destroy(); this.labels.delete(key); }
         }
         for (const [key, sprite] of this.avatars) {
-          if (!seen.has(key)) { sprite.destroy(); this.avatars.delete(key); }
+          if (!seen.has(key)) { sprite.destroy(); this.avatars.delete(key); this.remoteMotion.delete(key); }
         }
         for (const key of this.positions.keys()) {
           if (!seen.has(key)) this.positions.delete(key);

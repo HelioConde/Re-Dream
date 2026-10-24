@@ -94,3 +94,10 @@ Antes da masmorra, cada grupo entra no **Salão dos Sonhos**. O líder cria e co
 O personagem controlado pelo usuário usa **previsão local**: o movimento e o salto são desenhados instantaneamente no navegador, enquanto o servidor continua responsável pelo combate e corrige diferenças grandes. Os outros jogadores recebem posições pela rede e passam por suavização.
 
 A primeira personagem visual jogável é a **Vanguarda das Rosas**. O Phaser carrega `apps/web/public/sprites/rose-hero-real.webp`, um atlas ilustrado de oito quadros (4 colunas × 2 linhas, 64×64 por quadro), recortado diretamente da spritesheet gerada para esta personagem. Metadados em `rose-hero-real.json`. Quadros: idle 0–1, correr 2–4, atacar 5–6 e habilidade 7. O antigo atlas SVG simplificado foi removido. Esta é uma versão WebP compactada para testes; a spritesheet ilustrada original em alta resolução permanece disponível na conversa e as animações definitivas ainda precisam de refinamento de qualidade/posição dos pés.
+
+
+## Atualização dos sprites do ZIP
+
+O personagem de teste agora usa **os 8 quadros reais de caminhada para esquerda e os 8 quadros reais de caminhada para direita** extraídos de `char free.zip`. Não aplicamos `flipX`, pois o pacote possui as duas direções. O servidor continua autoritativo e a movimentação local permanece preditiva. Os sprites são carregados em `apps/web/public/sprites/imported/char/`. O arquivo original não fornece quadros de ataque, habilidades, salto ou morte; efeitos durante essas ações são provisórios e não se apresentam como animações originais. A licença do pacote deve ser verificada antes de uso comercial.
+
+O pacote `Little Dreamyland - Free Pack.zip` **não é usado**, porque sua licença restringe o uso a projetos não comerciais e não permite redistribuição do pacote. Os arquivos derivados anteriormente publicados por nosso importador foram excluídos. Se o ZIP original permanecer no repositório público, convém removê-lo da distribuição pública após manter uma cópia particular autorizada.
