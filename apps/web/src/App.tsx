@@ -1,0 +1,180 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
+import GameCanvas from './GameCanvas';
+import type { Control, ServerMessage, Snapshot } from './protocol';
+
+const configuredUrl = import.meta.env.VITE_WS_URL?.trim() || '';
+const websocketUrl = configuredUrl || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'ws://localhost:3001/ws' : '');
+
+type Connection = 'idle' | 'connecting' | 'online' | 'offline';
+
+function Feature({ icon, title, description }: { icon: string; title: string; description: string }) {
+  return <article className="feature"><span className="feature-icon" aria-hidden="true">{icon}</span><h3>{title}</h3><p>{description}</p></article>;
+}
+
+export default function App() {
+  const [name, setName] = useState(() => localStorage.getItem('redream-name') || '');
+  const [roomInput, setRoomInput] = useState('');
+  const [connection, setConnection] = useState<Connection>('idle');
+  const [error, setError] = useState('');
+  const [room, setRoom] = useState('');
+  const [playerId, setPlayerId] = useState('');
+  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
+  const snapshotRef = useRef<Snapshot | null>(null);
+  const mobileRef = useRef<Control>({ left: false, right: false, jump: false, attack: false, skill: false });
+
+  const disconnect = useCallback(() => {
+    const ws = socketRef.current;
+    socketRef.current = null;
+    ws?.close(1000, 'Sair da masmorra');
+    snapshotRef.current = null;
+    setSnapshot(null);
+    setPlayerId('');
+    setRoom('');
+    setConnection('idle');
+  }, []);
+
+  useEffect(() => () => { socketRef.current?.close(); }, []);
+
+  const connect = (requestedRoom: string) => {
+    setError('');
+    if (!websocketUrl) {
+      setError('O frontend já está publicado, mas ainda falta configurar a URL pública do servidor WebSocket (VITE_WS_URL).');
+      return;
+    }
+    const safeName = name.trim().slice(0, 20);
+    if (safeName.length < 2) { setError('Escolha um apelido de pelo menos 2 caracteres.'); return; }
+    const normalizedRoom = requestedRoom.trim().toUpperCase();
+    if (normalizedRoom && !/^[A-Z0-9]{4,8}$/.test(normalizedRoom)) {
+      setError('O código da sala deve ter de 4 a 8 letras ou números.');
+      return;
+    }
+    localStorage.setItem('redream-name', safeName);
+    socketRef.current?.close();
+    setConnection('connecting');
+    try {
+      const socket = new WebSocket(websocketUrl);
+      socketRef.current = socket;
+      socket.onopen = () => socket.send(JSON.stringify({ type: 'join', name: safeName, room: normalizedRoom || undefined }));
+      socket.onmessage = event => {
+        let message: ServerMessage;
+        try { message = JSON.parse(event.data) as ServerMessage; } catch { return; }
+        if (socketRef.current !== socket) return;
+        if (message.type === 'joined') {
+          setRoom(message.room);
+          setRoomInput(message.room);
+          setPlayerId(message.id);
+          setConnection('online');
+        } else if (message.type === 'snapshot') {
+          snapshotRef.current = message;
+          setSnapshot(message);
+        } else if (message.type === 'error') {
+          setError(message.message);
+          socket.close();
+        }
+      };
+      socket.onerror = () => setError('Não foi possível conectar ao servidor de partidas.');
+      socket.onclose = () => {
+        if (socketRef.current !== socket) return;
+        socketRef.current = null;
+        setConnection('offline');
+        setRoom('');
+        setPlayerId('');
+        snapshotRef.current = null;
+        setSnapshot(null);
+      };
+    } catch {
+      setConnection('offline');
+      setError('A URL do WebSocket é inválida. Verifique VITE_WS_URL.');
+    }
+  };
+
+  const sendInput = useCallback((control: Control) => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({ type: 'input', ...control }));
+    }
+  }, []);
+
+  const touch = (key: keyof Control, pressed: boolean) => {
+    mobileRef.current = { ...mobileRef.current, [key]: pressed };
+  };
+
+  const join = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); connect(roomInput); };
+  const isPlaying = connection === 'online' && Boolean(room);
+  const me = snapshot?.players.find(player => player.id === playerId);
+
+  return (
+    <div className="app">
+      <header className="site-header">
+        <a className="brand" href="#inicio" aria-label="Re:Dream — início"><span className="brand-mark">✧</span><span>Re<span className="brand-accent">:</span>Dream</span></a>
+        <nav aria-label="Navegação principal">
+          <a href="#inicio">Início</a><a href="#universo">Universo</a><a href="#jogar">Jogar</a>
+        </nav>
+        <a className="github-link" href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">GitHub ↗</a>
+      </header>
+
+      {isPlaying ? (
+        <main className="session" id="jogar">
+          <div className="session-top">
+            <div><span className="eyebrow">✦ MASMORRA COOPERATIVA</span><h1>Bosque dos Sonhos</h1><p>Etapa {snapshot?.wave || 1} / 3 · {snapshot?.players.length || 1}/4 aventureiros</p></div>
+            <div className="session-actions">
+              <button className="room-chip" onClick={() => navigator.clipboard?.writeText(room)} title="Copiar código da sala">SALA {room} ⧉</button>
+              <button className="button button-ghost" onClick={disconnect}>Sair da sala</button>
+            </div>
+          </div>
+          <section className="game-shell" aria-label="Jogo Re:Dream">
+            <GameCanvas snapshotRef={snapshotRef} playerId={playerId} sendInput={sendInput} mobileRef={mobileRef} />
+            {snapshot?.status === 'victory' && <div className="game-outcome"><h2>Missão concluída! ✦</h2><p>O Bosque dos Sonhos voltou a brilhar.</p><button className="button button-primary" onClick={disconnect}>Voltar ao início</button></div>}
+            {snapshot?.status === 'defeat' && <div className="game-outcome"><h2>Os sonhos resistem...</h2><p>Reúna seus aliados e tente novamente.</p><button className="button button-primary" onClick={disconnect}>Voltar ao início</button></div>}
+          </section>
+          <div className="game-bottom">
+            <div className="stats"><span>♥ VIDA <strong>{me?.hp ?? 100}/100</strong></span><span>✧ PONTOS <strong>{me?.score ?? 0}</strong></span><span>⚔ INIMIGOS <strong>{snapshot?.remaining ?? 0}</strong></span></div>
+            <div className="controls-legend"><span>A / D · Mover</span><span>W / Espaço · Pular</span><span>J · Atacar</span><span>K · Especial</span></div>
+          </div>
+          <div className="touch-controls" aria-label="Controles para dispositivos móveis">
+            <div className="touch-group">
+              {([['left','◀'],['right','▶'],['jump','↑']] as const).map(([key,label]) => <button key={key} className="touch-key" aria-label={key} onPointerDown={e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); touch(key,true); }} onPointerUp={() => touch(key,false)} onPointerCancel={() => touch(key,false)} onLostPointerCapture={() => touch(key,false)}>{label}</button>)}
+            </div>
+            <div className="touch-group">
+              {([['attack','⚔'],['skill','✦']] as const).map(([key,label]) => <button key={key} className="touch-key touch-attack" aria-label={key} onPointerDown={e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); touch(key,true); }} onPointerUp={() => touch(key,false)} onPointerCancel={() => touch(key,false)} onLostPointerCapture={() => touch(key,false)}>{label}</button>)}
+            </div>
+          </div>
+          <section className="party-card"><h2>Aventureiros da sala</h2><div className="party-members">{snapshot?.players.map(player => <div className="party-member" key={player.id}><span className="party-avatar">✧</span><span>{player.name}{player.id === playerId ? ' (você)' : ''}</span><span>{player.hp > 0 ? '♥ ' + player.hp : 'Caído'}</span></div>)}</div></section>
+        </main>
+      ) : (
+        <main id="inicio">
+          <section className="hero">
+            <div className="hero-art" aria-hidden="true"><div className="moon"/><div className="mountain mountain-back"/><div className="mountain mountain-front"/><div className="hero-glow"/><div className="hero-gate">✧</div><div className="hero-stars">✦　·　✧　　　✦　·　✧</div></div>
+            <div className="hero-content">
+              <span className="eyebrow">✦ UMA NOVA AVENTURA ESTÁ DESPERTANDO</span>
+              <h1>Todo sonho merece <em>uma segunda chance.</em></h1>
+              <p>Explore reinos esquecidos, domine combos e reúna seus amigos em um RPG de ação 2D cooperativo que nasce de um sonho antigo.</p>
+              <div className="hero-buttons"><a href="#jogar" className="button button-primary">Começar aventura <span>→</span></a><a href="#universo" className="button button-outline">Descobrir o mundo</a></div>
+              <div className="hero-details"><span><b>2D</b> ação e plataformas</span><span><b>4</b> jogadores por sala</span><span><b>α</b> pré-alfa</span></div>
+            </div>
+          </section>
+          <section className="feature-section" id="universo">
+            <div className="section-heading"><span className="eyebrow">✦ UM MUNDO À SUA ESPERA</span><h2>A aventura começa aqui</h2><p>O espírito dos jogos cooperativos clássicos, reinventado em um universo original.</p></div>
+            <div className="features"><Feature icon="⚔" title="Combate que responde" description="Saltos, ataques e habilidades em masmorras 2D com física e combate controlados pelo servidor."/><Feature icon="♜" title="Jogue com amigos" description="Crie uma sala, compartilhe o código e avance ao lado de até três outros aventureiros."/><Feature icon="✧" title="Seu sonho, sua jornada" description="Três ondas de inimigos e um chefe na primeira missão. Mais mundos e classes estão a caminho."/></div>
+          </section>
+          <section id="jogar" className="play-section">
+            <div className="play-copy"><span className="eyebrow">✦ PORTAL DE AVENTUREIROS</span><h2>Pronto para atravessar o portal?</h2><p>Escolha um nome e crie uma sala para convidar seus amigos. Você também pode entrar usando um código recebido.</p><div className="online-tip"><span className={websocketUrl ? 'signal signal-ready' : 'signal'} />{websocketUrl ? 'Servidor configurado · conexão ao entrar' : 'Servidor multiplayer ainda não configurado nesta publicação'}</div></div>
+            <form className="join-card" onSubmit={join}>
+              <div className="card-heading"><span className="card-icon">✧</span><div><h3>Entrar no Re:Dream</h3><p>Versão pré-alfa · gratuito</p></div></div>
+              <label htmlFor="nickname">NOME DE AVENTUREIRO</label><input id="nickname" value={name} onChange={e => setName(e.target.value)} maxLength={20} minLength={2} placeholder="Seu apelido" autoComplete="nickname" required />
+              <button className="button button-primary button-full" type="button" onClick={() => connect('')} disabled={connection === 'connecting'}>{connection === 'connecting' ? 'Conectando...' : '✦ Criar nova sala'}</button>
+              <div className="or"><span>ou entre com um convite</span></div>
+              <label htmlFor="roomcode">CÓDIGO DA SALA</label><div className="join-row"><input id="roomcode" value={roomInput} onChange={e => setRoomInput(e.target.value.toUpperCase())} maxLength={8} placeholder="Ex.: DREAM1"/><button className="button button-outline" type="submit" disabled={connection === 'connecting'}>Entrar →</button></div>
+              {error && <p className="form-error" role="alert">{error}</p>}
+              <p className="form-hint">Controles: A/D mover · W pular · J atacar · K especial</p>
+            </form>
+          </section>
+          <section className="closing"><span>✧</span><h2>O mundo estava apenas esperando você despertar.</h2><p>Re:Dream · O Recomeço de um Sonho</p></section>
+        </main>
+      )}
+      <footer><span className="brand"><span className="brand-mark">✧</span> Re<span className="brand-accent">:</span>Dream</span><span>Projeto independente em desenvolvimento · pré-alfa</span><a href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">Código no GitHub ↗</a></footer>
+    </div>
+  );
+}
