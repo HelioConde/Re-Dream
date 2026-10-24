@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import GameCanvas from './GameCanvas';
+import PracticeMode from './PracticeMode';
 import AdventureHub from './AdventureHub';
 import CharacterSelect from './CharacterSelect';
 import { CHARACTERS, characterName, getCharacter } from './characters';
@@ -22,6 +23,7 @@ export default function App() {
     () => typeof window !== 'undefined' && window.location.hash === '#personagens' ? 'create' : null,
   );
   const [roomInput, setRoomInput] = useState('');
+  const [practiceActive, setPracticeActive] = useState(false);
   const [connection, setConnection] = useState<Connection>('idle');
   const [error, setError] = useState('');
   const [room, setRoom] = useState('');
@@ -54,7 +56,7 @@ export default function App() {
     clearLocalProfile();
     setLocalProfile({ ...EMPTY_PROFILE });
     setName('');
-    setSelectedCharacter('rose');
+    setSelectedCharacter('luci');
     setRoomInput('');
   };
 
@@ -187,6 +189,19 @@ export default function App() {
     socketRef.current.send(JSON.stringify({ type: 'select', characterId }));
   };
 
+  const startPractice = () => {
+    if (connection === 'connecting' || room) return;
+    setPracticeActive(true);
+    setSelectionIntent(null);
+    setError('');
+    window.location.hash = 'praticar';
+  };
+  const exitPractice = () => {
+    setPracticeActive(false);
+    setSelectionIntent('create');
+    window.location.hash = 'personagens';
+  };
+
   const isLobby = connection === 'online' && Boolean(room) && (!snapshot || snapshot.status === 'lobby');
   const isPlaying = connection === 'online' && Boolean(room) && !!snapshot && snapshot.status !== 'lobby';
   const isHost = snapshot?.hostId === playerId;
@@ -199,7 +214,7 @@ export default function App() {
 
   return (
     <div className="app app-reboot">
-      {(isLobby || isPlaying || Boolean(selectionIntent)) && <header className="site-header">
+      {(isLobby || isPlaying || Boolean(selectionIntent) || practiceActive) && <header className="site-header">
         <a className="brand" href="#inicio" aria-label="Re:Dream — início"><span className="brand-mark">✧</span><span>Re<span className="brand-accent">:</span>Dream</span></a>
         <nav aria-label="Navegação principal">
           <a href="#inicio">Início</a><a href="#universo">Universo</a>
@@ -208,7 +223,9 @@ export default function App() {
         <a className="github-link" href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">GitHub ↗</a>
       </header>}
 
-      {isLobby ? (
+      {practiceActive ? (
+        <PracticeMode characterId={selectedCharacter} nickname={name.trim() || 'Luci'} onExit={exitPractice}/>
+      ) : isLobby ? (
         <main className="lobby-page" id="jogar">
           <div className="lobby-ambient" aria-hidden="true">✧</div>
           <div className="lobby-eyebrow">✦ PORTAL DE AVENTUREIROS</div>
@@ -307,6 +324,7 @@ export default function App() {
           onRoomCode={setRoomInput}
           onBack={() => {setSelectionIntent(null);setError('');window.location.hash='jogar';}}
           onConfirm={() => connect(selectionIntent === 'join' ? roomInput : '')}
+          onPractice={startPractice}
         />
       ) : (
         <AdventureHub
@@ -318,7 +336,7 @@ export default function App() {
           onClearLocal={resetLocalHistory}
         />
       )}
-      {(isLobby || isPlaying || Boolean(selectionIntent)) && <footer><span className="brand"><span className="brand-mark">✧</span> Re<span className="brand-accent">:</span>Dream</span><span>Projeto independente em desenvolvimento · pré-alfa</span><a href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">Código no GitHub ↗</a></footer>}
+      {(isLobby || isPlaying || Boolean(selectionIntent) || practiceActive) && <footer><span className="brand"><span className="brand-mark">✧</span> Re<span className="brand-accent">:</span>Dream</span><span>Projeto independente em desenvolvimento · pré-alfa</span><a href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">Código no GitHub ↗</a></footer>}
     </div>
   );
 }

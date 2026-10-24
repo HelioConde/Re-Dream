@@ -1,6 +1,6 @@
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
 export type Status = 'lobby' | 'playing' | 'victory' | 'defeat';
-export const CHARACTER_IDS = ['rose', 'wanderer', 'sprout', 'bunny', 'retro', 'retrohat', 'mana_dapper', 'mana_bob', 'cat', 'fox', 'rabbit', 'wolf', 'panda', 'owl'] as const;
+export const CHARACTER_IDS = ['luci', 'rose', 'wanderer', 'sprout', 'bunny', 'retro', 'retrohat', 'mana_dapper', 'mana_bob', 'cat', 'fox', 'rabbit', 'wolf', 'panda', 'owl'] as const;
 export type CharacterId = typeof CHARACTER_IDS[number];
 export const isCharacterId = (value: unknown): value is CharacterId =>
   typeof value === 'string' && (CHARACTER_IDS as readonly string[]).includes(value);
@@ -33,7 +33,7 @@ export class GameRoom {
 
   get size() { return this.players.size; }
 
-  addPlayer(id: string, name: string, characterId: CharacterId = 'rose'): void {
+  addPlayer(id: string, name: string, characterId: CharacterId = 'luci'): void {
     if (!isCharacterId(characterId)) throw new Error('Personagem inválido.');
     if (this.players.size >= 4) throw new Error('Esta sala está cheia (máximo de 4 jogadores).');
     if (this.status !== 'lobby') throw new Error('A aventura já começou. Aguarde uma nova sala.');

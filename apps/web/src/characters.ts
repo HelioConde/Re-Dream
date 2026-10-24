@@ -4,6 +4,10 @@ export type CharacterDef = {
   origin: string; preview: string; artSize: string; previewPosition?: string;
 };
 export const CHARACTERS: readonly CharacterDef[] = [
+  { id: 'luci', name: 'Luci', subtitle: 'Fighter · Protagonista',
+    description: 'Nosso protagonista original, um lutador de manoplas ágil. Animações Leste do PixelLab: Idle, corrida, salto, combos e habilidades. A armadura iniciante ainda tem apenas poses estáticas.',
+    origin: 'Luci — personagem original Re:Dream criado no PixelLab; exportação Anime_fantasy_action_RPG_playable.zip',
+    preview: 'sprites/luci/preview.png', artSize: '100% 100%' },
   { id: 'rose', name: "Guerreira das Rosas", subtitle: "Magia sombria",
     description: "Personagem ilustrada de teste. Corrigida a direção de caminhada; quadros de ataque e habilidade experimentais.", origin: "Arte original criada para o Re:Dream",
     preview: 'sprites/rose-hero-real.webp', artSize: '400% 200%' },

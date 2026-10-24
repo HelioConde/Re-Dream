@@ -63,7 +63,7 @@ wss.on('connection', ws => {
       if (msg.characterId !== undefined && !isCharacterId(msg.characterId)) {
         send(ws, { type: 'error', message: 'Personagem inválido.' }); return;
       }
-      const selectedCharacter = isCharacterId(msg.characterId) ? msg.characterId : 'rose';
+      const selectedCharacter = isCharacterId(msg.characterId) ? msg.characterId : 'luci';
       const code = supplied || makeCode();
       let room = rooms.get(code);
       if (!room && supplied) { send(ws, { type: 'error', message: 'Sala não encontrada.' }); return; }

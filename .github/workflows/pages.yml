@@ -25,17 +25,10 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Test
         run: npm test
-      - name: Inspect Luci sprites archive
-        run: |
-          python - <<'PY'
-          import zipfile
-          from pathlib import Path
-          archive = Path("Anime_fantasy_action_RPG_playable.zip")
-          with zipfile.ZipFile(archive) as z:
-              for item in z.infolist():
-                  if not item.is_dir():
-                      print("LUCI_ZIP", item.filename, item.file_size)
-          PY
+      - name: Install sprite importer
+        run: python -m pip install Pillow
+      - name: Prepare Luci animation spritesheets
+        run: python scripts/import_luci_sprites.py
       - name: Build
         env:
           GITHUB_PAGES: 'true'

@@ -34,7 +34,7 @@ describe('localStorage de Re:Dream', () => {
     const storage = memoryStorage();
     storage.setItem('redream-name', 'Conde');
     assert.equal(readLocalProfile(storage).nickname, 'Conde');
-    assert.equal(readLocalProfile(storage).characterId, 'rose');
+    assert.equal(readLocalProfile(storage).characterId, 'luci');
   });
 
   it('não confia em números negativos, datas inválidas ou valores malformados', () => {
@@ -44,7 +44,7 @@ describe('localStorage de Re:Dream', () => {
     }));
     const p = readLocalProfile(storage);
     assert.equal(p.nickname.length, 20);
-    assert.equal(p.characterId, 'rose');
+    assert.equal(p.characterId, 'luci');
     assert.equal(p.lastRoom, '');
     assert.equal(p.victories, 0);
     assert.equal(p.defeats, 0);

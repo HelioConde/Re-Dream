@@ -15,11 +15,12 @@ type Props = {
   onRoomCode: (code: string) => void;
   onBack: () => void;
   onConfirm: () => void;
+  onPractice: () => void;
 };
 
 export default function CharacterSelect({
   selected, nickname, roomCode, intent, busy, error,
-  onSelect, onNickname, onRoomCode, onBack, onConfirm,
+  onSelect, onNickname, onRoomCode, onBack, onConfirm, onPractice,
 }: Props) {
   const [showDetails, setShowDetails] = useState(false);
   const chosen = CHARACTERS.find(c => c.id === selected) || CHARACTERS[0];
@@ -29,7 +30,7 @@ export default function CharacterSelect({
     <div className="select-heading">
       <span className="eyebrow">✧ RE:DREAM · SELEÇÃO DE AVENTUREIRO</span>
       <h1>Escolha seu personagem</h1>
-      <p>Selecione um dos {CHARACTERS.length} personagens provisórios e prepare sua aventura cooperativa. O Fighter original substituirá as opções de teste quando os sprites estiverem prontos.</p>
+      <p><strong>Luci</strong> é nosso Fighter protagonista. Escolha um personagem e entre no modo Praticar para testar movimento e combate sozinho, ou crie uma sala para jogar com amigos.</p>
     </div>
     <div className="select-layout">
       <section className="character-list" aria-label="Personagens disponíveis">
@@ -49,8 +50,8 @@ export default function CharacterSelect({
         </button>)}
         <div className="future-characters">
           <span aria-hidden="true">✧</span>
-          <strong>Fighter original em produção</strong>
-          <p>A base e a primeira armadura foram criadas no PixelLab. As animações equipadas ainda precisam ser exportadas.</p>
+          <strong>Luci · Fighter original</strong>
+          <p>As animações em Leste foram encontradas no ZIP do PixelLab. A armadura iniciante ainda precisa de quadros animados.</p>
         </div>
       </section>
       <section className="character-stage" aria-label="Prévia do personagem selecionado">
@@ -82,11 +83,14 @@ export default function CharacterSelect({
       {error && <p className="form-error" role="alert">{error}</p>}
       <div className="character-cta">
         <button type="button" className="button button-ghost" onClick={onBack}>← Voltar</button>
-        <button type="submit" className="button button-primary" disabled={busy}>{busy ? 'Conectando...' : intent === 'join' ? 'CONFIRMAR E ENTRAR →' : 'CONFIRMAR E CRIAR SALA →'}</button>
+        <div className="character-cta-actions">
+          <button type="button" className="button button-practice" onClick={onPractice} disabled={busy}>✊ PRATICAR · OFFLINE</button>
+          <button type="submit" className="button button-primary" disabled={busy}>{busy ? 'Conectando...' : intent === 'join' ? 'CONFIRMAR E ENTRAR →' : 'CONFIRMAR E CRIAR SALA →'}</button>
+        </div>
       </div>
     </form>
     <p className="character-disclaimer">Pré-alfa não comercial: algumas opções têm somente pose estática ou movimentos incompletos.
-    Personagens usam os mesmos atributos. Preferências salvas no seu navegador, sem banco de dados.
+    O treino acontece no navegador, sem conexão com o servidor. A escolha do personagem é salva localmente.
     Créditos de cada pacote disponíveis em "Ver origem dos sprites".</p>
   </main>;
 }

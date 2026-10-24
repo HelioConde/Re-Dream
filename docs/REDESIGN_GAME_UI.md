@@ -33,3 +33,14 @@ O servidor WebSocket e o gameplay foram preservados; nenhum armazenamento nem au
 ## Qualidade mínima
 
 Executar npm test e npm run build na raiz. Verificar navegação por teclado, layout móvel, fluxo Entrar → Seleção → Lobby → Iniciar, conexão com Render, jogo com dois clientes e estado local do perfil.
+
+## Luci e Modo Praticar
+
+- O protagonista oficial é **Luci**, classe **Fighter**, e foi adicionado como primeira opção da seleção.
+- O original permanece em **Anime_fantasy_action_RPG_playable.zip** na raiz do repo. A etapa CI "Prepare Luci animation spritesheets" extrai as animações Leste em spritesheets transparentes 128×128 e gera um manifesto, um preview do corpo e um preview da armadura.
+- **Não regeneramos quadros**: cada imagem vem diretamente da exportação existente. Os estados disponíveis são o corpo Idle com animações e a armadura Fighter_Iniciante_01 com apenas poses estáticas.
+- O Phaser usa animações de idle, corrida, pulo e quatro ataques originais do Luci; espelha Leste para Oeste.
+- O botão "Praticar · offline" abre uma arena local com um alvo regenerativo, hitpoints, contador de golpes e comandos idênticos aos do modo multiplayer. Não usa Render, banco de dados, ranking, dinheiro ou recompensas.
+- A física do treino foi recriada no cliente para testes; resultados do treino não são autoritativos e não afetam partidas.
+- Em Windows, para testar localmente, instale Pillow com pip e execute python scripts/import_luci_sprites.py antes de npm run dev; no GitHub Actions a importação ocorre automaticamente.
+- Animações equipadas e equipamentos modulares permanecem pendentes, não foram inventados ou substituídos por arte provisória.

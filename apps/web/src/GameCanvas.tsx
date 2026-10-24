@@ -5,6 +5,7 @@ import type { Control, Snapshot } from './protocol';
 import { LocalPredictor } from './prediction';
 import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
+import { LUCI_ANIMATION_KEYS, selectLuciAnimation, LuciComboTracker } from './luciAnimation';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -28,6 +29,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private lastInput = '';
       private predictor = new LocalPredictor();
       private attackPlayback = new AttackPlayback();
+      private luciCombos = new LuciComboTracker();
       private lastServerSnapshot: Snapshot | null = null;
       private labels = new Map<string, Phaser.GameObjects.Text>();
       private avatars = new Map<string, Phaser.GameObjects.Image>();
@@ -39,6 +41,11 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
 
       constructor() { super('dungeon'); }
       preload() {
+        for (const key of LUCI_ANIMATION_KEYS) {
+          this.load.spritesheet('luci_' + key,
+            import.meta.env.BASE_URL + 'sprites/luci/' + key + '.png',
+            { frameWidth: 128, frameHeight: 128 });
+        }
         this.load.spritesheet('hero-rose', import.meta.env.BASE_URL + 'sprites/rose-hero-real.webp', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('hero-sprout',import.meta.env.BASE_URL+'sprites/imported/sprout/sprout-character.png',{frameWidth:16,frameHeight:16});
         for(const id of prototypeAtlases) {
@@ -173,16 +180,31 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             freshSnapshot, player.hp > 0 && snapshot.status === 'playing', time,
           );
           const attacking = attackElapsed !== null;
-          const animation = selectSprite(
-            player.characterId, immediateFacing, moving,
-            attacking, isYou && input.skill, attackElapsed ?? time,
-          );
+          const comboStage = player.characterId === 'luci'
+            ? this.luciCombos.update(key, attackElapsed, time) : 1;
+          const animation = player.characterId === 'luci'
+            ? selectLuciAnimation({
+                facing: immediateFacing,
+                moving,
+                airborne: isYou ? !this.predictor.grounded :
+                  (player.y < 592 && Math.abs(player.y - 466) > 5 && Math.abs(player.y - 414) > 5),
+                falling: isYou ? this.predictor.vy >= 0 : false,
+                attacking,
+                skill: isYou && input.skill,
+                comboStage,
+                attackElapsed,
+                timeMs: time,
+              })
+            : selectSprite(
+                player.characterId, immediateFacing, moving,
+                attacking, isYou && input.skill, attackElapsed ?? time,
+              );
           const {texture,frame} = animation;
           let avatar = this.avatars.get(key);
           if (!avatar && this.textures.exists(texture)) {
             avatar = this.add.image(p.x, p.y, texture, frame)
               .setOrigin(.5, 1)
-              .setDisplaySize(108, 108)
+              .setDisplaySize(player.characterId === 'luci' ? 170 : 108, player.characterId === 'luci' ? 170 : 108)
               .setDepth(3);
             this.avatars.set(key, avatar);
           }
@@ -190,6 +212,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             if (avatar.texture.key !== texture) avatar.setTexture(texture, frame);
             avatar.setFrame(frame);
             avatar.setFlipX(animation.flipX);
+            avatar.setDisplaySize(player.characterId === 'luci' ? 170 : 108, player.characterId === 'luci' ? 170 : 108);
             // Tiny anticipation and recoil only for the static animal art.
             // No artificial animation frames are generated.
             const isCat = player.characterId === 'cat';
@@ -208,7 +231,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           // The Bunny already has authentic sword frames; don't overlay a
           // generic circle. Static animals receive a short directional claw
           // swipe instead of a misleading fake character animation.
-          if (attacking && player.characterId !== 'bunny') {
+          if (attacking && player.characterId !== 'bunny' && player.characterId !== 'luci') {
             this.drawSwipe(g, p.x, p.y, immediateFacing, attackElapsed! / BASIC_ATTACK_ANIM_MS,
               player.characterId === 'cat');
           }
@@ -233,6 +256,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             this.avatars.delete(key);
             this.remoteMotion.delete(key);
             this.attackPlayback.remove(key);
+            this.luciCombos.remove(key);
           }
         }
         for (const key of this.positions.keys()) {

@@ -232,3 +232,13 @@ body{background:#071326;color:#eef5ff}
   .rd-game-hud{left:4px;right:4px;top:4px;gap:5px}.rd-hud-player{padding:4px;gap:4px;width:45%}.rd-hud-face{width:25px;height:27px;font-size:14px}.rd-hud-info>strong{font-size:9px}.rd-hud-health{height:6px;margin-top:3px}.rd-hud-info small{font-size:8px}.rd-hud-objective{padding:4px 6px}.rd-hud-objective strong{font-size:9px}.rd-hud-objective span{font-size:8px}
 }
 @media(prefers-reduced-motion:reduce){.rd-action,.rd-world-pin-icon,.rd-hud-health span{transition:none}}
+
+/* Luci training entry and standalone offline arena. */
+.character-cta-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px}
+.button-practice{border-radius:5px;color:#11344d;background:linear-gradient(#9df5dd,#44c1a4);border:1px solid #b8ffe6;box-shadow:inset 0 1px #e7fff5,0 4px 11px #031b2988;font-weight:900}
+.button-practice:hover:not(:disabled){background:linear-gradient(#c5fff0,#74d9be)}
+.practice-page{min-height:calc(100vh - 160px)}
+.practice-hint{padding:19px 21px;margin-top:16px;background:linear-gradient(100deg,#21445b,#112e49);border:1px solid #80afc7;border-radius:7px;font-size:13px;line-height:1.7;color:#c5e5f6}
+.practice-hint strong{color:#f9dea9}
+.practice-stats{border-radius:5px}
+@media(max-width:700px){.character-cta-actions{width:100%;flex-direction:column;align-items:stretch}.character-cta-actions button{width:100%}.practice-page{padding:18px 9px 40px}.practice-page .session-actions{display:flex;flex-direction:column}.practice-page .session-top h1{font-size:29px}}
