@@ -45,7 +45,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           this.load.spritesheet(id,import.meta.env.BASE_URL+'sprites/prototype/'+id+'.png',{frameWidth:64,frameHeight:64});
         }
         for(const animal of animalIds) {
-          this.load.image('animal-'+animal,import.meta.env.BASE_URL+'sprites/imported/animals/'+animal+'.png');
+          // A static 32x32 animal still needs a numbered frame for setFrame(0).
+          this.load.spritesheet('animal-'+animal,import.meta.env.BASE_URL+'sprites/imported/animals/'+animal+'.png',{frameWidth:32,frameHeight:32});
         }
         // Author-provided GIF animations are packed into two real 8-frame directional strips.
         this.load.spritesheet('hero-left', import.meta.env.BASE_URL + 'sprites/imported/char/left.png', { frameWidth: 64, frameHeight: 64 });
