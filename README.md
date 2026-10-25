@@ -1,4 +1,31 @@
-# Re:Dream ✧
+# Re:Dream ✧ — O recomeço de um sonho
+
+**RPG de ação 2D cooperativo em desenvolvimento para navegador, com combate, salas online e progressão planejada.**
+
+[**Repositório**](https://github.com/HelioConde/Re-Dream) · [**Frontend no GitHub Pages**](https://helioconde.github.io/Re-Dream/)
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Phaser](https://img.shields.io/badge/Phaser-4-6554C0) ![Node.js](https://img.shields.io/badge/Node.js-WebSocket-339933?logo=nodedotjs&logoColor=white) ![Status](https://img.shields.io/badge/status-pré--alfa-64748b)
+
+## Visão rápida
+
+| Aspecto | Estado documentado |
+| --- | --- |
+| Gênero | RPG de ação e plataformas 2D |
+| Plataforma | Navegador, com controles de teclado e toque |
+| Sessões | Salas cooperativas de até quatro participantes |
+| Servidor | Node.js e WebSocket, com regras de combate no servidor |
+| Persistência | Preferências locais; sem contas ou progressão permanente no backend |
+| Maturidade | Pré-alfa; servidor precisa de hospedagem própria |
+
+**Teste local:** `npm install && npm run dev` (Node.js 22+). A interface inicia em `http://localhost:5173`.
+
+> **Importante:** o GitHub Pages publica apenas a interface estática; partidas online dependem do serviço WebSocket rodando separadamente. Este é um projeto autoral independente, sem vínculo com Grand Chase.
+
+### Navegação
+
+[Instalação completa](#executar-localmente) · [Controles e jogabilidade](#jogabilidade-implementada) · [Publicação](#publicação-no-github-pages) · [Limitações técnicas](#escalabilidade-e-limitações)
+
+---
 
 **O Recomeço de um Sonho** — projeto independente de RPG de ação 2D cooperativo para navegador. Esta é uma pré-alfa com universo próprio e gráficos temporários.
 
