@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import Phaser from 'phaser';
-import type { Control, PracticeInput, Snapshot } from './protocol';
+import type { Control, PracticeImpact, PracticeInput, Snapshot } from './protocol';
 import { LocalPredictor } from './prediction';
 import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
@@ -25,6 +25,10 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
     class Dungeon extends Phaser.Scene {
       private keys!: Record<string, Phaser.Input.Keyboard.Key>;
       private draw!: Phaser.GameObjects.Graphics;
+      private hitLayer!: Phaser.GameObjects.Graphics;
+      private lastImpactSequence = 0;
+      private impactBursts: Array<PracticeImpact & { startedAt: number }> = [];
+      private reducedMotion = false;
       private lastSent = 0;
       private lastFrame = 0;
       private lastInput = '';
@@ -65,6 +69,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         // The ZIP has no attack/death poses; do not invent or mislabel frames.
         this.cameras.main.setBackgroundColor('#101935');
         this.draw = this.add.graphics();
+        this.hitLayer = this.add.graphics().setDepth(8);
+        this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         this.keys = this.input.keyboard!.addKeys(
           'A,D,W,S,J,K,LEFT,RIGHT,UP,DOWN,SPACE,Z,X',
         ) as Record<string, Phaser.Input.Keyboard.Key>;
@@ -136,6 +142,12 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         }
         const freshSnapshot = snapshot !== this.lastServerSnapshot;
         this.lastServerSnapshot = snapshot;
+        if (practiceMode && snapshot.impact &&
+            snapshot.impact.sequence !== this.lastImpactSequence) {
+          this.lastImpactSequence = snapshot.impact.sequence;
+          this.spawnImpact(snapshot.impact, time);
+        }
+        this.renderImpactBursts(time);
         const seen = new Set<string>();
         for (const enemy of snapshot.enemies) {
           const key = 'enemy-' + enemy.id;
@@ -276,6 +288,55 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         }
         for (const key of this.positions.keys()) {
           if (!seen.has(key)) this.positions.delete(key);
+        }
+      }
+
+      private spawnImpact(impact: PracticeImpact, time: number) {
+        this.impactBursts.push({ ...impact, startedAt: time });
+        const skill = impact.kind === 'skill';
+        const label = this.add.text(impact.x + impact.direction * 12, impact.y - 20,
+          String(impact.damage), {
+            fontFamily: 'Arial, sans-serif',
+            fontSize: skill ? '34px' : '28px',
+            fontStyle: 'bold',
+            color: skill ? '#f3c8ff' : '#fff5c9',
+            stroke: '#1b2043', strokeThickness: 7,
+          }).setOrigin(.5).setDepth(10);
+        this.tweens.add({
+          targets: label,
+          y: label.y - (this.reducedMotion ? 14 : 62),
+          alpha: 0,
+          duration: this.reducedMotion ? 190 : 540,
+          ease: 'Cubic.easeOut',
+          onComplete: () => label.destroy(),
+        });
+        if (!this.reducedMotion) {
+          // Small camera feedback for an actual confirmed hit, never for a missed input.
+          this.cameras.main.shake(skill ? 105 : 58, skill ? 0.0019 : 0.0012, true);
+        }
+      }
+
+      private renderImpactBursts(now: number) {
+        const g = this.hitLayer;
+        g.clear();
+        this.impactBursts = this.impactBursts.filter(burst => now - burst.startedAt < 260);
+        if (this.reducedMotion) return;
+        for (const burst of this.impactBursts) {
+          const t = Math.min(1, (now - burst.startedAt) / 260);
+          const size = burst.kind === 'skill' ? 66 : 42;
+          const alpha = Math.max(0, 1 - t);
+          const color = burst.kind === 'skill' ? 0xd7a2ff : 0xffdfa0;
+          g.lineStyle(5 * (1 - t * 0.65), color, alpha * 0.9);
+          g.strokeCircle(burst.x, burst.y, 8 + size * t);
+          for (let i = 0; i < 8; i++) {
+            const angle = Math.PI * 2 * i / 8;
+            const dist = 12 + size * t;
+            g.lineStyle(3, 0xffffff, alpha * 0.8);
+            g.lineBetween(burst.x + Math.cos(angle) * (dist - 8),
+              burst.y + Math.sin(angle) * (dist - 8),
+              burst.x + Math.cos(angle) * dist,
+              burst.y + Math.sin(angle) * dist);
+          }
         }
       }
 
