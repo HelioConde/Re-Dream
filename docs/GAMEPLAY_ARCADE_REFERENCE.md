@@ -12,9 +12,11 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 - **J:** sequência de golpes com escala de dano e quatro estágios de animação. Manter J pressionado também funciona como opção acessível.
 - **Ataque no ar:** usa a animação real de ataque aéreo e acerta o alvo quando próximo.
 - **Ataque durante o dash:** utiliza a spritesheet real de dash attack do Luci.
-- **Z:** toque curto para golpe básico; segurar por 650 ms e soltar ativa a habilidade carregada se houver 35 MP.
+- **Z:** o primeiro golpe sai imediatamente ao pressionar; segurar por 650 ms e soltar adiciona a habilidade carregada se houver 35 MP. Soltar Z rapidamente não duplica o golpe.
 - **K/X:** habilidade instantânea se houver MP. MP inicial 40; acertos restauram MP.
-- O alvo fica parado, tem 260 HP e retorna após a derrota.
+- O alvo de treino mantém a colisão fixa, mas recua visualmente ao receber dano. Indicadores de dano e centelhas só aparecem em golpes confirmados, com efeitos reduzidos ao respeitar a preferência do sistema por menos movimento.
+- Golpes inseridos até 170 ms antes de ficarem disponíveis são armazenados em um pequeno buffer para evitar perder sequências rápidas.
+- O alvo tem 260 HP e retorna após a derrota.
 - Resultados e indicadores são locais; não há progressão permanente nem recompensas reais.
 
 ## Limites atuais
@@ -32,6 +34,7 @@ Próximas etapas, em ordem:
 
 1. Abrir /Re-Dream/#personagens, escolher Luci e clicar em **Praticar offline**.
 2. Apertar →, soltar, apertar → novamente rapidamente: o contador de dash deve aumentar.
+2a. Pressionar Z uma vez perto do alvo: o primeiro impacto deve ocorrer antes de soltar. Soltar rapidamente não deve gerar segundo golpe.
 3. Subir numa plataforma e apertar ↓: atravessar a plataforma sem atravessar o chão.
 4. Chegar perto do boneco e atacar 3-4 vezes: contador de combo e danos devem progredir.
 5. Pular perto do alvo e atacar: contador de ataques aéreos deve aumentar.
