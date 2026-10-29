@@ -180,6 +180,8 @@ test('only confirmed hits emit a unique impact event with accurate damage', () =
   arena.step(1 / 30);
   assert.equal(arena.snapshot().impact, undefined);
   arena.setInput(noInput);
+  // Wait until shortly before the basic attack recovery window ends.
+  for (let i = 0; i < 5; i++) arena.step(1 / 30);
   arena.player.x = 800;
   arena.setInput({ ...noInput, attack: true });
   for (let i = 0; i < 10; i++) arena.step(1 / 30);
