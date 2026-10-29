@@ -129,7 +129,8 @@ test('pausing clears charged input without triggering a hidden attack', () => {
   for (let i = 0; i < 30; i++) arena.step(1 / 30);
   arena.suspend();
   arena.step(1 / 30);
-  assert.equal(arena.stats.targetHp, 260);
+  // Initial Z keydown already landed one punch; pausing must not fire the charge.
+  assert.equal(arena.stats.targetHp, 236);
   assert.equal(arena.stats.chargePercent, 0);
 });
 
@@ -184,7 +185,9 @@ test('only confirmed hits emit a unique impact event with accurate damage', () =
   for (let i = 0; i < 5; i++) arena.step(1 / 30);
   arena.player.x = 800;
   arena.setInput({ ...noInput, attack: true });
-  for (let i = 0; i < 10; i++) arena.step(1 / 30);
+  arena.step(1 / 30);
+  arena.setInput(noInput);
+  for (let i = 0; i < 9; i++) arena.step(1 / 30);
   const impact = arena.snapshot().impact;
   assert.ok(impact);
   assert.equal(impact.sequence, 1);
