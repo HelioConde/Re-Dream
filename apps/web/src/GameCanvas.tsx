@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import Phaser from 'phaser';
-import type { Control, Snapshot } from './protocol';
+import type { Control, PracticeInput, Snapshot } from './protocol';
 import { LocalPredictor } from './prediction';
 import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
@@ -11,10 +11,11 @@ type Props = {
   snapshotRef: RefObject<Snapshot | null>;
   playerId: string;
   sendInput: (input: Control) => void;
-  mobileRef: RefObject<Control>;
+  mobileRef: RefObject<PracticeInput>;
+  practiceMode?: boolean;
 };
 
-export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef }: Props) {
+export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef, practiceMode = false }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const sendRef = useRef(sendInput);
   sendRef.current = sendInput;
@@ -65,20 +66,24 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         this.cameras.main.setBackgroundColor('#101935');
         this.draw = this.add.graphics();
         this.keys = this.input.keyboard!.addKeys(
-          'A,D,W,J,K,LEFT,RIGHT,UP,SPACE,Z,X',
+          'A,D,W,S,J,K,LEFT,RIGHT,UP,DOWN,SPACE,Z,X',
         ) as Record<string, Phaser.Input.Keyboard.Key>;
-        this.input.keyboard!.addCapture(['SPACE', 'UP', 'LEFT', 'RIGHT']);
+        this.input.keyboard!.addCapture(['SPACE', 'UP', 'DOWN', 'LEFT', 'RIGHT']);
       }
 
       update(time: number) {
         const keys = this.keys;
         const mobile = mobileRef.current;
-        const input: Control = {
+        const input: PracticeInput = {
           left: keys.A.isDown || keys.LEFT.isDown || mobile.left,
           right: keys.D.isDown || keys.RIGHT.isDown || mobile.right,
           jump: keys.W.isDown || keys.UP.isDown || keys.SPACE.isDown || mobile.jump,
-          attack: keys.J.isDown || keys.Z.isDown || mobile.attack,
+          attack: keys.J.isDown || (!practiceMode && keys.Z.isDown) || mobile.attack,
           skill: keys.K.isDown || keys.X.isDown || mobile.skill,
+          ...(practiceMode ? {
+            down: keys.S.isDown || keys.DOWN.isDown || mobile.down === true,
+            charge: keys.Z.isDown,
+          } : {}),
         };
         const inputKey = Object.values(input).map(value => Number(value)).join('');
         if (inputKey !== this.lastInput || time - this.lastSent >= 50) {
@@ -125,7 +130,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         const snapshot = snapshotRef.current;
         if (!snapshot) return;
         const myself = snapshot.players.find(p => p.id === playerId);
-        if (myself) {
+        if (myself && !practiceMode) {
           if (snapshot !== this.lastServerSnapshot) this.predictor.sync(myself.x, myself.y, input);
           if (myself.hp > 0) this.predictor.advance(dt, input);
         }
@@ -156,9 +161,11 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           const key = 'player-' + player.id;
           seen.add(key);
           const isYou = player.id === playerId;
-          const p = isYou && this.predictor.initialized
-            ? { x: this.predictor.x, y: this.predictor.y }
-            : this.smooth(key, player.x, player.y);
+          const p = isYou && practiceMode
+            ? { x: player.x, y: player.y }
+            : isYou && this.predictor.initialized
+              ? { x: this.predictor.x, y: this.predictor.y }
+              : this.smooth(key, player.x, player.y);
           // Use the exact original walk-left and walk-right frame sequences.
           // No sprite mirroring: both directions exist in the supplied ZIP.
           if (freshSnapshot && !isYou) {
@@ -167,30 +174,37 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             this.remoteMotion.set(key, { x: player.x, until: moved ? time + 220 : time - 1 });
           }
           const moving = isYou
-            ? input.left !== input.right
+            ? practiceMode ? Math.abs(player.velocityX ?? 0) > 10 : input.left !== input.right
             : time < (this.remoteMotion.get(key)?.until ?? 0);
-          const immediateFacing = isYou
+          const immediateFacing = isYou && !practiceMode
             ? (input.left && !input.right ? -1 : input.right && !input.left ? 1 : player.facing)
             : player.facing;
           // Immediate cosmetic response on J, but hit registration stays on the server.
           // Remote strikes come from the server's attack flash; a held J cannot
           // restart the animation on every frame.
-          const attackElapsed = this.attackPlayback.update(
-            key, isYou, isYou && input.attack, player.flash,
-            freshSnapshot, player.hp > 0 && snapshot.status === 'playing', time,
-          );
+          const attackElapsed = isYou && practiceMode
+            ? (player.combatAction === 'attack' || player.combatAction === 'air_attack' || player.combatAction === 'dash_attack'
+                ? player.actionElapsedMs ?? null : null)
+            : this.attackPlayback.update(
+                key, isYou, isYou && input.attack, player.flash,
+                freshSnapshot, player.hp > 0 && snapshot.status === 'playing', time,
+              );
           const attacking = attackElapsed !== null;
-          const comboStage = player.characterId === 'luci'
-            ? this.luciCombos.update(key, attackElapsed, time) : 1;
+          const comboStage = isYou && practiceMode
+            ? player.comboStage ?? 1
+            : player.characterId === 'luci'
+              ? this.luciCombos.update(key, attackElapsed, time) : 1;
           const animation = player.characterId === 'luci'
             ? selectLuciAnimation({
                 facing: immediateFacing,
                 moving,
-                airborne: isYou ? !this.predictor.grounded :
+                airborne: isYou && practiceMode ? Boolean(player.airborne) : isYou ? !this.predictor.grounded :
                   (player.y < 592 && Math.abs(player.y - 466) > 5 && Math.abs(player.y - 414) > 5),
-                falling: isYou ? this.predictor.vy >= 0 : false,
+                falling: isYou && practiceMode ? Boolean(player.falling) : isYou ? this.predictor.vy >= 0 : false,
                 attacking,
-                skill: isYou && input.skill,
+                skill: isYou && practiceMode ? player.combatAction === 'skill' : isYou && input.skill,
+                dashing: isYou && practiceMode && Boolean(player.dashing),
+                dashAttacking: isYou && practiceMode && player.combatAction === 'dash_attack',
                 comboStage,
                 attackElapsed,
                 timeMs: time,
@@ -313,7 +327,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       scene: [Dungeon],
     });
     return () => { game.destroy(true); };
-  }, [mobileRef, playerId, snapshotRef]);
+  }, [mobileRef, playerId, snapshotRef, practiceMode]);
 
-  return <div ref={host} className="game-canvas" role="img" aria-label="Masmorra cooperativa 2D" />;
+  return <div ref={host} className="game-canvas" role="img" aria-label={practiceMode ? 'Arena de treino 2D com plataformas' : 'Masmorra cooperativa 2D'} />;
 }
