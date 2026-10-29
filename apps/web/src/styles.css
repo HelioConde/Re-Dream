@@ -120,3 +120,12 @@
 }
 .character-stage-art{overflow:hidden}
 .character-credit{line-height:1.8}
+
+/* Practice: readable pause state and touch-friendly actions without disturbing the canvas. */
+.practice-pause-overlay{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:22px;background:rgba(8,15,34,.88);backdrop-filter:blur(8px)}
+.practice-pause-overlay strong{font:800 clamp(26px,4.5vw,44px)/1.1 Outfit,system-ui,sans-serif;color:#f2eaff}
+.practice-pause-overlay p{max-width:420px;margin:0 0 12px;color:#bbc5dd;line-height:1.6}
+.practice-page .session-actions{flex-wrap:wrap}
+.practice-page .touch-key:disabled{opacity:.42;touch-action:auto}
+@media(max-width:620px){.practice-page .session-actions .button{flex:1 1 125px;padding:12px 10px}.practice-pause-overlay{gap:7px}.practice-pause-overlay p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.practice-pause-overlay{backdrop-filter:none}}
