@@ -258,6 +258,7 @@ export class PracticeArena {
     this.impactSequence = 0; this.lastImpactAt = Number.NEGATIVE_INFINITY;
     this.lastImpactDamage = 0; this.lastImpactDirection = 1; this.lastImpactKind = 'basic';
     this.lastSuccessfulHit = Number.NEGATIVE_INFINITY;
+    this.attackBufferUntil = Number.NEGATIVE_INFINITY;
     this.lastLeftTap = Number.NEGATIVE_INFINITY;
     this.lastRightTap = Number.NEGATIVE_INFINITY;
     this.lastGroundedAt = 0;
