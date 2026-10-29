@@ -35,6 +35,8 @@ export type LuciVisualState = {
   falling: boolean;
   attacking: boolean;
   skill: boolean;
+  dashing?: boolean;
+  dashAttacking?: boolean;
   comboStage: number;
   attackElapsed: number | null;
   timeMs: number;
@@ -47,15 +49,18 @@ export type LuciVisualState = {
 export function selectLuciAnimation(s: LuciVisualState): SpriteChoice {
   let action: LuciAction = 'idle_east';
   let frame: number;
-  if (s.attacking && s.attackElapsed !== null) {
-    action = s.airborne ? 'attack_air_east' :
+  if (s.skill) {
+    action = 'skill_2_east';
+    frame = Math.floor(s.timeMs * 16 / 1000) % LUCI_FRAME_COUNTS[action];
+  } else if (s.attacking && s.attackElapsed !== null) {
+    action = s.airborne ? 'attack_air_east' : s.dashAttacking ? 'dash_attack_east' :
       ('attack_' + Math.max(1, Math.min(4, s.comboStage || 1)) + '_east') as LuciAction;
     const count = LUCI_FRAME_COUNTS[action];
     frame = Math.max(0, Math.min(count - 1,
       Math.floor(s.attackElapsed / BASIC_ATTACK_ANIM_MS * count)));
   } else {
-    if (s.skill) action = 'skill_2_east';
-    else if (s.airborne) action = s.falling ? 'jump_fall_east' : 'jump_air_east';
+    if (s.airborne) action = s.falling ? 'jump_fall_east' : 'jump_air_east';
+    else if (s.dashing) action = 'dash_east';
     else if (s.moving) action = 'run_east';
     const fps = action === 'run_east' ? 12 : action === 'idle_east' ? 9 : 12;
     frame = Math.floor(s.timeMs * fps / 1000) % LUCI_FRAME_COUNTS[action];
