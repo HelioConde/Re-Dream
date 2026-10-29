@@ -116,7 +116,8 @@ test('short Z taps attack; holding Z spends MP to perform a charged skill', () =
   assert.equal(long.stats.chargePercent, 100);
   long.setInput(noInput);
   long.step(1 / 30);
-  assert.equal(long.stats.targetHp, 195);
+  // Z makes one immediate punch and then a charged special on release.
+  assert.equal(long.stats.targetHp, 171);
   assert.equal(long.snapshot().players[0].combatAction, 'skill');
   assert.ok(long.stats.mp < 40);
 });
@@ -130,4 +131,81 @@ test('pausing clears charged input without triggering a hidden attack', () => {
   arena.step(1 / 30);
   assert.equal(arena.stats.targetHp, 260);
   assert.equal(arena.stats.chargePercent, 0);
+});
+
+
+test('Z responds on keydown without a delayed extra punch on quick release', () => {
+  const arena = new PracticeArena();
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, charge: true });
+  arena.step(1 / 30);
+  assert.equal(arena.stats.targetHp, 236);
+  assert.equal(arena.snapshot().players[0].combatAction, 'attack');
+  arena.setInput(noInput);
+  arena.step(1 / 30);
+  assert.equal(arena.stats.targetHp, 236);
+});
+
+test('holding Z only produces one basic attack until charged skill release', () => {
+  const arena = new PracticeArena();
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, charge: true });
+  for (let i = 0; i < 24; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.targetHp, 236);
+  arena.setInput(noInput);
+  arena.step(1 / 30);
+  assert.equal(arena.stats.targetHp, 171);
+});
+
+test('a quick J tap during recovery is buffered into the next combo strike', () => {
+  const arena = new PracticeArena();
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1 / 30);
+  arena.setInput(noInput);
+  // Strike cooldown: 0.25 seconds. Queue second tap at ~0.2 seconds.
+  for (let i = 0; i < 5; i++) arena.step(1 / 30);
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1 / 30);
+  arena.setInput(noInput);
+  assert.equal(arena.stats.targetHp, 236);
+  for (let i = 0; i < 4; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.targetHp, 207);
+  assert.equal(arena.stats.combo, 2);
+});
+
+test('only confirmed hits emit a unique impact event with accurate damage', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1 / 30);
+  assert.equal(arena.snapshot().impact, undefined);
+  arena.setInput(noInput);
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, attack: true });
+  for (let i = 0; i < 10; i++) arena.step(1 / 30);
+  const impact = arena.snapshot().impact;
+  assert.ok(impact);
+  assert.equal(impact.sequence, 1);
+  assert.equal(impact.damage, 24);
+  assert.equal(impact.kind, 'basic');
+  assert.equal(impact.x, 875);
+  assert.ok(arena.snapshot().enemies[0].x > 875);
+  arena.step(1 / 30);
+  assert.equal(arena.snapshot().impact?.sequence, impact.sequence);
+});
+
+test('reset and pause discard buffered attacks and reset impact ids', () => {
+  const arena = new PracticeArena();
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1 / 30);
+  assert.equal(arena.snapshot().impact?.sequence, 1);
+  arena.setInput(noInput);
+  arena.setInput({ ...noInput, attack: true });
+  arena.suspend();
+  for (let i = 0; i < 12; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.strikes, 1);
+  arena.reset();
+  assert.equal(arena.snapshot().impact, undefined);
+  assert.equal(arena.stats.strikes, 0);
 });
