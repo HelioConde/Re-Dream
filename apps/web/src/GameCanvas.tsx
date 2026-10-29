@@ -207,7 +207,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
                 dashAttacking: isYou && practiceMode && player.combatAction === 'dash_attack',
                 comboStage,
                 attackElapsed,
-                timeMs: time,
+                timeMs: isYou && practiceMode && player.combatAction === 'skill'
+                  ? player.actionElapsedMs ?? 0 : time,
               })
             : selectSprite(
                 player.characterId, immediateFacing, moving,
