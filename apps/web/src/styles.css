@@ -129,3 +129,18 @@
 .practice-page .touch-key:disabled{opacity:.42;touch-action:auto}
 @media(max-width:620px){.practice-page .session-actions .button{flex:1 1 125px;padding:12px 10px}.practice-pause-overlay{gap:7px}.practice-pause-overlay p{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.practice-pause-overlay{backdrop-filter:none}}
+
+/* Re:Dream arcade training: original UI tokens and readable meters on mobile. */
+.practice-combat-meters{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 2px 4px}
+.practice-meter{flex:1 1 155px;max-width:300px;min-width:135px}
+.practice-meter-label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;font-weight:800;color:#cdd4ed;margin-bottom:7px}
+.practice-meter-label strong{color:#f4edff;font-variant-numeric:tabular-nums}
+.practice-meter-track{height:9px;border:1px solid #7ba5e960;background:#121a35;border-radius:999px;overflow:hidden}
+.practice-meter-track>span{display:block;height:100%;background:linear-gradient(90deg,#588ee8,#8dcaff);border-radius:999px;transition:width .1s linear}
+.practice-meter-track.charge>span{background:linear-gradient(90deg,#9863ec,#e8b7ff)}
+.practice-combo-label{display:block;min-width:128px;text-align:right;font:800 clamp(12px,1.5vw,17px) Outfit,system-ui,sans-serif;color:#f2d7a5;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.practice-page .touch-controls{flex-wrap:wrap}
+.practice-page .touch-group{flex-wrap:wrap}
+.practice-page .touch-key{min-width:48px}
+@media(max-width:620px){.practice-combat-meters{gap:10px}.practice-combo-label{text-align:left;flex-basis:100%}.practice-page .touch-controls{gap:10px}}
+@media(prefers-reduced-motion:reduce){.practice-meter-track>span{transition:none}}

@@ -4,9 +4,16 @@ export const DEFAULT_CHARACTER: CharacterId = 'luci';
 export const isCharacterId = (value: unknown): value is CharacterId =>
   typeof value === 'string' && (CHARACTER_IDS as readonly string[]).includes(value);
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
+// Extra commands are offline-only until the multiplayer server gains matching rules.
+export type PracticeInput = Control & { down?: boolean; charge?: boolean };
 export type Player = {
   id: string; name: string; characterId: CharacterId; x: number; y: number; hp: number; score: number;
   facing: number; flash: number; color: number;
+  // Optional offline training metadata; multiplayer snapshots stay compatible.
+  comboStage?: number; airborne?: boolean; falling?: boolean;
+  dashing?: boolean; velocityX?: number;
+  combatAction?: 'attack' | 'air_attack' | 'dash_attack' | 'skill';
+  actionElapsedMs?: number;
 };
 export type Enemy = { id: number; x: number; y: number; hp: number; maxHp: number; boss: boolean; flash: number };
 export type Snapshot = {

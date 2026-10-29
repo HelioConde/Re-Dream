@@ -25,3 +25,14 @@ test('Luci combo tracker chains only distinct attacks and resets after a pause',
   combo.update('one', null, 500);
   assert.equal(combo.update('one', 0, 1900), 1);
 });
+
+test('Luci selects original dash, dash strike and charged skill sprites', () => {
+  assert.equal(selectLuciAnimation({ ...base, dashing: true }).texture, 'luci_dash_east');
+  assert.equal(selectLuciAnimation({
+    ...base, dashing: true, dashAttacking: true,
+    attacking: true, attackElapsed: 100,
+  }).texture, 'luci_dash_attack_east');
+  assert.equal(selectLuciAnimation({
+    ...base, skill: true, attacking: true, attackElapsed: 100,
+  }).texture, 'luci_skill_2_east');
+});
