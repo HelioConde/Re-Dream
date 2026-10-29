@@ -5,14 +5,36 @@ import { EMPTY_CONTROLS, type CharacterId, type Control, type Snapshot } from '.
 import { characterName } from './characters';
 
 type Props = { characterId: CharacterId; nickname: string; onExit: () => void };
+const touchLabels: Record<keyof Control, string> = {
+  left: 'Mover para a esquerda', right: 'Mover para a direita',
+  jump: 'Pular', attack: 'Atacar', skill: 'Usar habilidade',
+};
 export default function PracticeMode({ characterId, nickname, onExit }: Props) {
   const arenaRef = useRef<PracticeArena | null>(null);
   if (arenaRef.current === null) arenaRef.current = new PracticeArena(characterId, nickname || characterName(characterId));
   const arena = arenaRef.current;
   const snapshotRef = useRef<Snapshot | null>(arena.snapshot());
   const mobileRef = useRef<Control>({ ...EMPTY_CONTROLS });
+  const pausedRef = useRef(false);
+  const [paused, setPaused] = useState(false);
   const [stats, setStats] = useState<TrainingStats>({ ...arena.stats });
-  const sendInput = useCallback((input: Control) => { arena.setInput(input); }, [arena]);
+  const sendInput = useCallback((input: Control) => {
+    if (!pausedRef.current) arena.setInput(input);
+  }, [arena]);
+  const pauseTraining = useCallback(() => {
+    pausedRef.current = true;
+    arena.setInput(EMPTY_CONTROLS);
+    mobileRef.current = { ...EMPTY_CONTROLS };
+    setPaused(true);
+  }, [arena]);
+  const resumeTraining = () => {
+    pausedRef.current = false;
+    setPaused(false);
+  };
+  const togglePause = () => {
+    if (pausedRef.current) resumeTraining();
+    else pauseTraining();
+  };
 
   useEffect(() => {
     // Standalone fixed-step local simulation. No socket, login or database.
@@ -23,6 +45,12 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     let frameId = 0;
     const frame = (time: number) => {
       if (!lastTime) lastTime = time;
+      if (pausedRef.current || document.hidden) {
+        lastTime = time;
+        accumulator = 0;
+        frameId = requestAnimationFrame(frame);
+        return;
+      }
       accumulator += Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
       for (let steps = 0; accumulator >= 1 / 30 && steps < 4; steps++) {
@@ -36,14 +64,24 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       }
       frameId = requestAnimationFrame(frame);
     };
+    const onVisibilityChange = () => { if (document.hidden) pauseTraining(); };
+    // On tab switches or lost focus, avoid held attacks and movement continuing.
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('blur', pauseTraining);
     frameId = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(frameId); };
-  }, [arena]);
+    return () => {
+      cancelAnimationFrame(frameId);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('blur', pauseTraining);
+    };
+  }, [arena, pauseTraining]);
 
   const touch = (key: keyof Control, active: boolean) => {
+    if (pausedRef.current) return;
     mobileRef.current = { ...mobileRef.current, [key]: active };
   };
   const reset = () => {
+    mobileRef.current = { ...EMPTY_CONTROLS };
     arena.reset();
     setStats({ ...arena.stats });
     snapshotRef.current = arena.snapshot();
@@ -54,6 +92,9 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       <div><span className="eyebrow">✦ ÁREA DE TREINAMENTO · OFFLINE</span><h1>Campo de Prática</h1>
         <p>{characterName(characterId)} · Teste movimentação, saltos, ataques e habilidades sem entrar numa sala.</p></div>
       <div className="session-actions">
+        <button type="button" className="button button-outline" onClick={togglePause} aria-pressed={paused}>
+          {paused ? '▶ Continuar' : 'Ⅱ Pausar'}
+        </button>
         <button type="button" className="button button-outline" onClick={reset}>↻ Reiniciar treino</button>
         <button type="button" className="button button-ghost" onClick={onExit}>← Seleção</button>
       </div>
@@ -68,6 +109,12 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
           <span>HP {stats.targetHp}/260 · derrotados {stats.defeated}</span></div>
       </div>
       <GameCanvas snapshotRef={snapshotRef} playerId={arena.playerId} sendInput={sendInput} mobileRef={mobileRef}/>
+      {paused && <div className="practice-pause-overlay" role="status" aria-live="polite">
+        <span className="eyebrow">✦ TREINAMENTO OFFLINE</span>
+        <strong>Treino pausado</strong>
+        <p>Seus resultados continuam aqui. Retome quando estiver pronto.</p>
+        <button type="button" className="button button-primary" onClick={resumeTraining}>▶ Continuar treino</button>
+      </div>}
     </section>
     <div className="game-bottom practice-stats">
       <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span></div>
@@ -76,14 +123,14 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     <div className="touch-controls" aria-label="Controles de treino para dispositivos móveis">
       <div className="touch-group">
         {([['left','◀'],['right','▶'],['jump','↑']] as const).map(([key,label]) =>
-          <button key={key} type="button" className="touch-key" aria-label={key}
+          <button key={key} type="button" className="touch-key" aria-label={touchLabels[key]} disabled={paused}
             onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);touch(key,true);}}
             onPointerUp={()=>touch(key,false)} onPointerCancel={()=>touch(key,false)}
             onLostPointerCapture={()=>touch(key,false)}>{label}</button>)}
       </div>
       <div className="touch-group">
         {([['attack','✊'],['skill','✧']] as const).map(([key,label]) =>
-          <button key={key} type="button" className="touch-key touch-attack" aria-label={key}
+          <button key={key} type="button" className="touch-key touch-attack" aria-label={touchLabels[key]} disabled={paused}
             onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);touch(key,true);}}
             onPointerUp={()=>touch(key,false)} onPointerCancel={()=>touch(key,false)}
             onLostPointerCapture={()=>touch(key,false)}>{label}</button>)}

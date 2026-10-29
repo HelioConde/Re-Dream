@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import GameCanvas from './GameCanvas';
 import PracticeMode from './PracticeMode';
+import { resolveStandaloneRoute } from './routeState';
 import AdventureHub from './AdventureHub';
 import CharacterSelect from './CharacterSelect';
 import { CHARACTERS, characterName, getCharacter } from './characters';
@@ -23,7 +24,9 @@ export default function App() {
     () => typeof window !== 'undefined' && window.location.hash === '#personagens' ? 'create' : null,
   );
   const [roomInput, setRoomInput] = useState('');
-  const [practiceActive, setPracticeActive] = useState(false);
+  const [practiceActive, setPracticeActive] = useState(
+    () => typeof window !== 'undefined' && resolveStandaloneRoute(window.location.hash) === 'practice',
+  );
   const [connection, setConnection] = useState<Connection>('idle');
   const [error, setError] = useState('');
   const [room, setRoom] = useState('');
@@ -79,7 +82,9 @@ export default function App() {
   useEffect(() => {
     const onHashChange = () => {
       if (room) return;
-      if (window.location.hash === '#personagens') {
+      const route = resolveStandaloneRoute(window.location.hash);
+      setPracticeActive(route === 'practice');
+      if (route === 'characters') {
         setSelectionIntent(previous => previous ?? 'create');
       } else {
         setSelectionIntent(null);
