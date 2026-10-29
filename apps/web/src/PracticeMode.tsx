@@ -77,7 +77,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     };
   }, [arena, pauseTraining]);
 
-  const touch = (key: keyof Control, active: boolean) => {
+  const touch = (key: keyof PracticeInput, active: boolean) => {
     if (pausedRef.current) return;
     mobileRef.current = { ...mobileRef.current, [key]: active };
   };
