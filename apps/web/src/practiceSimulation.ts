@@ -211,6 +211,16 @@ export class PracticeArena {
     }
   }
 
+  suspend() {
+    // Pausing must never cast a charged skill as a side effect of releasing keys.
+    this.controls = { ...EMPTY_CONTROLS };
+    this.pendingChargeRelease = null;
+    this.stats.chargePercent = 0;
+    this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
+    this.dashUntil = 0;
+    this.player.vx = 0;
+  }
+
   reset() {
     Object.assign(this.player, {
       x: 180, y: FLOOR, vy: 0, vx: 0, grounded: true, facing: 1,
