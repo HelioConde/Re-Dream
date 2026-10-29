@@ -1,20 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import GameCanvas from './GameCanvas';
 import { PracticeArena, type TrainingStats } from './practiceSimulation';
-import { EMPTY_CONTROLS, type CharacterId, type Control, type Snapshot } from './protocol';
+import { EMPTY_CONTROLS, type CharacterId, type Control, type PracticeInput, type Snapshot } from './protocol';
 import { characterName } from './characters';
 
 type Props = { characterId: CharacterId; nickname: string; onExit: () => void };
-const touchLabels: Record<keyof Control, string> = {
+const touchLabels: Record<'left'|'right'|'jump'|'down'|'attack'|'skill', string> = {
   left: 'Mover para a esquerda', right: 'Mover para a direita',
-  jump: 'Pular', attack: 'Atacar', skill: 'Usar habilidade',
+  jump: 'Pular', down: 'Descer da plataforma',
+  attack: 'Atacar', skill: 'Usar habilidade',
 };
 export default function PracticeMode({ characterId, nickname, onExit }: Props) {
   const arenaRef = useRef<PracticeArena | null>(null);
   if (arenaRef.current === null) arenaRef.current = new PracticeArena(characterId, nickname || characterName(characterId));
   const arena = arenaRef.current;
   const snapshotRef = useRef<Snapshot | null>(arena.snapshot());
-  const mobileRef = useRef<Control>({ ...EMPTY_CONTROLS });
+  const mobileRef = useRef<PracticeInput>({ ...EMPTY_CONTROLS });
   const pausedRef = useRef(false);
   const [paused, setPaused] = useState(false);
   const [stats, setStats] = useState<TrainingStats>({ ...arena.stats });
@@ -108,7 +109,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
         <div className="rd-hud-objective"><strong>✦ Alvo de treino</strong>
           <span>HP {stats.targetHp}/260 · derrotados {stats.defeated}</span></div>
       </div>
-      <GameCanvas snapshotRef={snapshotRef} playerId={arena.playerId} sendInput={sendInput} mobileRef={mobileRef}/>
+      <GameCanvas snapshotRef={snapshotRef} playerId={arena.playerId} sendInput={sendInput} mobileRef={mobileRef} practiceMode/>
       {paused && <div className="practice-pause-overlay" role="status" aria-live="polite">
         <span className="eyebrow">✦ TREINAMENTO OFFLINE</span>
         <strong>Treino pausado</strong>
@@ -117,12 +118,23 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       </div>}
     </section>
     <div className="game-bottom practice-stats">
-      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span></div>
-      <div className="controls-legend"><span>A / D mover</span><span>W / Espaço pular</span><span>J atacar</span><span>K especial</span></div>
+      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span></div>
+      <div className="practice-combat-meters" aria-label="Indicadores de combate">
+        <div className="practice-meter">
+          <div className="practice-meter-label"><span>✦ MP</span><strong>{stats.mp}/100</strong></div>
+          <div className="practice-meter-track"><span style={{width: stats.mp+'%'}}/></div>
+        </div>
+        <div className="practice-meter">
+          <div className="practice-meter-label"><span>⚡ Carga Z</span><strong>{stats.chargePercent}%</strong></div>
+          <div className="practice-meter-track charge"><span style={{width: stats.chargePercent+'%'}}/></div>
+        </div>
+        <strong className="practice-combo-label" aria-live="off">{stats.combo > 1 ? stats.combo+' HIT COMBO' : 'COMBO · '+stats.bestCombo+' recorde'}</strong>
+      </div>
+      <div className="controls-legend"><span>← → / A D mover · toque duplo: dash</span><span>↑ / W pular</span><span>↓ / S descer plataforma</span><span>J: combo · Z: segure para carregar</span><span>K / X: habilidade</span></div>
     </div>
     <div className="touch-controls" aria-label="Controles de treino para dispositivos móveis">
       <div className="touch-group">
-        {([['left','◀'],['right','▶'],['jump','↑']] as const).map(([key,label]) =>
+        {([['left','◀'],['right','▶'],['jump','↑'],['down','↓']] as const).map(([key,label]) =>
           <button key={key} type="button" className="touch-key" aria-label={touchLabels[key]} disabled={paused}
             onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);touch(key,true);}}
             onPointerUp={()=>touch(key,false)} onPointerCancel={()=>touch(key,false)}
@@ -136,7 +148,8 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
             onLostPointerCapture={()=>touch(key,false)}>{label}</button>)}
       </div>
     </div>
-    <aside className="practice-hint"><strong>Treino livre:</strong> aproxime-se do alvo, ataque com J ou use K.
-      O boneco não causa dano e reaparece depois de derrotado. Este modo não exige servidor e não salva recompensas.</aside>
+    <aside className="practice-hint"><strong>Treino estilo arcade:</strong> aperte duas vezes a mesma direção para dar dash, combine golpes com J e ataque no ar.
+      Toque ↓ sobre uma plataforma para atravessá-la. Um toque curto em Z ataca; segure Z e solte para usar uma habilidade quando houver MP.
+      K ou X também ativa a habilidade. O boneco reaparece após ser derrotado. Sem servidor ou recompensas online.</aside>
   </main>;
 }
