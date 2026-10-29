@@ -24,7 +24,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
   }, [arena]);
   const pauseTraining = useCallback(() => {
     pausedRef.current = true;
-    arena.setInput(EMPTY_CONTROLS);
+    arena.suspend();
     mobileRef.current = { ...EMPTY_CONTROLS };
     setPaused(true);
   }, [arena]);
