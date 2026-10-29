@@ -10,6 +10,8 @@ const DASH_SPEED = 685;
 const DASH_DURATION = 0.24;
 const DOUBLE_TAP_WINDOW = 0.29;
 const COMBO_WINDOW = 1.05;
+// Accept fast button presses shortly before a strike becomes available.
+const ATTACK_BUFFER_WINDOW = 0.17;
 const MP_SKILL_COST = 35;
 
 type CombatAction = 'attack' | 'air_attack' | 'dash_attack' | 'skill';
@@ -44,6 +46,12 @@ export class PracticeArena {
   private now = 0;
   private nextAttack = 0;
   private nextSkill = 0;
+  private attackBufferUntil = Number.NEGATIVE_INFINITY;
+  private impactSequence = 0;
+  private lastImpactAt = Number.NEGATIVE_INFINITY;
+  private lastImpactDamage = 0;
+  private lastImpactDirection = 1;
+  private lastImpactKind: 'basic' | 'air' | 'dash' | 'skill' = 'basic';
   private lastSuccessfulHit = Number.NEGATIVE_INFINITY;
   private lastLeftTap = Number.NEGATIVE_INFINITY;
   private lastRightTap = Number.NEGATIVE_INFINITY;
@@ -73,6 +81,11 @@ export class PracticeArena {
     if (next.left && !this.controls.left) this.tapDirection(-1);
     if (next.right && !this.controls.right) this.tapDirection(1);
     if (next.jump && !this.controls.jump) this.jumpQueuedUntil = this.now + 0.12;
+    // An initial Z press produces an immediate basic attack. Holding Z still
+    // charges the special; releasing it no longer repeats the initial punch.
+    if ((next.attack && !this.controls.attack) || (next.charge && !this.controls.charge)) {
+      this.attackBufferUntil = this.now + ATTACK_BUFFER_WINDOW;
+    }
     if (next.down && !this.controls.down && this.player.grounded && this.player.y < FLOOR - 5) {
       // Pass through one-way platforms, never the solid ground.
       this.dropUntil = this.now + 0.26;
@@ -152,22 +165,24 @@ export class PracticeArena {
       const held = this.pendingChargeRelease;
       this.pendingChargeRelease = null;
       if (held >= 0.65 && this.stats.mp >= MP_SKILL_COST) this.useSkill();
-      else this.useBasicAttack();
     }
-    // J and the mobile fist button repeat for accessibility; quick taps chain naturally.
-    if (this.controls.attack) this.useBasicAttack();
     if (this.controls.skill) this.useSkill();
+    // J can be held to repeat for accessibility; a fast tap is buffered.
+    // Holding Z charges without auto-repeating basic strikes.
+    if ((this.controls.attack || this.now <= this.attackBufferUntil) &&
+        this.useBasicAttack()) this.attackBufferUntil = Number.NEGATIVE_INFINITY;
   }
 
-  private useBasicAttack() {
-    if (this.now < this.nextAttack) return;
+  private useBasicAttack(): boolean {
+    if (this.now < this.nextAttack) return false;
     const p = this.player;
     const airborne = !p.grounded;
     const dashAttack = this.now < this.dashUntil && !airborne;
     const chain = this.now - this.lastSuccessfulHit <= COMBO_WINDOW ? Math.min(4, p.comboStage + 1) : 1;
     const damage = dashAttack ? 36 : airborne ? 30 : [24, 29, 35, 44][chain - 1];
     const range = dashAttack ? 148 : airborne ? 123 : 116;
-    this.hit(damage, range, airborne ? 155 : 92, false);
+    this.hit(damage, range, airborne ? 155 : 92, false,
+      dashAttack ? 'dash' : airborne ? 'air' : 'basic');
     if (this.stats.lastDamage > 0) {
       p.comboStage = chain;
       this.stats.combo++;
@@ -179,19 +194,21 @@ export class PracticeArena {
     this.action = dashAttack ? 'dash_attack' : airborne ? 'air_attack' : 'attack';
     this.actionStartedAt = this.now;
     this.nextAttack = this.now + (dashAttack ? 0.3 : 0.25);
+    return true;
   }
 
   private useSkill() {
     if (this.now < this.nextSkill || this.stats.mp < MP_SKILL_COST) return;
     this.stats.mp -= MP_SKILL_COST;
-    this.hit(65, 174, 145, true);
+    this.hit(65, 174, 145, true, 'skill');
     this.nextSkill = this.now + 1.45;
     this.player.flash = 0.35;
     this.action = 'skill';
     this.actionStartedAt = this.now;
   }
 
-  private hit(damage: number, range: number, verticalRange: number, area: boolean) {
+  private hit(damage: number, range: number, verticalRange: number, area: boolean,
+      kind: 'basic' | 'air' | 'dash' | 'skill') {
     const p = this.player;
     this.stats.strikes++;
     this.stats.lastDamage = 0;
@@ -204,6 +221,11 @@ export class PracticeArena {
     this.stats.lastDamage = dealt;
     this.stats.mp = Math.min(100, this.stats.mp + Math.max(6, Math.round(dealt * 0.25)));
     this.targetFlash = 0.18;
+    this.impactSequence++;
+    this.lastImpactAt = this.now;
+    this.lastImpactDamage = dealt;
+    this.lastImpactDirection = p.facing;
+    this.lastImpactKind = kind;
     if (this.stats.targetHp <= 0) {
       this.stats.defeated++;
       p.score += 25;
@@ -217,6 +239,7 @@ export class PracticeArena {
     this.pendingChargeRelease = null;
     this.stats.chargePercent = 0;
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
+    this.attackBufferUntil = Number.NEGATIVE_INFINITY;
     this.dashUntil = 0;
     this.player.vx = 0;
   }
@@ -232,6 +255,8 @@ export class PracticeArena {
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
+    this.impactSequence = 0; this.lastImpactAt = Number.NEGATIVE_INFINITY;
+    this.lastImpactDamage = 0; this.lastImpactDirection = 1; this.lastImpactKind = 'basic';
     this.lastSuccessfulHit = Number.NEGATIVE_INFINITY;
     this.lastLeftTap = Number.NEGATIVE_INFINITY;
     this.lastRightTap = Number.NEGATIVE_INFINITY;
@@ -248,7 +273,17 @@ export class PracticeArena {
     const elapsed = (this.now - this.actionStartedAt) * 1000;
     const animationDuration = this.action === 'skill' ? 460 : 330;
     const animating = this.action && elapsed >= 0 && elapsed < animationDuration;
+    const impactAge = this.now - this.lastImpactAt;
+    const recoiling = impactAge >= 0 && impactAge < 0.3;
+    const recoilFactor = recoiling ? Math.pow(1 - impactAge / 0.3, 2) : 0;
+    const lift = this.lastImpactKind === 'skill' ? 27 : this.lastImpactKind === 'air' ? 16 : 7;
+    const impact = this.impactSequence > 0 && impactAge < 0.55 ? {
+      sequence: this.impactSequence, damage: this.lastImpactDamage,
+      x: DUMMY_X, y: FLOOR - 27, direction: this.lastImpactDirection,
+      kind: this.lastImpactKind,
+    } as const : undefined;
     return {
+      impact,
       type: 'snapshot', room: 'TREINO', hostId: PRACTICE_ID,
       status: 'playing', wave: 1, remaining: this.stats.targetHp > 0 ? 1 : 0,
       players: [{
@@ -261,7 +296,9 @@ export class PracticeArena {
         actionElapsedMs: animating ? elapsed : undefined,
       }],
       enemies: this.stats.targetHp > 0 ? [{
-        id: 1, x: DUMMY_X, y: FLOOR, hp: this.stats.targetHp,
+        // Visual-only recoil: collision remains at DUMMY_X, preserving training accuracy.
+        id: 1, x: DUMMY_X + this.lastImpactDirection * 22 * recoilFactor,
+        y: FLOOR - lift * recoilFactor, hp: this.stats.targetHp,
         maxHp: DUMMY_HP, boss: false, flash: this.targetFlash,
       }] : [],
     };
