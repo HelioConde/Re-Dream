@@ -16,7 +16,13 @@ export type Player = {
   actionElapsedMs?: number;
 };
 export type Enemy = { id: number; x: number; y: number; hp: number; maxHp: number; boss: boolean; flash: number };
+// Feedback is optional and sent only by the offline practice simulation.
+export type PracticeImpact = {
+  sequence: number; damage: number; x: number; y: number;
+  direction: number; kind: 'basic' | 'air' | 'dash' | 'skill';
+};
 export type Snapshot = {
+  impact?: PracticeImpact;
   type: 'snapshot'; room: string; status: 'lobby' | 'playing' | 'victory' | 'defeat'; hostId: string;
   wave: number; players: Player[]; enemies: Enemy[]; remaining: number;
 };
