@@ -155,6 +155,13 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           seen.add(key);
           const p = this.smooth(key, enemy.x, enemy.y);
           const size = enemy.boss ? 58 : 31;
+          if (practiceMode && enemy.y < 584) {
+            // A world-space landing shadow helps the player read aerial distance.
+            g.fillStyle(0x08172d, 0.42);
+            g.fillEllipse(enemy.x, 595, 48, 10);
+            g.lineStyle(1, 0xb7d1ff, 0.22);
+            g.lineBetween(enemy.x, enemy.y + 5, enemy.x, 587);
+          }
           g.fillStyle(enemy.boss ? 0xb65bce : 0x50b7ad);
           g.fillEllipse(p.x, p.y - size * .7, size * 1.5, size * 1.3);
           g.fillStyle(0xf7edf9);

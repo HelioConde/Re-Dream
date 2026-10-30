@@ -295,3 +295,91 @@ test('reset clears launched target, dive state and counters', () => {
   assert.equal(arena.stats.launchers,0);
   assert.equal(arena.stats.dives,0);
 });
+
+
+function prepareLaunchedDummy(arena: PracticeArena) {
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1 / 30);
+  arena.setInput(noInput);
+  for (let i = 0; i < 5; i++) arena.step(1 / 30);
+  arena.setInput({ ...noInput, up: true, jump: true, attack: true });
+  for (let i = 0; i < 5; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.launchers, 1);
+  arena.setInput(noInput);
+}
+
+test('after a launcher, a fresh jump cancels recovery into faster aerial pursuit', () => {
+  const arena = new PracticeArena();
+  prepareLaunchedDummy(arena);
+  assert.equal(arena.stats.chaseReady, true);
+  assert.equal(arena.player.grounded, true);
+  arena.setInput({ ...noInput, jump: true, up: true });
+  arena.step(1 / 30);
+  assert.equal(arena.stats.chaseJumps, 1);
+  assert.ok(arena.player.vy < -680);
+  assert.equal(arena.player.grounded, false);
+  assert.notEqual(arena.snapshot().players[0].combatAction, 'launcher');
+  assert.equal(arena.stats.chaseReady, false);
+});
+
+test('air chase leads to a follow-up juggle that suspends the dummy briefly', () => {
+  const arena = new PracticeArena();
+  prepareLaunchedDummy(arena);
+  arena.setInput({ ...noInput, jump: true, up: true });
+  arena.step(1 / 30);
+  arena.setInput(noInput);
+  arena.step(1 / 30);
+  arena.setInput({ ...noInput, attack: true });
+  for (let i = 0; i < 4; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.chaseJumps, 1);
+  assert.equal(arena.stats.juggles, 1);
+  assert.equal(arena.stats.juggleChain, 1);
+  assert.equal(arena.stats.bestJuggle, 1);
+  assert.equal(arena.snapshot().impact?.kind, 'air');
+  assert.ok(arena.snapshot().enemies[0].y < 596);
+});
+
+test('ordinary jump has no chase boost and no fake juggle', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, jump: true, up: true });
+  arena.step(1 / 30);
+  assert.equal(arena.stats.chaseJumps, 0);
+  assert.equal(arena.stats.juggles, 0);
+  assert.ok(arena.player.vy > -680);
+});
+
+test('held up+attack after launcher cannot auto-trigger another launcher', () => {
+  const arena = new PracticeArena();
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1 / 30);
+  arena.setInput(noInput);
+  for (let i = 0; i < 5; i++) arena.step(1 / 30);
+  arena.setInput({ ...noInput, up: true, jump: true, attack: true });
+  for (let i = 0; i < 12; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.launchers, 1);
+  assert.equal(arena.stats.chaseJumps, 0);
+  assert.equal(arena.player.grounded, true);
+});
+
+test('juggle chain clears when the opponent lands and reset clears all progress', () => {
+  const arena = new PracticeArena();
+  prepareLaunchedDummy(arena);
+  arena.setInput({ ...noInput, jump: true, up: true });
+  arena.step(1 / 30);
+  arena.setInput(noInput);
+  arena.step(1 / 30);
+  arena.setInput({ ...noInput, attack: true });
+  for (let i = 0; i < 4; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.juggles, 1);
+  arena.setInput(noInput);
+  for (let i = 0; i < 65; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.juggleChain, 0);
+  assert.equal(arena.stats.bestJuggle, 1);
+  arena.reset();
+  assert.equal(arena.stats.juggles, 0);
+  assert.equal(arena.stats.bestJuggle, 0);
+  assert.equal(arena.stats.chaseJumps, 0);
+  assert.equal(arena.stats.chaseReady, false);
+});
