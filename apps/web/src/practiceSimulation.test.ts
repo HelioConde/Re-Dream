@@ -35,8 +35,12 @@ test('practice dummy only takes valid hits and automatically reappears', () => {
   assert.equal(arena.stats.targetHp, 260);
   for (let i = 0; i < 12; i++) arena.step(1 / 30);
   assert.equal(arena.stats.targetHp, 236);
-  arena.setInput({ ...noInput, skill: true });
-  for (let i = 0; i < 6; i++) arena.step(1 / 30);
+  arena.setInput({ ...noInput, charge: true });
+  for (let i = 0; i < 22; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.skillCasts, 0);
+  arena.setInput(noInput); // Releasing Z is the only way to cast.
+  arena.step(1 / 30);
+  assert.equal(arena.stats.skillCasts, 1);
   assert.ok(arena.stats.targetHp <= 171);
   arena.reset();
   assert.equal(arena.stats.targetHp, 260);
