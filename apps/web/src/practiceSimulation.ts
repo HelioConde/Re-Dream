@@ -496,6 +496,20 @@ export class PracticeArena {
     this.diving = false;
   }
 
+  /** Training-only convenience: put Luci on a real one-way collision surface.
+   * Does not change physics, map coordinates or the online server. */
+  placeOnPlatformForTraining() {
+    this.suspend();
+    this.player.x = 320;
+    this.player.y = 466;
+    this.player.vx = 0;
+    this.player.vy = 0;
+    this.player.grounded = true;
+    this.dropUntil = 0;
+    this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
+    this.stats.onPlatform = true;
+  }
+
   reset() {
     Object.assign(this.player, {
       x: 180, y: FLOOR, vy: 0, vx: 0, grounded: true, facing: 1,
