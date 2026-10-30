@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { AREN_ACTIONS, AREN_FRAME_COUNTS, selectArenAnimation, ArenLandingTracker } from './arenAnimation';
+import { AREN_ACTIONS, AREN_FRAME_COUNTS, selectArenAnimation, ArenLandingTracker, ArenActionPhaseTracker, chooseArenAction } from './arenAnimation';
 import { CHARACTER_IDS, DEFAULT_CHARACTER, isCharacterId } from './protocol';
 import { CHARACTERS } from './characters';
 
@@ -78,4 +78,58 @@ test('animação de pouso é temporária e não altera a física',()=>{
   assert.equal(tracker.update('aren',false,400),false);
   tracker.remove('aren');
   assert.equal(tracker.update('aren',false,410),false);
+});
+
+test('ação visual do Aren reinicia no primeiro quadro a cada transição', () => {
+  const tracker = new ArenActionPhaseTracker();
+  assert.equal(tracker.elapsed('a','idle',1000),0);
+  assert.equal(tracker.elapsed('a','idle',1140),140);
+  assert.equal(tracker.elapsed('a','run',1160),0);
+  assert.equal(tracker.elapsed('a','run',1210),50);
+  assert.equal(tracker.elapsed('a','idle',1220),0);
+  const old = selectArenAnimation({...base,moving:true,timeMs:2000,
+    actionAgeMs:tracker.elapsed('a','walk',2000)});
+  assert.equal(old.texture,'aren-walk-0');
+  const next = selectArenAnimation({...base,moving:true,timeMs:2100,
+    actionAgeMs:tracker.elapsed('a','walk',2100)});
+  assert.notEqual(old.texture,next.texture);
+});
+
+test('timeline visual é individual por jogador, limpa ao sair e recupera tempo voltando', () => {
+  const tracker = new ArenActionPhaseTracker();
+  tracker.elapsed('host','dash',1000);
+  tracker.elapsed('friend','idle',1040);
+  assert.equal(tracker.elapsed('host','dash',1070),70);
+  assert.equal(tracker.elapsed('friend','idle',1070),30);
+  // Browser tab/device time can reset; never return negative animation frames.
+  assert.equal(tracker.elapsed('host','dash',800),0);
+  assert.equal(tracker.elapsed('host','dash',816),16);
+  tracker.remove('host');
+  assert.equal(tracker.elapsed('host','dash',850),0);
+  assert.equal(tracker.elapsed('friend','idle',1080),40);
+});
+
+test('carga Z e habilidades continuam acima de correr, salto e pouso', () => {
+  assert.equal(chooseArenAction({...base,locomotion:'run',charging:true}),'charge');
+  assert.equal(chooseArenAction({...base,locomotion:'rocket',airborne:true,
+    charging:true,combatAction:'skill',skillLevel:3}),'skill_3');
+  assert.equal(chooseArenAction({...base,locomotion:'fall',airborne:true,
+    combatAction:'air_attack'}),'air_attack');
+});
+
+test('costume V2 tem identidade lunar consistente e magias têm cristais diferentes por nível', () => {
+  const get = (file: string) => readFileSync(join(process.cwd(),'public/art/aren',file),'utf8');
+  const idle=get('idle-0.svg'), skill1=get('skill_1-2.svg'),
+    skill2=get('skill_2-2.svg'),skill3=get('skill_3-2.svg');
+  for (const frame of [idle,skill1,skill2,skill3]) {
+    assert.match(frame, /#d7c99c/); // new braided sash
+    assert.match(frame, /#7fead5/); // head circlet jewel
+    assert.match(frame, /#cfdbd1/); // asymmetrical shoulder armor
+    assert.match(frame, /#d7ded2/); // split coat
+  }
+  assert.match(skill1, /#c5ffe4/);
+  assert.match(skill2, /#b6e8ff/);
+  assert.match(skill3, /#efd2ff/);
+  assert.notEqual(skill1,skill2);
+  assert.notEqual(skill2,skill3);
 });
