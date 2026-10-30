@@ -1,5 +1,6 @@
 import { EMPTY_CONTROLS, type CharacterId, type PracticeInput, type Snapshot } from './protocol';
 import { advanceLocomotion, classifyLocomotion, type LocomotionState } from './locomotionFsm';
+import { PracticeEventBus, type PracticeEventListener } from './practiceEvents';
 
 const FLOOR = 596;
 const PLATFORMS = [{ x: 220, y: 466, w: 220 }, { x: 690, y: 414, w: 250 }];
@@ -46,6 +47,11 @@ export type TrainingStats = {
 export class PracticeArena {
   controls: PracticeInput = { ...EMPTY_CONTROLS };
   readonly playerId = PRACTICE_ID;
+  private readonly events = new PracticeEventBus();
+
+  subscribe(listener: PracticeEventListener): () => void {
+    return this.events.subscribe(listener);
+  }
   readonly characterId: CharacterId;
   readonly nickname: string;
   readonly player: TrainingPlayer = {
@@ -326,7 +332,10 @@ export class PracticeArena {
       this.targetVy = 0;
       this.resetDummyAt = 0;
     }
-    if (this.now - this.lastSuccessfulHit > COMBO_WINDOW) this.stats.combo = 0;
+    if (this.stats.combo > 0 && this.now - this.lastSuccessfulHit > COMBO_WINDOW) {
+      this.stats.combo = 0;
+      this.events.publish({ type: 'comboChanged', combo: 0, bestCombo: this.stats.bestCombo });
+    }
     this.stats.chaseReady = p.grounded && this.now <= this.chaseUntil &&
       this.targetY < FLOOR - 10;
 
@@ -411,12 +420,20 @@ export class PracticeArena {
     this.stats.combo++;
     this.stats.bestCombo = Math.max(this.stats.bestCombo, this.stats.combo);
     this.lastSuccessfulHit = this.now;
+    this.events.publish({
+      type: 'comboChanged', combo: this.stats.combo, bestCombo: this.stats.bestCombo,
+    });
   }
 
   private useSkill(level: 1 | 2 | 3 = 1) {
     const cost = MP_PER_BAR * level;
     if (this.now < this.nextSkill || this.stats.mp < cost) return false;
+    const previousMp = this.stats.mp;
     this.stats.mp -= cost;
+    this.events.publish({
+      type: 'mpChanged', before: previousMp, after: this.stats.mp,
+      reason: 'skill', level,
+    });
     this.hit([0, 65, 115, 180][level], [0, 174, 208, 252][level],
       [0, 145, 190, 250][level], true, 'skill');
     this.nextSkill = this.now + 1.2 + level * 0.25;
@@ -441,6 +458,7 @@ export class PracticeArena {
     const dealt = Math.min(this.stats.targetHp, damage);
     this.stats.targetHp -= dealt;
     this.stats.lastDamage = dealt;
+    const previousMp = this.stats.mp;
     this.stats.mp = Math.min(MAX_MP, this.stats.mp + Math.max(6, Math.round(dealt * 0.25)));
     this.targetFlash = 0.18;
     this.impactSequence++;
@@ -448,6 +466,20 @@ export class PracticeArena {
     this.lastImpactDamage = dealt;
     this.lastImpactDirection = p.facing;
     this.lastImpactKind = kind;
+    // Reuse the existing impact sequence so Phaser's impact renderer remains
+    // the only VFX consumer. Event Bus observers receive the same confirmed hit.
+    this.events.publish({
+      type: 'impactConfirmed',
+      impact: {
+        sequence: this.impactSequence, damage: dealt, x: DUMMY_X,
+        y: this.targetY - 27, direction: p.facing, kind,
+      },
+    });
+    if (this.stats.mp !== previousMp) {
+      this.events.publish({
+        type: 'mpChanged', before: previousMp, after: this.stats.mp, reason: 'hit',
+      });
+    }
     if (this.targetY < FLOOR - 18 && kind === 'air' &&
         this.airJuggleCount < MAX_AIR_JUGGLE) {
       // An aerial follow-up briefly lifts a launched opponent. It never
@@ -467,6 +499,7 @@ export class PracticeArena {
       this.stats.defeated++;
       p.score += 25;
       this.resetDummyAt = this.now + 1.1;
+      this.events.publish({ type: 'dummyDefeated', total: this.stats.defeated });
     }
   }
 
@@ -535,7 +568,9 @@ export class PracticeArena {
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
     this.targetY = FLOOR; this.targetVy = 0; this.diving = false;
     this.chaseUntil = Number.NEGATIVE_INFINITY; this.airJuggleCount = 0;
-    this.impactSequence = 0; this.lastImpactAt = Number.NEGATIVE_INFINITY;
+    // Keep impact ids monotonic: GameCanvas caches the last rendered id,
+    // and resetting ids could suppress a later confirmed hit with the same id.
+    this.lastImpactAt = Number.NEGATIVE_INFINITY;
     this.lastImpactDamage = 0; this.lastImpactDirection = 1; this.lastImpactKind = 'basic';
     this.lastSuccessfulHit = Number.NEGATIVE_INFINITY;
     this.attackBufferUntil = Number.NEGATIVE_INFINITY;
@@ -552,6 +587,7 @@ export class PracticeArena {
     this.shadowUntil = 0; this.ottoPending = false;
     this.resetDummyAt = 0; this.targetFlash = 0;
     this.action = null; this.actionStartedAt = Number.NEGATIVE_INFINITY;
+    this.events.publish({ type: 'reset' });
   }
 
   snapshot(): Snapshot {
