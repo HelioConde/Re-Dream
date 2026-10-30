@@ -195,3 +195,50 @@ test('V5: Aren stays proportional to the 720px platform stage and guardian', () 
   assert.ok(AREN_HEALTHBAR_OFFSET_Y>=AREN_DISPLAY_SIZE);
   assert.ok(AREN_NAME_OFFSET_Y>AREN_HEALTHBAR_OFFSET_Y);
 });
+
+test('V7: sword stays visible in idle, walk, run, dash, jump, fall and landing', () => {
+  const read=(state:string,frame=0)=>readFileSync(
+    join(process.cwd(),'public/art/aren',state+'-'+frame+'.svg'),'utf8');
+  for(const action of ['idle','walk','run','dash','rise','fall','rocket','shadow','land','hurt']){
+    const svg=read(action);
+    assert.match(svg,/data-weapon="lunar-sabre"/,action+' should carry sword');
+    assert.match(svg,/#8be5cf/);
+  }
+  for(const action of ['attack_1','attack_4','skill_1','skill_3','charge']){
+    assert.doesNotMatch(read(action),/data-weapon="lunar-sabre"/,
+      action+' has its dedicated weapon/spell pose instead');
+  }
+});
+
+test('V7: face is slimmer, gaze expressive and the layered hair follows each pose',()=>{
+  const read=(name:string)=>readFileSync(join(process.cwd(),'public/art/aren',name),'utf8');
+  const idle=read('idle-0.svg');
+  const blink=read('idle-4.svg');
+  const attack=read('attack_1-3.svg');
+  for(const svg of [idle,blink,attack]){
+    assert.match(svg,/data-face="hero"/);
+    assert.match(svg,/#8caab0/); // swept directional hair strands
+    assert.match(svg,/#cfdbd1/); // asymmetric original shoulder armor
+    assert.match(svg,/#d7c99c/); // lunar belt crest
+  }
+  assert.notEqual(idle,blink,'idle blink must still have a distinct eyelid');
+  assert.notEqual(idle,attack,'combat expression must differ from resting face');
+  assert.match(idle,/rx="3.6" ry="5.2"/);
+});
+
+test('V7: all 151 animation files are distinct valid-frame SVGs with costume details',()=>{
+  for(const action of AREN_ACTIONS){
+    const poses = new Set<string>();
+    for(let i=0;i<AREN_FRAME_COUNTS[action];i++){
+      const file=join(process.cwd(),'public/art/aren',action+'-'+i+'.svg');
+      const svg=readFileSync(file,'utf8');
+      assert.match(svg,/<svg[^>]+width="192" height="192" viewBox="0 0 192 192"/);
+      assert.match(svg,/#b6d9cd/,'reinforced boot toe absent: '+file);
+      assert.match(svg,/#b4eacf/,'cape stitching absent: '+file);
+      assert.match(svg,/#668d91/,'glove/forearm bracer absent: '+file);
+      assert.doesNotMatch(svg,/<image\b|<script\b|<foreignObject\b/);
+      poses.add(svg);
+    }
+    assert.ok(poses.size>1,'animation frozen: '+action);
+  }
+});

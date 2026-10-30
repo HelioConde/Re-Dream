@@ -64,7 +64,7 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
   const air = ['rise','fall','rocket','shadow','air_attack','dive','otto'].includes(state);
   const fast = ['run','dash','rocket','dash_attack'].includes(state);
   let lean=0,bob=0,stride=0,arm=-7,scarfMotion=0,knee=0,bodyY=0;
-  if(state==='idle'){bob=wave*1.5;scarfMotion=wave*6;arm=wave*4;}
+  if(state==='idle'){lean=5+wave*1.2;bob=wave*1.2;stride=4+wave*1.3;scarfMotion=8+wave*5;arm=-10+wave*3;}
   if(state==='walk'){bob=abs*2;stride=wave*28;arm=-wave*27;scarfMotion=13+wave*8;}
   if(state==='run'){lean=12;bob=abs*3;stride=wave*43;arm=-wave*41;scarfMotion=32+wave*13;knee=13;}
   if(state==='dash'){lean=24;bob=2;stride=20+wave*8;arm=-60;scarfMotion=44+wave*9;knee=18;}
@@ -85,26 +85,33 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
   const color = {outline:'#13283b',coat:'#e9e6d9',shadow:'#9fa8b2',cloth:'#203c4e',
     cape:'#226476',capeLight:'#64d2b9',metal:'#b9b7a2',skin:'#f2ccb0',skinShadow:'#d49d89',
     hair:'#233547',hairLight:'#4e6570',glow:'#9bfce0',boot:'#233647'};
-  const hipY=120+knee*.28, headY=50+bob, coreX=97+lean*.33;
+  // Broader chest and a slightly smaller face give Aren an agile hero silhouette.
+  // The physical sole stays anchored to 192px in every pose.
+  const hipY=118+knee*.28, headY=51+bob, coreX=97+lean*.33;
   const leg = (side, swing) => {
     const hipX=coreX+side*11, hip=hipY;
     const angle=swing*Math.PI/180;
     const bend=(state==='run'?25:state==='walk'?8:knee)*Math.PI/180;
-    const kx=hipX+Math.sin(angle)*30,ky=hip+Math.cos(angle)*30;
-    const footx=kx+Math.sin(-angle*.5+bend*(side>0?1:-1))*29;
-    const footy=ky+Math.cos(-angle*.5+bend*(side>0?1:-1))*29;
+    const kx=hipX+Math.sin(angle)*31,ky=hip+Math.cos(angle)*31;
+    const footx=kx+Math.sin(-angle*.5+bend*(side>0?1:-1))*30;
+    const footy=ky+Math.cos(-angle*.5+bend*(side>0?1:-1))*30;
     return [
       line(hipX,hip,kx,ky,color.outline,18),
       line(hipX,hip,kx,ky,side>0?'#364858':'#182e3f',13),
       circle(kx,ky,9,color.metal),
       line(kx,ky,footx,footy,color.outline,17),
       line(kx,ky,footx,footy,'#324f60',12),
-      '<path d="M'+round(footx-8)+' '+round(footy-3)+' q16 3 22 8 l-1 7 q-11 3 -29 -1z" fill="'+color.boot+'" stroke="'+color.outline+'" stroke-width="3"/>',
+      '<path d="M'+round(footx-10)+' '+round(footy-5)+' q16 0 25 9 l-1 8 q-15 4 -33 -1z" fill="'+color.boot+'" stroke="'+color.outline+'" stroke-width="3"/>',
+      // Reinforced boot cuff, angled steel toe, and separate leather sole.
+      path('M'+round(kx-9)+' '+round(ky+12)+' q8 7 17 0 l-3 7 -13 0z','#839c9d','stroke="#183747" stroke-width="1.5"'),
+      path('M'+round(footx+4)+' '+round(footy+2)+'l10 4 -5 3 -8 -2z','#b6d9cd'),
+      line(footx-9,footy+8,footx+14,footy+10,'#182a3b',3),
       line(footx-3,footy+2,footx+8,footy+4,color.capeLight,2),
     ].join('');
   };
   const backLeg=leg(-1,-stride),frontLeg=leg(1,stride);
-  const capeTipX=25-scarfMotion*.55, capeTipY=110+wave*5-(fast?12:0);
+  const capeTipX=Math.max(8,27-scarfMotion*.38);
+  const capeTipY=109+wave*4-(fast?10:0);
   const cape=path('M'+round(coreX-11)+' 64 Q'+round(coreX-39)+' 68 '+round(capeTipX)+' '+round(capeTipY-24)+
     'Q'+round(capeTipX-8)+' '+round(capeTipY)+' '+round(capeTipX+20)+' '+round(capeTipY+7)+
     'L'+round(coreX-4)+' 111Z',color.cape,
@@ -112,6 +119,12 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     path('M'+round(coreX-12)+' 75 Q'+round(capeTipX+9)+' '+round(capeTipY-13)+' '+round(capeTipX+19)+
     ' '+round(capeTipY)+' Q'+round(coreX-46)+' 93 '+round(coreX-7)+' 91Z','#3c8c86',
     'opacity=".8"')+
+    // Multiple cloth folds, fine lunar stitching and an articulated tip.
+    path('M'+round(coreX-17)+' 73 Q'+round(coreX-51)+' 89 '+round(capeTipX+13)+' '+round(capeTipY-5)+
+      'Q'+round(capeTipX+28)+' '+round(capeTipY-11)+' '+round(coreX-13)+' 91Z','#52a99b','opacity=".54"')+
+    path('M'+round(coreX-22)+' 86Q'+round(coreX-42)+' 106 '+round(capeTipX+25)+' '+round(capeTipY)+
+      'Q'+round(coreX-23)+' 114 '+round(coreX-8)+' 102','none',
+      'stroke="#b4eacf" stroke-width="2" opacity=".52"')+
     line(capeTipX+15,capeTipY-2,capeTipX+23,capeTipY+3,color.glow,2.5);
   const backArmX=coreX-18, backArmY=81;
   const backElbowX=backArmX-12-arm*.16, backElbowY=105+arm*.06;
@@ -134,10 +147,15 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     line(mainElbowX,mainElbowY,mainHandX,mainHandY,color.outline,15)+
     line(mainElbowX,mainElbowY,mainHandX,mainHandY,color.skin,10)+
     circle(mainElbowX,mainElbowY,6,color.metal)+
+    // Segmented cuff and reinforced bracer follow the sword arm through every frame.
+    line(mainElbowX+3,mainElbowY+3,mainHandX-2,mainHandY-4,'#4d6b76',5)+
+    line(mainElbowX+3,mainElbowY+3,mainHandX-2,mainHandY-4,'#b9d0c7',2)+
     circle(mainHandX,mainHandY,8,color.boot)+
+    path('M'+round(mainHandX-5)+' '+round(mainHandY-7)+'l8 1 4 7 -12 -1z',
+      '#668d91','stroke="#1d4055" stroke-width="1.5"')+
     line(mainHandX-2,mainHandY-3,mainHandX+4,mainHandY-1,color.capeLight,2);
-  const torso = '<path d="M'+round(coreX-22)+' 72 Q'+round(coreX)+' 63 '+round(coreX+23)+
-    ' 75L'+round(coreX+20)+' 122Q'+round(coreX)+' 136 '+round(coreX-22)+' 119Z" fill="'+color.coat+
+  const torso = '<path d="M'+round(coreX-25)+' 72 Q'+round(coreX)+' 61 '+round(coreX+26)+
+    ' 75L'+round(coreX+23)+' 122Q'+round(coreX)+' 135 '+round(coreX-24)+' 119Z" fill="'+color.coat+
     '" stroke="'+color.outline+'" stroke-width="4"/>'+
     path('M'+round(coreX-17)+' 80 l19 0 12 29 -18 4z','#aec4c1','opacity=".7"')+
     path('M'+round(coreX-19)+' 111 L'+round(coreX+20)+' 113 L'+round(coreX+27)+' 125 L'+round(coreX-23)+' 124Z',
@@ -187,28 +205,67 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
       'none','stroke="#61c5ac" stroke-width="3"'),
     path('M'+round(coreX+8)+' 138 l15 6',
       'none','stroke="#61c5ac" stroke-width="3"'),
+    // Decorative chest ribs and a side harness give the torso depth at game size.
+    path('M'+round(coreX-17)+' 94 Q'+round(coreX-23)+' 106 '+round(coreX-19)+' 114',
+      'none','stroke="#627e83" stroke-width="3" opacity=".85"'),
+    path('M'+round(coreX+16)+' 97 Q'+round(coreX+21)+' 106 '+round(coreX+17)+' 114',
+      'none','stroke="#7b9696" stroke-width="2.5" opacity=".85"'),
+    line(coreX-10,111,coreX+9,111,'#d4caa7',1.9),
     // Belt pouch, tiny and in front of the far hip.
     path('M'+round(coreX-24)+' 117 q-11 6 -9 17 l14 4 8 -13z',
       '#3d4a59','stroke="#142d40" stroke-width="3"'),
     line(coreX-26,127,coreX-18,129,'#d0c09a',2.5),
   ].join('');
   const neck=circle(coreX+2,70,10,color.skin);
-  const face='<ellipse cx="'+round(coreX+4)+'" cy="'+round(headY)+'" rx="21" ry="26" fill="'+color.skin+
+  const face='<path data-face="hero" d="M'+round(coreX-14)+' '+round(headY-14)+
+    'Q'+round(coreX-9)+' '+round(headY-25)+' '+round(coreX+6)+' '+round(headY-24)+
+    'Q'+round(coreX+24)+' '+round(headY-21)+' '+round(coreX+24)+' '+round(headY+1)+
+    'Q'+round(coreX+22)+' '+round(headY+15)+' '+round(coreX+9)+' '+round(headY+22)+
+    'Q'+round(coreX-13)+' '+round(headY+18)+' '+round(coreX-15)+' '+round(headY+3)+'Z" fill="'+color.skin+
     '" stroke="'+color.outline+'" stroke-width="3.3"/>'+
     path('M'+round(coreX+14)+' '+round(headY+2)+' q12 5 1 13',color.skinShadow)+
     // expressive eyes, a blinking frame every full idle cycle
     (state==='idle'&&index===4?line(coreX+7,headY,coreX+16,headY+1,color.outline,2.6):
-    '<ellipse cx="'+round(coreX+13)+'" cy="'+round(headY)+'" rx="4.8" ry="7" fill="'+color.outline+
-    '"/>'+circle(coreX+14.5,headY-1.6,2.1,color.glow))+
-    line(coreX+8,headY-9,coreX+18,headY-10,color.hair,2.5)+
-    path('M'+round(coreX-17)+' '+round(headY+12)+' q13 7 26 2','none',
-      'stroke="#c58b7f" stroke-width="1.8"');
-  const hair=path('M'+round(coreX-20)+' '+round(headY-9)+
-    'q-8 -26 2 -29 l12 -8 10 5 17 -8 -4 14 17 -7 -8 16 14 6 -14 9 -4 -9 -15 12 -9 -8 -10 12z',
-    color.hair,'stroke="'+color.outline+'" stroke-width="3" stroke-linejoin="round"')+
-    path('M'+round(coreX-13)+' '+round(headY-30)+
-    'q15 -18 30 -10 l-6 8 -10 -3 -7 16z',color.hairLight,'opacity=".75"')+
-    path('M'+round(coreX-18)+' '+round(headY-5)+' q-8 -16 -2 -28 l8 12z',color.hair);
+    '<ellipse cx="'+round(coreX+13)+'" cy="'+round(headY)+'" rx="3.6" ry="5.2" fill="'+color.outline+
+    '"/>'+circle(coreX+14,headY-1.4,1.45,'#e6ffef'))+
+    line(coreX+8,headY-10,coreX+19,headY-12,color.hair,2.7)+
+    // A small nose bridge and state-dependent mouth keep the face readable at 160px.
+    path('M'+round(coreX+21)+' '+round(headY+3)+'q3 3 -2 6','none',
+      'stroke="#cc9382" stroke-width="1.7"')+
+    (attack||state==='hurt'
+      ? path('M'+round(coreX+11)+' '+round(headY+14)+'q5 2 9 -1','none',
+          'stroke="#753e47" stroke-width="2.2"')
+      : path('M'+round(coreX+10)+' '+round(headY+14)+'q6 3 11 -1','none',
+          'stroke="#a86f65" stroke-width="1.8"'))+
+    path('M'+round(coreX-9)+' '+round(headY+4)+'q-1 7 2 10',
+      'none','stroke="#f9dfc4" stroke-width="2" opacity=".55"');
+  // V7: layered directional hair with fewer random spikes; three swept locks
+  // emphasize the forward gaze without making the head more oversized.
+  const hair=path('M'+round(coreX-21)+' '+round(headY-8)+
+    'Q'+round(coreX-28)+' '+round(headY-34)+' '+round(coreX-10)+' '+round(headY-39)+
+    'L'+round(coreX-5)+' '+round(headY-47)+' L'+round(coreX+5)+' '+round(headY-42)+
+    'Q'+round(coreX+18)+' '+round(headY-52)+' '+round(coreX+25)+' '+round(headY-42)+
+    'L'+round(coreX+24)+' '+round(headY-32)+' L'+round(coreX+37)+' '+round(headY-35)+
+    'Q'+round(coreX+33)+' '+round(headY-22)+' '+round(coreX+24)+' '+round(headY-20)+
+    'Q'+round(coreX+13)+' '+round(headY-16)+' '+round(coreX+7)+' '+round(headY-17)+
+    'L'+round(coreX-6)+' '+round(headY-9)+' L'+round(coreX-13)+' '+round(headY-18)+
+    'L'+round(coreX-22)+' '+round(headY-3)+'Z',
+    color.hair,'stroke="'+color.outline+'" stroke-width="3.2" stroke-linejoin="round"')+
+    // Directional forelock and 2 volume accents, independent from face outline.
+    path('M'+round(coreX-14)+' '+round(headY-31)+
+      'Q'+round(coreX+1)+' '+round(headY-47)+' '+round(coreX+18)+' '+round(headY-35)+
+      'L'+round(coreX+27)+' '+round(headY-25)+
+      'Q'+round(coreX+13)+' '+round(headY-30)+' '+round(coreX+3)+' '+round(headY-18)+
+      'Q'+round(coreX-7)+' '+round(headY-26)+' '+round(coreX-15)+' '+round(headY-22)+'Z',
+      color.hairLight,'opacity=".72"')+
+    path('M'+round(coreX-14)+' '+round(headY-39)+
+      'Q'+round(coreX-1)+' '+round(headY-51)+' '+round(coreX+11)+' '+round(headY-41),
+      'none','stroke="#8caab0" stroke-width="2.5" opacity=".65"')+
+    path('M'+round(coreX+13)+' '+round(headY-39)+
+      'Q'+round(coreX+22)+' '+round(headY-43)+' '+round(coreX+28)+' '+round(headY-31),
+      'none','stroke="#7fa3ae" stroke-width="2" opacity=".55"')+
+    path('M'+round(coreX-18)+' '+round(headY-4)+
+      'q-8 -15 -1 -27l7 12z',color.hair);
   // The thin moon circlet, side ear crystal and expressive facial linework
   // stay attached to the head instead of the old plain oval silhouette.
   const faceAccessories =
@@ -225,6 +282,24 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     '#62bfae','opacity=".88"')+
     line(coreX-9,78,coreX+9,80,'#d9f5ce',2);
   let effect='';
+  // V7: Aren holds his iconic lunar sword in all unarmed-looking locomotion
+  // frames too. Previously the blade appeared only during attacks.
+  // Weapon geometry is cosmetic and never expands the gameplay hitbox.
+  if(!attack && !skill && state!=='charge'){
+    const theta=(fast?-36:air?-14:51)*Math.PI/180;
+    const gripX=mainHandX+Math.cos(theta)*5, gripY=mainHandY+Math.sin(theta)*5;
+    const bladeX=Math.max(12,Math.min(183,gripX+Math.cos(theta)*47));
+    const bladeY=Math.max(8,Math.min(181,gripY+Math.sin(theta)*47));
+    const sideX=Math.sin(theta)*9,sideY=Math.cos(theta)*9;
+    effect='<g data-weapon="lunar-sabre">'+
+      line(mainHandX,mainHandY,gripX,gripY,'#223849',8)+
+      line(gripX,gripY,bladeX,bladeY,'#153649',10)+
+      line(gripX,gripY,bladeX,bladeY,'#8be5cf',6.5)+
+      line(gripX+1,gripY-1,bladeX-1,bladeY-1,'#f1fff0',2)+
+      line(gripX-sideX,gripY+sideY,gripX+sideX,gripY-sideY,'#d5c89c',4)+
+      circle(gripX,gripY,3.5,'#a6ffdf')+
+      circle(bladeX,bladeY,3,'#e6fff5')+'</g>';
+  }
   if(attack) {
     const swingProgress=strikePose.impact;
     const theta=strikePose.bladeAngle*Math.PI/180;

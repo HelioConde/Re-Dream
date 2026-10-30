@@ -35,12 +35,12 @@
 | --- | --- | --- | --- |
 | RD-D01 | V6 implementado; QA visual V6 pendente | Montanhas e copa orgânicas, relevo estático, juntas do portal, cachoeira e solo detalhados; mesmas plataformas físicas | XML e build; captura real **V5** usada como diagnóstico, captura V6 ainda pendente |
 | RD-D02 | Implementado; QA visual pendente | Sentinela de Cristal e retrato do Aren no HUD substituem placeholders | Gameplay e hitboxes inalterados, nenhuma arte de terceiros |
-| RD-D03 | Aren Art V4 implementado; pintura final pendente | Nove ataques com poses próprias, Combo IV com finalização lunar e MP3 Dream Crescent, preservando 23 estados | Testes de SVG, poses e seleção; falta QA visual e ilustração final |
+| RD-D03 | Aren V7 implementado; pintura ilustrada final pendente | Rosto menor e expressivo, cabelo direcional, tronco reforçado, capa com dobras, botas/braceletes e espada visível também fora dos ataques; preservadas 23 ações | Testes dos 151 SVGs; QA visual no navegador e ilustração final ainda pendentes |
 | RD-D04 | Planejado | Animações da Sentinela: idle/hurt/stun/defeat | Estado da animação acompanha dano real sem hitbox visual enganador |
 | RD-D05 | VFX implementado no treino; SFX pendente | Impactos diferenciados por ação e MP1/2/3; duas camadas novas de profundidade; hit do alvo confirmado | Testes de VFX e XML; movimento reduzido; captura visual e performance reais pendentes |
 | RD-D06 | Parcial: ateliê e escala V5 implementados | Galeria de 23 movimentos; sprite reduzido de 235 para 160px após screenshot real V4; pés no piso, HUD sem duplicação | Testes de código; falta screenshot real **da V5** em desktop e mobile |
 
-**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md), [Aren V2](AREN_V2_VISUAL_QA.md), [Visual V3](VISUAL_V3.md), [Aren Art V4](AREN_V4_VISUAL_QA.md) e [Aren V5 — QA de escala](AREN_V5_SCALE_QA.md) e [Bosque V6 — direção de arte](FOREST_V6_ART_REVIEW.md).
+**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md), [Aren V2](AREN_V2_VISUAL_QA.md), [Visual V3](VISUAL_V3.md), [Aren Art V4](AREN_V4_VISUAL_QA.md) e [Aren V5 — QA de escala](AREN_V5_SCALE_QA.md) e [Bosque V6 — direção de arte](FOREST_V6_ART_REVIEW.md) e [Aren V7 — redesign](AREN_V7_CHARACTER_REDESIGN.md).
 
 ## Definição de pronto
 - Critérios observáveis implementados com cobertura automatizada da lógica.

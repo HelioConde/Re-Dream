@@ -36,12 +36,12 @@ export default function ArenAnimationInspector() {
   return <section className="aren-inspector" aria-label="Oficina de animações originais do Aren">
     <div className="aren-inspector-heading">
       <div>
-        <span className="eyebrow">✦ RE:DREAM · AREN ART V4</span>
+        <span className="eyebrow">✦ RE:DREAM · AREN ART V7</span>
         <h2>Inspecionar as 23 animações do Aren</h2>
         <p>Os quadros exibidos aqui são os mesmos usados no jogo. Escolha uma ação,
           pause e compare poses, silhueta, roupa, efeitos e contato com o chão.
           Esta é uma prévia ampliada para examinar detalhes; na arena, Aren tem {AREN_DISPLAY_SIZE}px de escala.
-          Compare os quatro combos, Lançador, Otto e Magia MP3: agora têm poses-chave próprias.</p>
+          Compare a pose Idle, o novo rosto e a espada na mão; depois confira corrida, salto, combos e MP3.</p>
       </div>
       <span className="aren-inspector-count">{count} quadros</span>
     </div>
