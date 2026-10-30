@@ -70,3 +70,18 @@ test('impacto é alimentado por resultado confirmado e não pelas entradas do te
   assert.match(canvas,/buildCombatVfx\(/);
   assert.match(canvas,/this\.reducedMotion/);
 });
+
+test('V5: player feet and labels align to the authored frame rather than sinking into soil', () => {
+  assert.match(canvas,/AREN_FOOT_ANCHOR_Y/);
+  assert.match(canvas,/avatar\.setPosition\(p\.x, p\.y \+ footInset\)/);
+  assert.doesNotMatch(canvas,/avatar\.setPosition\(p\.x, p\.y \+ 15\)/);
+  assert.match(canvas,/if \(!practiceMode \|\| !isYou\)/);
+  assert.match(canvas,/AREN_HEALTHBAR_OFFSET_Y/);
+  assert.match(canvas,/AREN_NAME_OFFSET_Y/);
+});
+
+test('V5: moon mist has lower contrast wash, but depth and collision art remain unchanged', () => {
+  assert.match(canvas,/setDepth\(-11\)\.setAlpha\(\.68\)/);
+  assert.match(stage,/id="platform-lower"/);
+  assert.match(stage,/id="platform-upper"/);
+});
