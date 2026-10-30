@@ -19,7 +19,7 @@
 
 **Re:Dream** é um jogo independente inspirado na vontade de retomar um projeto antigo e transformá-lo em uma experiência original. A ideia é unir a ação de um RPG de plataforma com cooperação online e sistemas que possam crescer por etapas.
 
-**Estado:** **pré-alfa jogável**, com conteúdo de demonstração. Personagens, sprites e partes da interface podem usar recursos temporários. Não há inventário persistente, economia online ou rede multi-instância de produção.
+**Estado:** **pré-alfa jogável**, com conteúdo de demonstração. O elenco foi reiniciado e agora só **Aren, Buscador de Sonhos**, pode ser escolhido. Ele possui 23 ações/estados animados e 151 quadros vetoriais originais gerados no build; o acabamento ilustrado final ainda está em desenvolvimento. Não há inventário persistente, economia online ou rede multi-instância de produção.
 
 ## Jogabilidade atual
 
@@ -94,7 +94,7 @@ Salas e combates ficam **em memória de uma única instância do servidor**. Uma
 O projeto inclui um conjunto **enxuto de 9 skills para IA** em `.claude/skills/`, adaptado ao fluxo Phaser + TypeScript do Re:Dream: GDD, backlog, FSM, Event Bus, conversão de engine, stack traces, performance, shaders e prompts de assets.
 
 - [Guia de uso e catálogo](docs/AI_GAME_STUDIO.md)
-- [GDD vivo](docs/GDD_RE_DREAM.md), [direção de arte 2D](docs/ART_DIRECTION_RE_DREAM.md), [FSM de locomoção](docs/LOCOMOTION_FSM.md), [Event Bus do treino](docs/PRACTICE_EVENTS.md) e [backlog técnico](docs/BACKLOG_RE_DREAM.md)
+- [Reboot de Aren, com lista de 23 movimentos](docs/AREN_REBOOT.md), [GDD vivo](docs/GDD_RE_DREAM.md), [direção de arte 2D](docs/ART_DIRECTION_RE_DREAM.md), [FSM de locomoção](docs/LOCOMOTION_FSM.md), [Event Bus do treino](docs/PRACTICE_EVENTS.md) e [backlog técnico](docs/BACKLOG_RE_DREAM.md)
 - [Instruções para Codex e outros agentes](AGENTS.md)
 
 No Claude Code, abra a **raiz** do repositório e use, por exemplo, `/gdd-dinamico` ou `/backlog-gameplay`. No ChatGPT/Codex, leia o `AGENTS.md` e a skill correspondente; o registro de comandos não ocorre automaticamente nesses clientes. A validação estrutural é executada com `npm run test:skills` e também em `npm test`.
@@ -105,7 +105,7 @@ As skills são **instruções de desenvolvimento**, não plugins de execução d
 
 | Já existe como base | Ainda precisa evoluir |
 | --- | --- |
-| Seleção e navegação pré-alfa | Roster definitivo com sprites próprios |
+| Aren único com 23 ações vetoriais | Arte ilustrada final, atlas otimizado e mais cenários autorais |
 | Sala online e cooperação local/testável | Reconexão e infraestrutura escalável |
 | Movimentação e combate | Mais animações, golpes e inimigos |
 | Dungeon demonstrativa | Mundo, regiões e progressão persistente |
