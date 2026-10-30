@@ -147,7 +147,12 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     line(mainElbowX,mainElbowY,mainHandX,mainHandY,color.outline,15)+
     line(mainElbowX,mainElbowY,mainHandX,mainHandY,color.skin,10)+
     circle(mainElbowX,mainElbowY,6,color.metal)+
+    // Segmented cuff and reinforced bracer follow the sword arm through every frame.
+    line(mainElbowX+3,mainElbowY+3,mainHandX-2,mainHandY-4,'#4d6b76',5)+
+    line(mainElbowX+3,mainElbowY+3,mainHandX-2,mainHandY-4,'#b9d0c7',2)+
     circle(mainHandX,mainHandY,8,color.boot)+
+    path('M'+round(mainHandX-5)+' '+round(mainHandY-7)+'l8 1 4 7 -12 -1z',
+      '#668d91','stroke="#1d4055" stroke-width="1.5"')+
     line(mainHandX-2,mainHandY-3,mainHandX+4,mainHandY-1,color.capeLight,2);
   const torso = '<path d="M'+round(coreX-25)+' 72 Q'+round(coreX)+' 61 '+round(coreX+26)+
     ' 75L'+round(coreX+23)+' 122Q'+round(coreX)+' 135 '+round(coreX-24)+' 119Z" fill="'+color.coat+
@@ -200,6 +205,12 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
       'none','stroke="#61c5ac" stroke-width="3"'),
     path('M'+round(coreX+8)+' 138 l15 6',
       'none','stroke="#61c5ac" stroke-width="3"'),
+    // Decorative chest ribs and a side harness give the torso depth at game size.
+    path('M'+round(coreX-17)+' 94 Q'+round(coreX-23)+' 106 '+round(coreX-19)+' 114',
+      'none','stroke="#627e83" stroke-width="3" opacity=".85"'),
+    path('M'+round(coreX+16)+' 97 Q'+round(coreX+21)+' 106 '+round(coreX+17)+' 114',
+      'none','stroke="#7b9696" stroke-width="2.5" opacity=".85"'),
+    line(coreX-10,111,coreX+9,111,'#d4caa7',1.9),
     // Belt pouch, tiny and in front of the far hip.
     path('M'+round(coreX-24)+' 117 q-11 6 -9 17 l14 4 8 -13z',
       '#3d4a59','stroke="#142d40" stroke-width="3"'),
@@ -228,12 +239,33 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
           'stroke="#a86f65" stroke-width="1.8"'))+
     path('M'+round(coreX-9)+' '+round(headY+4)+'q-1 7 2 10',
       'none','stroke="#f9dfc4" stroke-width="2" opacity=".55"');
-  const hair=path('M'+round(coreX-20)+' '+round(headY-9)+
-    'q-8 -26 2 -29 l12 -8 10 5 17 -8 -4 14 17 -7 -8 16 14 6 -14 9 -4 -9 -15 12 -9 -8 -10 12z',
-    color.hair,'stroke="'+color.outline+'" stroke-width="3" stroke-linejoin="round"')+
-    path('M'+round(coreX-13)+' '+round(headY-30)+
-    'q15 -18 30 -10 l-6 8 -10 -3 -7 16z',color.hairLight,'opacity=".75"')+
-    path('M'+round(coreX-18)+' '+round(headY-5)+' q-8 -16 -2 -28 l8 12z',color.hair);
+  // V7: layered directional hair with fewer random spikes; three swept locks
+  // emphasize the forward gaze without making the head more oversized.
+  const hair=path('M'+round(coreX-21)+' '+round(headY-8)+
+    'Q'+round(coreX-28)+' '+round(headY-34)+' '+round(coreX-10)+' '+round(headY-39)+
+    'L'+round(coreX-5)+' '+round(headY-47)+' L'+round(coreX+5)+' '+round(headY-42)+
+    'Q'+round(coreX+18)+' '+round(headY-52)+' '+round(coreX+25)+' '+round(headY-42)+
+    'L'+round(coreX+24)+' '+round(headY-32)+' L'+round(coreX+37)+' '+round(headY-35)+
+    'Q'+round(coreX+33)+' '+round(headY-22)+' '+round(coreX+24)+' '+round(headY-20)+
+    'Q'+round(coreX+13)+' '+round(headY-16)+' '+round(coreX+7)+' '+round(headY-17)+
+    'L'+round(coreX-6)+' '+round(headY-9)+' L'+round(coreX-13)+' '+round(headY-18)+
+    'L'+round(coreX-22)+' '+round(headY-3)+'Z',
+    color.hair,'stroke="'+color.outline+'" stroke-width="3.2" stroke-linejoin="round"')+
+    // Directional forelock and 2 volume accents, independent from face outline.
+    path('M'+round(coreX-14)+' '+round(headY-31)+
+      'Q'+round(coreX+1)+' '+round(headY-47)+' '+round(coreX+18)+' '+round(headY-35)+
+      'L'+round(coreX+27)+' '+round(headY-25)+
+      'Q'+round(coreX+13)+' '+round(headY-30)+' '+round(coreX+3)+' '+round(headY-18)+
+      'Q'+round(coreX-7)+' '+round(headY-26)+' '+round(coreX-15)+' '+round(headY-22)+'Z',
+      color.hairLight,'opacity=".72"')+
+    path('M'+round(coreX-14)+' '+round(headY-39)+
+      'Q'+round(coreX-1)+' '+round(headY-51)+' '+round(coreX+11)+' '+round(headY-41),
+      'none','stroke="#8caab0" stroke-width="2.5" opacity=".65"')+
+    path('M'+round(coreX+13)+' '+round(headY-39)+
+      'Q'+round(coreX+22)+' '+round(headY-43)+' '+round(coreX+28)+' '+round(headY-31),
+      'none','stroke="#7fa3ae" stroke-width="2" opacity=".55"')+
+    path('M'+round(coreX-18)+' '+round(headY-4)+
+      'q-8 -15 -1 -27l7 12z',color.hair);
   // The thin moon circlet, side ear crystal and expressive facial linework
   // stay attached to the head instead of the old plain oval silhouette.
   const faceAccessories =
@@ -250,6 +282,24 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     '#62bfae','opacity=".88"')+
     line(coreX-9,78,coreX+9,80,'#d9f5ce',2);
   let effect='';
+  // V7: Aren holds his iconic lunar sword in all unarmed-looking locomotion
+  // frames too. Previously the blade appeared only during attacks.
+  // Weapon geometry is cosmetic and never expands the gameplay hitbox.
+  if(!attack && !skill && state!=='charge'){
+    const theta=(fast?-36:air?-14:51)*Math.PI/180;
+    const gripX=mainHandX+Math.cos(theta)*5, gripY=mainHandY+Math.sin(theta)*5;
+    const bladeX=Math.max(12,Math.min(183,gripX+Math.cos(theta)*47));
+    const bladeY=Math.max(8,Math.min(181,gripY+Math.sin(theta)*47));
+    const sideX=Math.sin(theta)*9,sideY=Math.cos(theta)*9;
+    effect='<g data-weapon="lunar-sabre">'+
+      line(mainHandX,mainHandY,gripX,gripY,'#223849',8)+
+      line(gripX,gripY,bladeX,bladeY,'#153649',10)+
+      line(gripX,gripY,bladeX,bladeY,'#8be5cf',6.5)+
+      line(gripX+1,gripY-1,bladeX-1,bladeY-1,'#f1fff0',2)+
+      line(gripX-sideX,gripY+sideY,gripX+sideX,gripY-sideY,'#d5c89c',4)+
+      circle(gripX,gripY,3.5,'#a6ffdf')+
+      circle(bladeX,bladeY,3,'#e6fff5')+'</g>';
+  }
   if(attack) {
     const swingProgress=strikePose.impact;
     const theta=strikePose.bladeAngle*Math.PI/180;
