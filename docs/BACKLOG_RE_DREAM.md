@@ -4,8 +4,8 @@
 ## Épico A — Núcleo de combate determinístico
 | ID | Ordem | Tarefa verificável | Dependências | Aceite |
 | --- | --- | --- | --- | --- |
-| RD-A01 | 1 | Mapear transições Idle/Walk/Dash/Run/Jump/Fall/Attack/Charge/Skill e prioridades | GDD | Diagrama/contrato cobre cancelamento e soltar Z |
-| RD-A02 | 2 | Extrair FSM testável para movimentação offline sem alterar física | A01 | Testes de duplo toque, dash→run, Rocket e reversão passam |
+| RD-A01 | Concluído no eixo de locomoção; combate pendente em RD-A03 | Tabela e prioridades Idle/Walk/Dash/Run/Rise/Fall/Rocket/Shadow, eventos de plataforma e camada ortogonal de Z | `docs/LOCOMOTION_FSM.md`; testes da FSM |
+| RD-A02 | Implementado incrementalmente no treino | Extrair decisão pura do estado de movimento e velocidade, conectar snapshot, HUD e seletor de sprites | Testes da FSM, arena e animação; QA manual ainda pendente |
 | RD-A03 | 3 | Extrair FSM de combate e regras de cancelamento | A01/A02 | Z breve=golpe; Z segurado+solto=magia; A/S/D não conjuram |
 | RD-A04 | 4 | Portar regras aprovadas ao multiplayer autoritativo (se solicitado) | A02/A03 | Testes de rede validam latência, anti-cheat e reconciliação |
 
@@ -38,4 +38,4 @@
 - PR separado por mudança lógica; rollback claro.
 
 ## Fila para seleção
-**Primeira história sugerida:** RD-A01 (especificar FSM antes de refatorar). **Segunda:** RD-B01 (eventos tipados). Não fundir epics grandes numa única PR.
+**Próxima história sugerida:** RD-B01 (especificar eventos tipados para VFX/HUD/MP sem alterar o WebSocket). Depois RD-A03 (FSM de combate e carga Z). Não misturar epics grandes numa PR.
