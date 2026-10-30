@@ -26,11 +26,23 @@ function waitMessage(ws, predicate, timeoutMs = 12000) {
 async function join(name, room, characterId) {
   const ws = new WebSocket(url, { origin, handshakeTimeout: 115000 });
   await new Promise((resolve, reject) => { ws.once('open', resolve); ws.once('error', reject); });
-  const joined = waitMessage(ws, x => x.type === 'joined' || x.type === 'error');
+  const accepted = x => x.type === 'joined' || x.type === 'error';
+  const first = waitMessage(ws, accepted);
   ws.send(JSON.stringify({ type: 'join', name, room, characterId }));
-  const msg = await joined;
+  let msg = await first;
+  let wireCharacterId = characterId;
+  // Render deploys independently from GitHub Pages. A legacy backend does
+  // not recognize 'aren' yet. Match the one-time fallback used by App.tsx;
+  // this is a transport alias only, never a second selectable game character.
+  if (msg.type === 'error' && msg.message === 'Personagem inválido.' && characterId === 'aren') {
+    wireCharacterId = 'luci';
+    const fallback = waitMessage(ws, accepted);
+    ws.send(JSON.stringify({ type: 'join', name, room, characterId: wireCharacterId }));
+    msg = await fallback;
+    console.warn('Legacy Render backend detected; player is rendered as Aren on the new web client.');
+  }
   if (msg.type !== 'joined') { ws.terminate(); throw Error(msg.message || 'Join refused'); }
-  return { ws, ...msg };
+  return { ws, wireCharacterId, ...msg };
 }
 let a, b;
 try {
@@ -60,14 +72,14 @@ try {
   const lobbyState = await together;
   if (lobbyState.status !== 'lobby') throw Error('Expected staging lobby before combat');
   const roster = new Map(lobbyState.players.map(p => [p.id, p.characterId]));
-  if (roster.get(a.id) !== 'aren' || roster.get(b.id) !== 'aren') {
+  if (roster.get(a.id) !== a.wireCharacterId || roster.get(b.id) !== b.wireCharacterId) {
     throw Error('Render did not synchronize selected characters: ' + JSON.stringify([...roster]));
   }
   if (a.room !== b.room) throw Error('Joined different rooms');
   const started = waitMessage(b.ws, msg => msg.type === 'snapshot' && msg.status === 'playing');
   a.ws.send(JSON.stringify({ type: 'start' }));
   await started;
-  console.log('PASS: Aren synchronized for both players, room started', a.room);
+  console.log('PASS: Aren frontend compatibility and 2-player room started', a.room);
 } finally {
   clearTimeout(abortTimer);
   a?.ws.terminate();
