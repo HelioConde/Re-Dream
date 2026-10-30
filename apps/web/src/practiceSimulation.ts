@@ -6,6 +6,7 @@ const DUMMY_X = 875;
 const DUMMY_HP = 260;
 const PRACTICE_ID = 'offline-practice';
 const WALK_SPEED = 310;
+const RUN_SPEED = 455; // Sustain acceleration only after a held second dash tap.
 const DASH_SPEED = 685;
 const DASH_DURATION = 0.24;
 const DOUBLE_TAP_WINDOW = 0.29;
@@ -36,6 +37,7 @@ export type TrainingStats = {
   chaseReady: boolean;
   chargeLevel: number; skillCasts: number; lastSkillLevel: number;
   rocketSteps: number; shadowSteps: number; dashCancels: number; ottoShots: number;
+  runs: number;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -57,6 +59,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
+    runs: 0,
   };
 
   private now = 0;
@@ -86,6 +89,9 @@ export class PracticeArena {
   private dropUntil = 0;
   private dashUntil = 0;
   private dashDirection = 0;
+  private runArmed = false;
+  private running = false;
+  private runDirection = 0;
   private chargeStartedAt = 0;
   private pendingChargeRelease: number | null = null;
   private resetDummyAt = 0;
@@ -110,6 +116,14 @@ export class PracticeArena {
     };
     if (next.left && !this.controls.left) this.tapDirection(-1);
     if (next.right && !this.controls.right) this.tapDirection(1);
+    // Releasing the second tap during the dash prevents the run transition.
+    // The existing short dash still completes, even after an early release.
+    if (this.runArmed && !(this.runDirection < 0 ? next.left : next.right)) {
+      this.runArmed = false;
+    }
+    if (this.running && !(this.runDirection < 0 ? next.left : next.right)) {
+      this.running = false;
+    }
     if (next.down && !this.controls.down && this.rocketUntil > this.now && !this.player.grounded) {
       this.shadowUntil = this.now + 0.35;
       this.rocketUntil = 0;
@@ -149,9 +163,12 @@ export class PracticeArena {
 
   private tapDirection(dir: -1 | 1) {
     const last = dir === -1 ? this.lastLeftTap : this.lastRightTap;
-    if (this.dashUntil > this.now && this.dashDirection === -dir) {
+    if ((this.dashUntil > this.now && this.dashDirection === -dir) ||
+        (this.running && this.runDirection === -dir)) {
       // Opposite input breaks a dash early. Never triggers a reverse dash for free.
       this.dashUntil = 0;
+      this.running = false;
+      this.runArmed = false;
       this.stats.dashCancels++;
       this.lastLeftTap = Number.NEGATIVE_INFINITY;
       this.lastRightTap = Number.NEGATIVE_INFINITY;
@@ -160,6 +177,9 @@ export class PracticeArena {
     if (this.now - last <= DOUBLE_TAP_WINDOW) {
       this.dashUntil = this.now + DASH_DURATION;
       this.dashDirection = dir;
+      this.runDirection = dir;
+      this.runArmed = true;
+      this.running = false;
       this.stats.dashes++;
       this.lastLeftTap = Number.NEGATIVE_INFINITY;
       this.lastRightTap = Number.NEGATIVE_INFINITY;
@@ -175,12 +195,23 @@ export class PracticeArena {
     const dir = Number(this.controls.right) - Number(this.controls.left);
     if (dir !== 0) p.facing = Math.sign(dir);
     const dashing = this.dashUntil > this.now;
+    // Only a sustained second press produces a run, starting after the dash.
+    // Releasing, reversing or leaving the ground returns to normal movement.
+    if (!dashing && this.runArmed) {
+      if (p.grounded && dir === this.runDirection) {
+        this.running = true;
+        this.stats.runs++;
+      }
+      this.runArmed = false;
+    }
+    if (this.running && (!p.grounded || dir !== this.runDirection)) this.running = false;
     const rocket = !p.grounded && this.rocketUntil > this.now;
     const shadow = !p.grounded && this.shadowUntil > this.now;
     const velocityDirection = dashing ? this.dashDirection :
       rocket || shadow ? (dir || this.rocketDirection) : dir;
+    const runSpeed = this.running && p.grounded ? RUN_SPEED : WALK_SPEED;
     p.vx = velocityDirection * (dashing ? DASH_SPEED :
-      rocket ? ROCKET_SPEED : shadow ? WALK_SPEED * 1.15 : WALK_SPEED);
+      rocket ? ROCKET_SPEED : shadow ? WALK_SPEED * 1.15 : runSpeed);
     p.x = Math.max(22, Math.min(1258, p.x + p.vx * dt));
 
     // ↑ + attack during a grounded combo is a launcher, not a jump.
@@ -422,6 +453,9 @@ export class PracticeArena {
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
     this.attackBufferUntil = Number.NEGATIVE_INFINITY;
     this.dashUntil = 0;
+    this.runArmed = false;
+    this.running = false;
+    this.runDirection = 0;
     this.player.vx = 0;
     this.diving = false;
   }
@@ -438,6 +472,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
+    runs: 0,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
@@ -452,6 +487,7 @@ export class PracticeArena {
     this.lastGroundedAt = 0;
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
     this.dropUntil = 0; this.dashUntil = 0; this.dashDirection = 0;
+    this.runArmed = false; this.running = false; this.runDirection = 0;
     this.chargeStartedAt = 0; this.pendingChargeRelease = null;
     this.currentSkillLevel = 1;
     this.rocketUntil = 0; this.rocketDirection = 1;
@@ -485,7 +521,7 @@ export class PracticeArena {
         x: p.x, y: p.y, hp: p.hp, score: p.score, facing: p.facing,
         flash: p.flash, color: 0x86dcca, comboStage: p.comboStage,
         airborne: !p.grounded, falling: p.vy >= 0,
-        dashing: this.now < this.dashUntil, velocityX: p.vx,
+        dashing: this.now < this.dashUntil, running: this.running, velocityX: p.vx,
         rocket: this.rocketUntil > this.now && !p.grounded,
         shadow: this.shadowUntil > this.now && !p.grounded,
         skillLevel: this.action === 'skill' ? this.currentSkillLevel : undefined,
