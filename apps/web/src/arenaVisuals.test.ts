@@ -85,3 +85,29 @@ test('V5: moon mist has lower contrast wash, but depth and collision art remain 
   assert.match(stage,/id="platform-lower"/);
   assert.match(stage,/id="platform-upper"/);
 });
+
+test('V6: painted-style terrain relief is valid transparent art and a static stage layer', () => {
+  const detail = readFileSync(join(process.cwd(),'public/art/forest-detail.svg'),'utf8');
+  assert.match(detail,/width="1280" height="720" viewBox="0 0 1280 720"/);
+  assert.match(detail,/<\/svg>\s*$/);
+  for(const name of ['mountain-contours','canopy-detail','ancient-arch-detail',
+    'waterfall-detail','platform-stone-ornament','soil-detail']){
+    assert.ok(detail.includes('id="'+name+'"'),'missing illustrated layer: '+name);
+  }
+  for(const name of ['<image','<script','<foreignObject','data:image']){
+    assert.equal(detail.includes(name),false);
+  }
+  assert.match(canvas,/this\.load\.svg\('forest-detail'/);
+  assert.match(canvas,/this\.textures\.exists\('forest-detail'\)/);
+  assert.match(canvas,/this\.add\.image\(640, 360, 'forest-detail'\)/);
+  assert.match(canvas,/\.setDisplaySize\(1280, 720\)\.setDepth\(-16\)/);
+  // Static authored art is placed in create(), and never rebuilt each frame.
+  assert.equal(canvas.match(/this\.add\.image\(640, 360, 'forest-detail'\)/g)?.length,1);
+});
+
+test('V6: the old triangular mountain and oval tree silhouettes are replaced', () => {
+  assert.doesNotMatch(stage,/M0 418L154 258 298 377/);
+  assert.doesNotMatch(stage,/<ellipse cx="-8" cy="285" rx="118"/);
+  assert.match(stage,/M0 418Q58 360/);
+  assert.match(stage,/M-113 283Q-137 255/);
+});
