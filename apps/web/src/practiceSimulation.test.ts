@@ -725,3 +725,30 @@ test('pause and reset discard a pending platform drop', () => {
   assert.equal(a.stats.drops,0);
   assert.equal(a.player.y,596);
 });
+
+test('real training shortcut positions Luci on a collidable platform then ↓ drops him', () => {
+  const a=new PracticeArena();
+  a.placeOnPlatformForTraining();
+  assert.equal(a.player.grounded,true);
+  assert.equal(a.player.y,466);
+  assert.equal(a.stats.onPlatform,true);
+  a.setInput({...noInput,down:true});
+  for(let i=0;i<6;i++)a.step(1/30);
+  assert.equal(a.stats.drops,1);
+  assert.ok(a.player.y>466);
+  assert.equal(a.stats.onPlatform,false);
+});
+
+test('platform state is only announced when standing on a one-way platform', () => {
+  const a=new PracticeArena();
+  a.step(1/30);
+  assert.equal(a.stats.onPlatform,false);
+  Object.assign(a.player,{x:300,y:466,grounded:true,vy:0});
+  a.step(1/30);
+  assert.equal(a.stats.onPlatform,true);
+  a.setInput({...noInput,down:true});
+  for(let i=0;i<6;i++)a.step(1/30);
+  assert.equal(a.stats.onPlatform,false);
+  a.reset();
+  assert.equal(a.stats.onPlatform,false);
+});
