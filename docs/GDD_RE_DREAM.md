@@ -18,7 +18,7 @@ Jogo **original** de ação e plataformas 2D com atmosfera de fantasia, combate 
 ## Mecânicas atuais
 | Sistema | Situação | Fonte |
 | --- | --- | --- |
-| Andar, dash por duplo toque, corrida ao segurar segundo toque | Praticar offline | `practiceSimulation.ts` |
+| Andar, dash por duplo toque, corrida ao segurar segundo toque | Praticar offline, agora com decisão de estado/velocidade extraída para FSM pura | `locomotionFsm.ts`, `practiceSimulation.ts` |
 | Salto, Rocket/Shadow Step, dash cancel, **↓ sozinho para descer plataforma vazada** | Praticar offline | `practiceSimulation.ts` |
 | ↓ para descer plataforma fina: entrada, predição e servidor autoritativo | Cliente + servidor online (requer deploy do backend) | `GameCanvas.tsx`, `prediction.ts`, `apps/server/src/sim.ts` |
 | Combo básico, launcher, juggle, mergulho/estocada e Otto adaptado | Praticar offline | `practiceSimulation.ts` |
@@ -38,10 +38,11 @@ Cliente React + Phaser 4 + TypeScript, publicado estaticamente via GitHub Pages;
 - **Qualidade:** `npm test` e `npm run build`, QA visual manual, verificação de inputs e colisões, revisão de licenças dos assets.
 
 ## Próxima versão a validar
-Unificar a definição de estados de movimentação/combatentes; desacoplar feedback visual via eventos; medir *frame time* e reduzir regressões sem quebrar o multiplayer. Essas são **propostas**, não itens já implementados.
+A decisão de estados de locomoção offline já foi extraída como FSM pura, documentada em `docs/LOCOMOTION_FSM.md` e ligada ao seletor de sprites e indicador de ESTADO. **Ainda proposto:** extrair FSM de combate (incluindo cargas Z), eventos locais tipados para feedback visual e medir *frame time* com hardware real; nenhum desses itens está concluído.
 
 ## Histórico de decisões
 - 2026-10-30: GDD inicial redigido a partir da base existente e do fluxo de skills adaptado.
 - 2026-10-30: Descida de plataforma passou a exigir apenas ↓ (toque curto também funciona), preservando Otto e Shadow Step; validação lógica em testes de simulação local.
 - 2026-10-30: Relato de playtest: ↓ não funcionou. Identificada lacuna no multiplayer (cliente não enviava DOWN, servidor descartava a tecla e predição não atravessava plataforma); adicionados testes para a ponte de input e para o backend. Ajuda de teste do treino recebeu posicionamento na plataforma e indicador de pouso. Publicar o backend separadamente é obrigatório para paridade online.
+- 2026-10-30: FSM incremental de locomoção implementada offline, preservando dash→run, Rocket/Shadow, descida da plataforma, Otto e magias exclusivamente por Z. O servidor de multiplayer não foi alterado nesta etapa.
 - Qualquer mudança em controle/MP deve atualizar este GDD, documentação do gameplay e testes no mesmo PR.
