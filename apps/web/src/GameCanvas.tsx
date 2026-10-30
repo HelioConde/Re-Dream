@@ -80,7 +80,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       update(time: number) {
         const keys = this.keys;
         const mobile = mobileRef.current;
-        // Practice uses GC-style arrows + Z and A/S/D for skills.
+        // In practice, only a held-and-released Z can cast abilities.
         // Multiplayer keeps its existing A/D/W/Z/K/X bindings untouched.
         const up = keys.UP.isDown || keys.W.isDown || mobile.jump === true;
         const down = keys.DOWN.isDown || mobile.down === true;
@@ -93,9 +93,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           drop: (keys.SPACE.isDown || mobile.drop === true) && down,
           attack: keys.J.isDown || mobile.attack,
           charge: keys.Z.isDown || mobile.charge === true,
-          skill: keys.K.isDown || mobile.skill,
-          skillLevel: (keys.D.isDown ? 3 : keys.S.isDown ? 2 : keys.A.isDown ? 1 :
-            mobile.skillLevel ?? 0) as 0 | 1 | 2 | 3,
+          skill: false,
         } : {
           left: keys.A.isDown || keys.LEFT.isDown || mobile.left,
           right: keys.D.isDown || keys.RIGHT.isDown || mobile.right,
