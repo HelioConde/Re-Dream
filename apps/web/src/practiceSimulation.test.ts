@@ -77,16 +77,23 @@ test('double tap starts dash and holding the second tap transitions to a sustain
   assert.equal(arena.stats.runs, 1, 'holding direction never retriggers the run');
 });
 
-test('down drops through one-way platforms, but not through the floor', () => {
+test('down alone drops through one-way platforms, but never through the solid floor', () => {
   const arena = new PracticeArena();
   Object.assign(arena.player, { x: 300, y: 466, vy: 0, grounded: true });
-  arena.setInput({ ...noInput, down: true, drop: true });
+  arena.setInput({ ...noInput, down: true });
+  // Brief priority window is not a requirement to hold the button.
   arena.step(1 / 30);
-  assert.ok(arena.player.y > 466);
   arena.setInput(noInput);
+  for (let i = 0; i < 4; i++) arena.step(1 / 30);
+  assert.ok(arena.player.y > 466);
+  assert.equal(arena.stats.drops, 1);
   for (let i = 0; i < 60; i++) arena.step(1 / 30);
   assert.equal(arena.player.y, 596);
   assert.equal(arena.player.grounded, true);
+  arena.setInput({ ...noInput, down: true });
+  for (let i = 0; i < 30; i++) arena.step(1 / 30);
+  assert.equal(arena.player.y, 596);
+  assert.equal(arena.stats.drops, 1);
 });
 
 test('consecutive strikes build distinct combo stages and MP', () => {
@@ -439,15 +446,15 @@ test('opposite direction interrupts dash immediately rather than giving another 
   assert.ok(a.player.vx < 0);
 });
 
-test('down alone stays on an elevated platform, down+space drops through it', () => {
+test('down+space remains an optional immediate drop on one-way platforms', () => {
   const a = new PracticeArena();
   Object.assign(a.player, {x:300,y:466,grounded:true,vy:0});
-  a.setInput({ ...noInput, down:true });
-  a.step(1/30);
-  assert.equal(a.player.y,466);
-  a.setInput({...noInput,down:true,drop:true});
+  a.setInput({ ...noInput, down:true, drop:true });
   a.step(1/30);
   assert.ok(a.player.y >466);
+  assert.equal(a.stats.drops,1);
+  for(let i=0;i<20;i++)a.step(1/30);
+  assert.equal(a.stats.drops,1);
 });
 
 test('Otto at platform edge is a downward strike, not a teleport or floor clip', () => {
@@ -626,4 +633,95 @@ test('pause and reset clear run state so the next direction is a normal walk', (
   arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
   assert.equal(arena.player.vx, 310);
   assert.equal(arena.stats.dashes, 0);
+});
+
+
+test('down alone on the upper platform drops without an additional key', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player, {x:760,y:414,grounded:true,vy:0});
+  a.setInput({...noInput,down:true});
+  for(let i=0;i<5;i++)a.step(1/30);
+  assert.ok(a.player.y>414);
+  assert.equal(a.stats.drops,1);
+  assert.ok(a.player.vy>0);
+});
+
+test('a short down tap is enough, but never drops again without a new press', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player,{x:300,y:466,grounded:true,vy:0});
+  a.setInput({...noInput,down:true}); a.step(1/30);
+  a.setInput(noInput);
+  for(let i=0;i<7;i++) a.step(1/30);
+  assert.equal(a.stats.drops,1);
+  for(let i=0;i<25;i++)a.step(1/30);
+  assert.equal(a.stats.drops,1);
+});
+
+test('down+Z at platform edge takes priority as Otto, not a normal drop', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player,{x:900,y:414,vy:0,grounded:true,facing:-1});
+  a.setInput({...noInput,down:true,charge:true});
+  a.step(1/30);
+  assert.equal(a.stats.ottoShots,1);
+  assert.equal(a.stats.drops,0);
+  assert.equal(a.snapshot().impact?.kind,'otto');
+});
+
+test('press down then Z within the chord window preserves Otto', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player,{x:900,y:414,vy:0,grounded:true,facing:-1});
+  a.setInput({...noInput,down:true});
+  a.step(1/30);
+  assert.equal(a.player.y,414);
+  a.setInput({...noInput,down:true,charge:true});
+  for(let i=0;i<6;i++)a.step(1/30);
+  assert.equal(a.stats.ottoShots,1);
+  assert.equal(a.stats.drops,0);
+});
+
+test('attack+down on a platform does not trigger a delayed auto drop', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player,{x:300,y:466,vy:0,grounded:true});
+  a.setInput({...noInput,down:true});
+  a.step(1/30);
+  a.setInput({...noInput,down:true,charge:true});
+  for(let i=0;i<7;i++)a.step(1/30);
+  assert.equal(a.stats.drops,0);
+  assert.equal(a.player.y,466);
+  a.setInput(noInput);
+  a.step(1/30);
+  assert.equal(a.stats.drops,0);
+});
+
+test('down while airborne does not drop through a platform again on landing', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player,{x:300,y:350,vy:200,grounded:false});
+  a.setInput({...noInput,down:true});
+  for(let i=0;i<25;i++)a.step(1/30);
+  assert.equal(a.player.y,466);
+  assert.equal(a.player.grounded,true);
+  assert.equal(a.stats.drops,0);
+  a.setInput(noInput);
+  a.step(1/30);
+  a.setInput({...noInput,down:true});
+  for(let i=0;i<6;i++)a.step(1/30);
+  assert.equal(a.stats.drops,1);
+  assert.ok(a.player.y>466);
+});
+
+test('pause and reset discard a pending platform drop', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player,{x:300,y:466,vy:0,grounded:true});
+  a.setInput({...noInput,down:true});
+  a.step(1/30);
+  a.suspend();
+  for(let i=0;i<7;i++)a.step(1/30);
+  assert.equal(a.stats.drops,0);
+  assert.equal(a.player.y,466);
+  a.setInput({...noInput,down:true});
+  a.step(1/30);
+  a.reset();
+  for(let i=0;i<7;i++)a.step(1/30);
+  assert.equal(a.stats.drops,0);
+  assert.equal(a.player.y,596);
 });
