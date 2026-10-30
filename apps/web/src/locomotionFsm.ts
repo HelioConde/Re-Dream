@@ -75,8 +75,9 @@ export function advanceLocomotion(c: LocomotionContext): LocomotionTransition {
   }
   if (running && (!c.grounded || c.direction !== c.runDirection)) running = false;
 
-  const rocket = !c.grounded && c.rocketUntil > c.now;
   const shadow = !c.grounded && c.shadowUntil > c.now;
+  // Shadow's downward cancel always wins, even if stale Rocket time remains.
+  const rocket = !shadow && !c.grounded && c.rocketUntil > c.now;
   const horizontalDirection = dash ? c.dashDirection :
     rocket || shadow ? c.direction || c.rocketDirection : c.direction;
   const velocity = dash ? LOCOMOTION_SPEED.dash :
