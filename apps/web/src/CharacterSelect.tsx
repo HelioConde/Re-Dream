@@ -28,9 +28,9 @@ export default function CharacterSelect({
 
   return <main className="character-select" id="personagens">
     <div className="select-heading">
-      <span className="eyebrow">✧ RE:DREAM · SELEÇÃO DE AVENTUREIRO</span>
-      <h1>Escolha seu personagem</h1>
-      <p><strong>Luci</strong> é nosso Fighter protagonista. Escolha um personagem e entre no modo Praticar para testar movimento e combate sozinho, ou crie uma sala para jogar com amigos.</p>
+      <span className="eyebrow">✧ RE:DREAM · NOVO PROTAGONISTA</span>
+      <h1>Aren, o Buscador de Sonhos</h1>
+      <p>Elenco reconstruído do zero: <strong>um único herói original</strong>, com animações de movimento e combate completas. Entre no treino para conhecer Aren ou crie uma sala para jogar em equipe.</p>
     </div>
     <div className="select-layout">
       <section className="character-list" aria-label="Personagens disponíveis">
@@ -50,8 +50,8 @@ export default function CharacterSelect({
         </button>)}
         <div className="future-characters">
           <span aria-hidden="true">✧</span>
-          <strong>Luci · Fighter original</strong>
-          <p>As animações em Leste foram encontradas no ZIP do PixelLab. A armadura iniciante ainda precisa de quadros animados.</p>
+          <strong>Aren · 23 estados animados</strong>
+          <p>Idle, caminhada, corrida, dash, saltos, Rocket/Shadow, quatro ataques, Otto, lançador, queda, carga e MP1/2/3. Todos os quadros são gerados de arte vetorial original.</p>
         </div>
       </section>
       <section className="character-stage" aria-label="Prévia do personagem selecionado">
@@ -89,8 +89,6 @@ export default function CharacterSelect({
         </div>
       </div>
     </form>
-    <p className="character-disclaimer">Pré-alfa não comercial: algumas opções têm somente pose estática ou movimentos incompletos.
-    O treino acontece no navegador, sem conexão com o servidor. A escolha do personagem é salva localmente.
-    Créditos de cada pacote disponíveis em "Ver origem dos sprites".</p>
+    <p className="character-disclaimer">Reboot gráfico em desenvolvimento: os quadros animados de Aren são originais e funcionais, mas ainda são vetoriais — não a pintura final da ficha conceitual. O treino é offline e a escolha é salva localmente.</p>
   </main>;
 }
