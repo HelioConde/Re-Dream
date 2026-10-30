@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AREN_ACTIONS, AREN_FRAME_COUNTS, type ArenAction } from './arenAnimation';
+import { AREN_ACTIONS, AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, type ArenAction } from './arenAnimation';
 
 const LABELS: Record<ArenAction,string> = {
   idle:'Parado / Respiração',walk:'Caminhar',run:'Corrida',dash:'Dash',
@@ -40,6 +40,7 @@ export default function ArenAnimationInspector() {
         <h2>Inspecionar as 23 animações do Aren</h2>
         <p>Os quadros exibidos aqui são os mesmos usados no jogo. Escolha uma ação,
           pause e compare poses, silhueta, roupa, efeitos e contato com o chão.
+          Esta é uma prévia ampliada para examinar detalhes; na arena, Aren tem {AREN_DISPLAY_SIZE}px de escala.
           Compare os quatro combos, Lançador, Otto e Magia MP3: agora têm poses-chave próprias.</p>
       </div>
       <span className="aren-inspector-count">{count} quadros</span>
