@@ -11,9 +11,13 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 - Descer da plataforma com ↓ ou S, sem atravessar o chão sólido.
 - **J:** sequência de golpes com escala de dano e quatro estágios de animação. Manter J pressionado também funciona como opção acessível.
 - **Ataque no ar:** usa a animação real de ataque aéreo e acerta o alvo quando próximo.
-- **↑ + J/Z no meio de um combo em solo:** executa golpe ascendente com a spritesheet autêntica \`uppercut_east\` e lança o alvo para cima; ↑ sozinho continua pulando.
+- **↑ + J/Z no meio de um combo em solo:** executa golpe ascendente com a spritesheet autêntica `uppercut_east` e lança o alvo para cima; ↑ sozinho continua pulando.
 - **↓ + J/Z durante o salto:** estocada descendente. Acelera o Luci para o solo e só acerta se as áreas de ataque realmente se sobrepõem. A descida atravessa plataformas finas, mas nunca o chão sólido. Usa a animação aérea autoral do Luci com efeito de rastro, sem inventar quadros.
 - O alvo lançado tem gravidade e posição vertical reais durante o treinamento, podendo ser perseguido no ar.
+- **Perseguição após o lançamento:** solte ↑ depois do uppercut e pressione ↑ novamente em até 550 ms para cancelar a recuperação e saltar mais alto. Um indicador contextual `↑ PERSEGUIR` aparece enquanto a janela está ativa.
+- **Juggle aéreo:** ao alcançar o boneco lançado, acerte J no ar. O primeiro ao quarto golpe aéreo bem-sucedido renovam brevemente a altura do alvo, com gravidade e hitbox reais; o quinto não gera um repique infinito. O HUD registra a sequência aérea atual e o melhor resultado.
+- **Finalização:** ↓ + J durante o salto pode arremessar o boneco lançado de volta para o chão. Só ocorre dano quando a estocada realmente encosta no alvo.
+
 - **Ataque durante o dash:** utiliza a spritesheet real de dash attack do Luci.
 - **Z:** o primeiro golpe sai imediatamente ao pressionar; segurar por 650 ms e soltar adiciona a habilidade carregada se houver 35 MP. Soltar Z rapidamente não duplica o golpe.
 - **K/X:** habilidade instantânea se houver MP. MP inicial 40; acertos restauram MP.
@@ -41,6 +45,10 @@ Próximas etapas, em ordem:
 3. Subir numa plataforma e apertar ↓: atravessar a plataforma sem atravessar o chão.
 4. Chegar perto do boneco e atacar 3-4 vezes: contador de combo e danos devem progredir.
 5. Pular perto do alvo e atacar: contador de ataques aéreos deve aumentar.
+5a. Aproximar do boneco, J e depois ↑+J; ao surgir o indicador, soltar ↑ e apertar ↑ de novo para perseguir. Atacar com J no ar e conferir o contador JUGGLES.
+5b. Deixar o alvo cair: o contador da sequência aérea deve zerar, sem perder o recorde.
+5c. Após lançar e perseguir, ↓+J no ar deve finalizar o alvo em direção ao solo, sem acertar um alvo distante.
+
 6. Pressionar e segurar Z até carga cheia, soltar: habilidade deve consumir MP.
 7. Pausar durante uma carga de Z, continuar: não deve soltar habilidade sozinha.
 8. Testar 390 px de largura: controles móveis e medidores devem estar visíveis sem overflow.
