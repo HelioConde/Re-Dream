@@ -14,6 +14,7 @@ Este repositório contém um jogo **original** de ação/plataformas 2D. O clien
 - O modo `#praticar` roda simulação local em `apps/web/src/practiceSimulation.ts`; o multiplayer usa `apps/server/src/sim.ts`. Não levar regras offline para o servidor sem planejamento, validação de autoridade e testes de rede.
 - **Combate offline**: Z é a única tecla de conjuração; segurar e **soltar** Z carrega/ativa magia de MP 1/2/3. A/S/D/K nunca disparam magia no modo Praticar.
 - Preservar duplo toque de direção → dash; segurar o segundo toque → corrida; Rocket/Shadow Step, Otto, launcher e juggle quando alterar controles.
+- No treino, pressionar ↓ sozinho sobre plataforma vazada atravessa após uma breve janela de prioridade para ↓+Z/J (Otto); chão sólido não permite passagem, ↓ no ar continua Shadow Step. ↓+Espaço é opcional.
 - Prefira alterações pequenas, com critérios observáveis, testes e rollback possível. Nunca afirmar que uma animação/feature está funcional sem executar verificações adequadas.
 - Após alterações em TypeScript: `npm test` e `npm run build`. Em mudanças visuais, testar no navegador e conservar evidência visual; testes unitários não validam aparência nem *game feel*.
 - Não introduzir banco de dados/backend obrigatório no modo Praticar ou no GitHub Pages; páginas estáticas não executam WebSocket server.
