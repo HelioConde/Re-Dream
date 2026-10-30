@@ -125,6 +125,10 @@ export default function App() {
     try {
       const socket = new WebSocket(websocketUrl);
       socketRef.current = socket;
+      let legacyIdAttempted = false;
+      // Render may still be running the previous server. A one-time wire-only
+      // compatibility alias lets that server accept a join; all clients using
+      // this build still render Aren and only Aren.
       socket.onopen = () => socket.send(JSON.stringify({ type: 'join', name: safeName, room: normalizedRoom || undefined, characterId: selectedCharacter }));
       socket.onmessage = event => {
         let message: ServerMessage;
@@ -148,6 +152,12 @@ export default function App() {
           snapshotRef.current = message;
           setSnapshot(message);
         } else if (message.type === 'error') {
+          if (message.message === 'Personagem inválido.' && !legacyIdAttempted && selectedCharacter === 'aren') {
+            legacyIdAttempted = true;
+            socket.send(JSON.stringify({ type: 'join', name: safeName,
+              room: normalizedRoom || undefined, characterId: 'luci' }));
+            return;
+          }
           setError(message.message);
           socket.close();
         }
