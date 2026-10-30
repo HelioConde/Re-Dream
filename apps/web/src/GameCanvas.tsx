@@ -216,7 +216,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           const attackElapsed = isYou && practiceMode
             ? (player.combatAction === 'attack' || player.combatAction === 'air_attack' ||
                player.combatAction === 'dash_attack' || player.combatAction === 'launcher' ||
-               player.combatAction === 'dive'
+               (player.combatAction === 'dive' || player.combatAction === 'otto')
                 ? player.actionElapsedMs ?? null : null)
             : this.attackPlayback.update(
                 key, isYou, isYou && input.attack, player.flash,
@@ -239,7 +239,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
                 dashing: isYou && practiceMode && Boolean(player.dashing),
                 dashAttacking: isYou && practiceMode && player.combatAction === 'dash_attack',
                 launching: isYou && practiceMode && player.combatAction === 'launcher',
-                diving: isYou && practiceMode && player.combatAction === 'dive',
+                diving: isYou && practiceMode && (player.combatAction === 'dive' || player.combatAction === 'otto'),
                 comboStage,
                 attackElapsed,
                 timeMs: isYou && practiceMode && player.combatAction === 'skill'
@@ -249,6 +249,16 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
                 player.characterId, immediateFacing, moving,
                 attacking, isYou && input.skill, attackElapsed ?? time,
               );
+          if (isYou && practiceMode && !this.reducedMotion &&
+              player.combatAction === 'skill' && (player.skillLevel ?? 1) > 1) {
+            // The authored skill sprite is reused; each level gets a distinct
+            // original range ring rather than an unlicensed replacement sprite.
+            const level = player.skillLevel ?? 1;
+            const progress = Math.min(1, (player.actionElapsedMs ?? 0) / 460);
+            const tint = level === 3 ? 0xf8b1fb : 0x8fd5ff;
+            this.hitLayer.lineStyle(2 + level, tint, (1 - progress) * 0.58);
+            this.hitLayer.strokeCircle(p.x, p.y - 62, 28 + level * 9 + progress * 32);
+          }
           if (isYou && practiceMode && !this.reducedMotion && (player.rocket || player.shadow)) {
             // Original movement trail; no borrowed images from the reference game.
             const length = player.rocket ? 82 : 34;
