@@ -6,7 +6,7 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 
 ## Primeira implementação: Campo de Prática offline
 
-- Direção com setas; **duplo toque em uma direção** em até 290 ms ativa um dash de 240 ms.
+- Direção com setas: um toque mantém caminhada de 310 px/s; **duplo toque em até 290 ms** ativa um dash de 240 ms a 685 px/s. Se a segunda pressão continuar segurada, o dash termina em uma **corrida contínua** de 455 px/s. Soltar a direção encerra a corrida; inverter a direção cancela o movimento.
 - Salto em ↑ (W alternativo no treino); janela curta para aceitar saltos no momento certo.
 - Descer da plataforma com ↓ + Espaço, sem atravessar o chão sólido.
 - **J:** sequência de golpes com escala de dano e quatro estágios de animação. Manter J pressionado também funciona como opção acessível.
@@ -33,7 +33,8 @@ A configuração principal é baseada em **setas + Z**. **A, S e D não ativam h
 | Ação | Teclado |
 | --- | --- |
 | Andar | ← ou → |
-| Dash | ←← ou →→ |
+| Dash | ←← ou →→ (duplo toque rápido) |
+| Corrida após dash | Manter pressionada a **segunda** seta (← ou →) depois do dash; soltar interrompe a corrida |
 | Rocket Step | Dash + ↑ (mantém impulso horizontal no ar por janela limitada) |
 | Shadow Step | Rocket Step + ↓ durante o voo (encurta o salto) |
 | Dash Cancel | Direção oposta ao dash |
@@ -54,6 +55,8 @@ A configuração principal é baseada em **setas + Z**. **A, S e D não ativam h
 - Dash → ↑: contar Rocket; soltar direção e verificar que conserva brevemente o impulso no ar.
 - Durante Rocket, ↓: acelerar a queda, contar Shadow; aterrissar no chão sólido sem atravessá-lo.
 - Dash → direção oposta: interromper dash, contador CANCEL aumenta.
+- Apertar → uma vez e segurar: caminhar, sem dash nem corrida. Apertar → → e segurar a segunda pressão: dar dash e continuar correndo. Soltar → durante o dash: ele termina sem entrar em corrida. Soltar → depois da transição: parar imediatamente. Mudar para ← cancela a corrida.
+- No treino do Luci, conferir sprites diferentes de caminhada, corrida e dash, incluindo direção esquerda por espelhamento. Rocket Step deve continuar iniciando durante o dash sem disparar corrida automática durante o voo.
 - Subir na borda de plataforma vazada, ↓+Z: Otto descendente; ↓ sozinho não atravessa, ↓+Espaço atravessa.
 - Z curto acerta; Z segurado permite escolher nível 1, 2 ou 3; com MP suficiente, soltar consome 100/200/300. A/S/D/K não devem conjurar, nem deve existir botão MP1/2/3 no celular.
 - O multiplayer mantém os controles anteriores enquanto o sistema de habilidades carregadas exclusivamente com Z não for integrado ao servidor autoritativo.
@@ -72,7 +75,7 @@ Próximas etapas, em ordem:
 ## Checklist de teste manual
 
 1. Abrir /Re-Dream/#personagens, escolher Luci e clicar em **Praticar offline**.
-2. Apertar →, soltar, apertar → novamente rapidamente: o contador de dash deve aumentar.
+2. Apertar →, soltar, apertar → novamente rapidamente: o contador de dash deve aumentar. **Manter a segunda pressão** deve iniciar corrida contínua após o dash, incrementando CORRIDAS; soltar deve parar.
 2a. Pressionar Z uma vez perto do alvo: o primeiro impacto deve ocorrer antes de soltar. Soltar rapidamente não deve gerar segundo golpe.
 3. Subir numa plataforma e apertar ↓: atravessar a plataforma sem atravessar o chão.
 4. Chegar perto do boneco e atacar 3-4 vezes: contador de combo e danos devem progredir.

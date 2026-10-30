@@ -38,6 +38,7 @@ export type LuciVisualState = {
   attacking: boolean;
   skill: boolean;
   dashing?: boolean;
+  running?: boolean;
   dashAttacking?: boolean;
   launching?: boolean;
   diving?: boolean;
@@ -66,8 +67,8 @@ export function selectLuciAnimation(s: LuciVisualState): SpriteChoice {
   } else {
     if (s.airborne) action = s.falling ? 'jump_fall_east' : 'jump_air_east';
     else if (s.dashing) action = 'dash_east';
-    else if (s.moving) action = 'run_east';
-    const fps = action === 'run_east' ? 12 : action === 'idle_east' ? 9 : 12;
+    else if (s.moving) action = s.running ? 'run_east' : 'walk_east';
+    const fps = action === 'run_east' ? 15 : action === 'walk_east' ? 9 : action === 'idle_east' ? 9 : 12;
     frame = Math.floor(s.timeMs * fps / 1000) % LUCI_FRAME_COUNTS[action];
   }
   return { texture: 'luci_' + action, frame, flipX: s.facing < 0 };
