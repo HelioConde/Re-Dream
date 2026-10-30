@@ -6,7 +6,7 @@ import { readGameInput } from './inputMapping';
 import { buildCombatVfx, impactColor } from './combatVfx';
 import { LocalPredictor } from './prediction';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
-import { AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, selectArenAnimation, chooseArenAction, ArenActionPhaseTracker, ArenLandingTracker, ArenComboTracker, type ArenVisualState } from './arenAnimation';
+import { AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, AREN_FRAME_SIZE, AREN_FOOT_ANCHOR_Y, AREN_HEALTHBAR_OFFSET_Y, AREN_NAME_OFFSET_Y, selectArenAnimation, chooseArenAction, ArenActionPhaseTracker, ArenLandingTracker, ArenComboTracker, type ArenVisualState } from './arenAnimation';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -86,7 +86,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         // altering the y=596 floor or the two existing one-way platforms.
         if (this.textures.exists('forest-atmosphere')) {
           this.moonMist = this.add.image(640, 360, 'forest-atmosphere')
-            .setDisplaySize(1280, 720).setDepth(-11).setAlpha(.88);
+            .setDisplaySize(1280, 720).setDepth(-11).setAlpha(.68);
         }
         if (this.textures.exists('forest-foreground')) {
           this.nearFoliage = this.add.image(640, 360, 'forest-foreground')
@@ -295,8 +295,10 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             if (avatar.texture.key !== texture && this.textures.exists(texture)) avatar.setTexture(texture);
             avatar.setFlipX(animation.flipX);
             avatar.setDisplaySize(AREN_DISPLAY_SIZE, AREN_DISPLAY_SIZE);
-            // Art feet are at y≈180 on a 192px canvas; +15 aligns them with the collision plane.
-            avatar.setPosition(p.x, p.y + 15);
+            // The authored frame's sole is at its bottom edge (192/192).
+            // Rendering at p.y fixes the old +15px feet sinking under grass.
+            const footInset = AREN_DISPLAY_SIZE * (AREN_FRAME_SIZE - AREN_FOOT_ANCHOR_Y) / AREN_FRAME_SIZE;
+            avatar.setPosition(p.x, p.y + footInset);
           } else {
             // Clear loading failure rather than silently rendering an old cast.
             g.fillStyle(0x64b9b0);
@@ -304,17 +306,23 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             g.fillStyle(0xf0d0aa);
             g.fillCircle(p.x,p.y-77,14);
           }
-          this.healthbar(g, p.x - 24, p.y - 101, 48, player.hp / 100, 0x78d9a2);
-          let label = this.labels.get(key);
-          if (!label) {
-            label = this.add.text(0, 0, '', {
-              fontFamily: 'Arial', fontSize: '15px', color: '#ffffff',
-              stroke: '#192338', strokeThickness: 4,
-            }).setOrigin(.5);
-            this.labels.set(key, label);
+          // The offline player's HP and name are already in the upper-left
+          // training HUD. An extra label over the sprite hid the face and
+          // made the hero look larger than the rest of the stage.
+          if (!practiceMode || !isYou) {
+            this.healthbar(g, p.x - 24, p.y - AREN_HEALTHBAR_OFFSET_Y,
+              48, player.hp / 100, 0x78d9a2);
+            let label = this.labels.get(key);
+            if (!label) {
+              label = this.add.text(0, 0, '', {
+                fontFamily: 'Arial', fontSize: '13px', color: '#ffffff',
+                stroke: '#192338', strokeThickness: 4,
+              }).setOrigin(.5);
+              this.labels.set(key, label);
+            }
+            label.setText(isYou ? player.name + ' ★' : player.name);
+            label.setPosition(p.x, p.y - AREN_NAME_OFFSET_Y);
           }
-          label.setText(isYou ? player.name + ' ★' : player.name);
-          label.setPosition(p.x, p.y - 120);
         }
         for (const [key, label] of this.labels) {
           if (!seen.has(key)) { label.destroy(); this.labels.delete(key); }
