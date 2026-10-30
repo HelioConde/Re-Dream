@@ -214,3 +214,84 @@ test('reset and pause discard buffered attacks and reset impact ids', () => {
   assert.equal(arena.snapshot().impact, undefined);
   assert.equal(arena.stats.strikes, 0);
 });
+
+test('↑ + J during a grounded combo launches target, not the player', () => {
+  const arena = new PracticeArena();
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1/30);
+  assert.equal(arena.stats.targetHp, 236);
+  arena.setInput(noInput);
+  for (let i = 0; i < 5; i++) arena.step(1/30);
+  arena.setInput({ ...noInput, up: true, jump: true, attack: true });
+  for (let i = 0; i < 5; i++) arena.step(1/30);
+  assert.equal(arena.stats.launchers, 1);
+  assert.equal(arena.stats.targetHp, 198);
+  assert.equal(arena.player.grounded, true);
+  assert.equal(arena.snapshot().players[0].combatAction, 'launcher');
+  assert.equal(arena.snapshot().impact?.kind, 'launcher');
+  arena.setInput(noInput);
+  for (let i = 0; i < 5; i++) arena.step(1/30);
+  assert.ok(arena.snapshot().enemies[0].y < 550);
+});
+
+test('↑ alone still jumps normally after a combo', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, jump: true, up: true });
+  arena.step(1/30);
+  assert.ok(arena.player.y < 596);
+  assert.equal(arena.stats.launchers, 0);
+});
+
+test('↓ + J while jumping performs a real downward dive with one confirmed hit', () => {
+  const arena = new PracticeArena();
+  Object.assign(arena.player, { x: 805, y: 500, vy: -100, grounded: false });
+  arena.setInput({ ...noInput, down: true, attack: true });
+  arena.step(1/30);
+  assert.equal(arena.snapshot().players[0].combatAction, 'dive');
+  assert.equal(arena.stats.targetHp, 260);
+  for (let i = 0; i < 4; i++) arena.step(1/30);
+  assert.equal(arena.stats.targetHp, 210);
+  assert.equal(arena.stats.dives, 1);
+  assert.equal(arena.stats.aerialHits, 1);
+  assert.equal(arena.snapshot().impact?.kind, 'dive');
+  assert.equal(arena.stats.combo, 1);
+});
+
+test('missed dive never damages dummy through empty space', () => {
+  const arena = new PracticeArena();
+  Object.assign(arena.player, { x: 140, y: 410, vy: 10, grounded: false });
+  arena.setInput({ ...noInput, down: true, attack: true });
+  arena.step(1/30);
+  arena.setInput(noInput);
+  for (let i = 0; i < 40; i++) arena.step(1/30);
+  assert.equal(arena.stats.targetHp, 260);
+  assert.equal(arena.stats.dives, 0);
+  assert.equal(arena.player.y, 596);
+});
+
+test('normal aerial J does not become an automatic dive', () => {
+  const arena = new PracticeArena();
+  Object.assign(arena.player, { x: 810, y: 540, vy: 0, grounded: false });
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1/30);
+  assert.equal(arena.stats.targetHp, 230);
+  assert.equal(arena.stats.dives, 0);
+  assert.equal(arena.snapshot().players[0].combatAction, 'air_attack');
+});
+
+test('reset clears launched target, dive state and counters', () => {
+  const arena = new PracticeArena();
+  arena.player.x = 800;
+  arena.setInput({ ...noInput, attack: true });
+  arena.step(1/30);
+  arena.setInput(noInput);
+  for (let i=0;i<5;i++) arena.step(1/30);
+  arena.setInput({ ...noInput, up: true, jump: true, attack: true });
+  for (let i=0;i<5;i++) arena.step(1/30);
+  assert.ok(arena.snapshot().enemies[0].y < 596);
+  arena.reset();
+  assert.equal(arena.snapshot().enemies[0].y,596);
+  assert.equal(arena.stats.launchers,0);
+  assert.equal(arena.stats.dives,0);
+});

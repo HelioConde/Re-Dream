@@ -87,6 +87,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           attack: keys.J.isDown || (!practiceMode && keys.Z.isDown) || mobile.attack,
           skill: keys.K.isDown || keys.X.isDown || mobile.skill,
           ...(practiceMode ? {
+            up: keys.W.isDown || keys.UP.isDown || mobile.jump === true,
             down: keys.S.isDown || keys.DOWN.isDown || mobile.down === true,
             charge: keys.Z.isDown,
           } : {}),
@@ -195,7 +196,9 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           // Remote strikes come from the server's attack flash; a held J cannot
           // restart the animation on every frame.
           const attackElapsed = isYou && practiceMode
-            ? (player.combatAction === 'attack' || player.combatAction === 'air_attack' || player.combatAction === 'dash_attack'
+            ? (player.combatAction === 'attack' || player.combatAction === 'air_attack' ||
+               player.combatAction === 'dash_attack' || player.combatAction === 'launcher' ||
+               player.combatAction === 'dive'
                 ? player.actionElapsedMs ?? null : null)
             : this.attackPlayback.update(
                 key, isYou, isYou && input.attack, player.flash,
@@ -217,6 +220,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
                 skill: isYou && practiceMode ? player.combatAction === 'skill' : isYou && input.skill,
                 dashing: isYou && practiceMode && Boolean(player.dashing),
                 dashAttacking: isYou && practiceMode && player.combatAction === 'dash_attack',
+                launching: isYou && practiceMode && player.combatAction === 'launcher',
+                diving: isYou && practiceMode && player.combatAction === 'dive',
                 comboStage,
                 attackElapsed,
                 timeMs: isYou && practiceMode && player.combatAction === 'skill'
@@ -226,6 +231,14 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
                 player.characterId, immediateFacing, moving,
                 attacking, isYou && input.skill, attackElapsed ?? time,
               );
+          if (isYou && practiceMode && player.combatAction === 'dive' &&
+              !this.reducedMotion) {
+            // Original trail effect (not a fabricated sprite): visualize the plunge.
+            this.hitLayer.lineStyle(6, 0x94d6ff, 0.65);
+            this.hitLayer.lineBetween(p.x, p.y - 65, p.x, p.y - 8);
+            this.hitLayer.lineStyle(2, 0xf6fcff, 0.9);
+            this.hitLayer.lineBetween(p.x, p.y - 52, p.x, p.y - 12);
+          }
           const {texture,frame} = animation;
           let avatar = this.avatars.get(key);
           if (!avatar && this.textures.exists(texture)) {

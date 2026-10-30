@@ -36,3 +36,9 @@ test('Luci selects original dash, dash strike and charged skill sprites', () => 
     ...base, skill: true, attacking: true, attackElapsed: 100,
   }).texture, 'luci_skill_2_east');
 });
+
+test('Luci launcher uses authentic uppercut sprites and diving uses aerial sprites', () => {
+  assert.equal(selectLuciAnimation({...base, launching:true, attacking:true, attackElapsed:100}).texture, 'luci_uppercut_east');
+  assert.equal(selectLuciAnimation({...base, diving:true, airborne:true, attacking:true, attackElapsed:100}).texture, 'luci_attack_air_east');
+  assert.equal(LUCI_FRAME_COUNTS.uppercut_east, 17);
+});

@@ -11,6 +11,9 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 - Descer da plataforma com ↓ ou S, sem atravessar o chão sólido.
 - **J:** sequência de golpes com escala de dano e quatro estágios de animação. Manter J pressionado também funciona como opção acessível.
 - **Ataque no ar:** usa a animação real de ataque aéreo e acerta o alvo quando próximo.
+- **↑ + J/Z no meio de um combo em solo:** executa golpe ascendente com a spritesheet autêntica \`uppercut_east\` e lança o alvo para cima; ↑ sozinho continua pulando.
+- **↓ + J/Z durante o salto:** estocada descendente. Acelera o Luci para o solo e só acerta se as áreas de ataque realmente se sobrepõem. A descida atravessa plataformas finas, mas nunca o chão sólido. Usa a animação aérea autoral do Luci com efeito de rastro, sem inventar quadros.
+- O alvo lançado tem gravidade e posição vertical reais durante o treinamento, podendo ser perseguido no ar.
 - **Ataque durante o dash:** utiliza a spritesheet real de dash attack do Luci.
 - **Z:** o primeiro golpe sai imediatamente ao pressionar; segurar por 650 ms e soltar adiciona a habilidade carregada se houver 35 MP. Soltar Z rapidamente não duplica o golpe.
 - **K/X:** habilidade instantânea se houver MP. MP inicial 40; acertos restauram MP.
