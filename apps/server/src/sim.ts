@@ -1,4 +1,4 @@
-export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
+export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean; down?: boolean };
 export type Status = 'lobby' | 'playing' | 'victory' | 'defeat';
 export const CHARACTER_IDS = ['luci', 'rose', 'wanderer', 'sprout', 'bunny', 'retro', 'retrohat', 'mana_dapper', 'mana_bob', 'cat', 'fox', 'rabbit', 'wolf', 'panda', 'owl'] as const;
 export type CharacterId = typeof CHARACTER_IDS[number];
@@ -9,6 +9,7 @@ type Fighter = {
   id: string; name: string; characterId: CharacterId; x: number; y: number; vx: number; vy: number;
   grounded: boolean; hp: number; score: number; facing: number; flash: number; color: number;
   nextAttack: number; nextSkill: number; controls: Control;
+  dropQueued: boolean; dropUntil: number;
 };
 type Mob = {
   id: number; x: number; y: number; hp: number; maxHp: number;
@@ -43,6 +44,7 @@ export class GameRoom {
       id, name: name.trim().slice(0, 20), characterId, x: 140 + slot * 76, y: FLOOR,
       vx: 0, vy: 0, grounded: true, hp: 100, score: 0, facing: 1, flash: 0,
       color: COLORS[slot], nextAttack: 0, nextSkill: 0, controls: { ...EMPTY },
+      dropQueued: false, dropUntil: 0,
     });
   }
 
@@ -69,10 +71,20 @@ export class GameRoom {
   setInput(id: string, controls: Control) {
     const player = this.players.get(id);
     if (!player) return;
+    const down = controls.down === true;
+    // Capture the press edge here: a tap that ends between two server ticks
+    // still counts, but holding down while falling never drops on landing.
+    if (down && !player.controls.down && !controls.jump &&
+        !controls.attack && !controls.skill &&
+        player.grounded && PLATFORMS.some(p =>
+          Math.abs(player.y - p.y) < 3 &&
+          player.x >= p.x + 4 && player.x <= p.x + p.w - 4)) {
+      player.dropQueued = true;
+    }
     player.controls = {
       left: controls.left === true, right: controls.right === true,
       jump: controls.jump === true, attack: controls.attack === true,
-      skill: controls.skill === true,
+      skill: controls.skill === true, down,
     };
   }
 
@@ -103,6 +115,18 @@ export class GameRoom {
       if (direction) player.facing = Math.sign(direction);
       player.vx = direction * 310;
       player.x = Math.max(22, Math.min(1258, player.x + player.vx * dt));
+      if (player.dropQueued) {
+        player.dropQueued = false;
+        // Check ground again server-side. Do not allow clients to send positions.
+        if (player.grounded && !input.jump &&
+            PLATFORMS.some(p => Math.abs(player.y - p.y) < 3 &&
+              player.x >= p.x + 4 && player.x <= p.x + p.w - 4)) {
+          player.dropUntil = this.now + 0.28;
+          player.y += 9;
+          player.vy = 70;
+          player.grounded = false;
+        }
+      }
       if (input.jump && player.grounded) {
         player.vy = -650;
         player.grounded = false;
@@ -113,6 +137,7 @@ export class GameRoom {
       player.grounded = false;
       if (player.vy >= 0) {
         for (const platform of PLATFORMS) {
+          if (this.now < player.dropUntil) break;
           if (oldY <= platform.y + 4 && player.y >= platform.y &&
             player.x >= platform.x + 4 && player.x <= platform.x + platform.w - 4) {
             player.y = platform.y;

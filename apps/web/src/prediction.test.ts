@@ -38,3 +38,38 @@ test('o cliente reconcilia divergências grandes e protege limites do cenário',
   for(let i=0;i<1000;i++)p.advance(1/60,{...input,right:true});
   assert.equal(p.x,1258);
 });
+
+test('predição reage a DOWN em plataforma no mesmo frame sem aguardar snapshot', () => {
+  const p = new LocalPredictor();
+  p.sync(300,466,input);
+  assert.equal(p.grounded,true);
+  p.advance(1/60,{...input,down:true});
+  assert.ok(p.y>466);
+  assert.equal(p.grounded,false);
+  for(let i=0;i<60;i++)p.advance(1/60,{...input,down:true});
+  assert.equal(p.y,596);
+  assert.equal(p.grounded,true);
+});
+
+test('predição não atravessa chão sólido nem auto-desce em pouso', () => {
+  const p = new LocalPredictor();
+  p.sync(300,596,input);
+  for(let i=0;i<20;i++)p.advance(1/60,{...input,down:true});
+  assert.equal(p.y,596);
+  // New predictor begins airborne while down is held.
+  const q=new LocalPredictor();
+  q.sync(300,380,input);
+  q.advance(1/60,{...input,down:true});
+  for(let i=0;i<40;i++)q.advance(1/60,{...input,down:true});
+  assert.equal(q.y,466);
+  assert.equal(q.grounded,true);
+});
+
+test('predição reconhece sincronização autoritativa em plataforma, não só no chão', () => {
+  const p=new LocalPredictor();
+  p.sync(300,466,input);
+  assert.equal(p.initialized,true);
+  assert.equal(p.grounded,true);
+  p.advance(1/60,{...input,down:true});
+  assert.ok(p.y>466);
+});

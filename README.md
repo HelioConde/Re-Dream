@@ -34,6 +34,7 @@
 | --- | --- |
 | `A` / `D` ou setas | Mover |
 | `W` ou `Espaço` | Pular |
+| `↓` | Descer de plataformas vazadas (treino; servidor online atualizado necessário) |
 | `J` ou `Z` | Atacar |
 | `K` ou `X` | Habilidade |
 
@@ -77,7 +78,7 @@ scripts/                 Testes e verificações
 
 ## Online: o que funciona e o que exige infraestrutura
 
-O endereço do GitHub Pages hospeda **apenas o frontend estático**. O serviço WebSocket precisa rodar em hospedagem separada que suporte conexão persistente via **`wss://`**; o GitHub Pages não executa esse servidor.
+O endereço do GitHub Pages hospeda **apenas o frontend estático**. Mudanças de controles online, incluindo **↓ para descer plataformas**, só funcionam após o servidor WebSocket remoto executar a versão correspondente; publicar somente o GitHub Pages não atualiza o servidor. O serviço WebSocket precisa rodar em hospedagem separada que suporte conexão persistente via **`wss://`**; o GitHub Pages não executa esse servidor.
 
 Ao publicar uma instância própria:
 

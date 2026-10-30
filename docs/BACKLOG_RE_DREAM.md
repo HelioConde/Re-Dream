@@ -12,7 +12,7 @@
 ## Melhoria aplicada — interação com plataformas
 | ID | Estado | Entrega | Evidência |
 | --- | --- | --- | --- |
-| RD-A05 | Implementado no treino, QA visual ainda pendente | ↓ sozinho (toque curto) atravessa plataformas vazadas, atraso de 120 ms preserva Otto, chão sólido protegido e botão mobile ↓; prioridade Shadow no ar | Testes de simulação + `npm test`/`npm run build`; validar sensação jogando no navegador |
+| RD-A05 | Corrigido após feedback negativo do playtest; backend exige deploy | ↓ sozinho atravessa plataforma no treino e agora passa da captura Phaser à predição e simulação autoritativa online; botão de teste e aviso de plataforma no treino | Novos testes de input, predição e servidor; validar com o usuário no navegador e no servidor remoto atualizado |
 
 ## Épico B — Eventos e apresentação
 | ID | Ordem | Tarefa verificável | Dependências | Aceite |

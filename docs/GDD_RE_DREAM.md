@@ -20,6 +20,7 @@ Jogo **original** de ação e plataformas 2D com atmosfera de fantasia, combate 
 | --- | --- | --- |
 | Andar, dash por duplo toque, corrida ao segurar segundo toque | Praticar offline | `practiceSimulation.ts` |
 | Salto, Rocket/Shadow Step, dash cancel, **↓ sozinho para descer plataforma vazada** | Praticar offline | `practiceSimulation.ts` |
+| ↓ para descer plataforma fina: entrada, predição e servidor autoritativo | Cliente + servidor online (requer deploy do backend) | `GameCanvas.tsx`, `prediction.ts`, `apps/server/src/sim.ts` |
 | Combo básico, launcher, juggle, mergulho/estocada e Otto adaptado | Praticar offline | `practiceSimulation.ts` |
 | Segurar Z e **soltar** para magia MP1/MP2/MP3 | Praticar offline | `practiceSimulation.ts` |
 | Salas online, ondas e chefe de demonstração | Multiplayer | `apps/server/src/sim.ts` |
@@ -42,4 +43,5 @@ Unificar a definição de estados de movimentação/combatentes; desacoplar feed
 ## Histórico de decisões
 - 2026-10-30: GDD inicial redigido a partir da base existente e do fluxo de skills adaptado.
 - 2026-10-30: Descida de plataforma passou a exigir apenas ↓ (toque curto também funciona), preservando Otto e Shadow Step; validação lógica em testes de simulação local.
+- 2026-10-30: Relato de playtest: ↓ não funcionou. Identificada lacuna no multiplayer (cliente não enviava DOWN, servidor descartava a tecla e predição não atravessava plataforma); adicionados testes para a ponte de input e para o backend. Ajuda de teste do treino recebeu posicionamento na plataforma e indicador de pouso. Publicar o backend separadamente é obrigatório para paridade online.
 - Qualquer mudança em controle/MP deve atualizar este GDD, documentação do gameplay e testes no mesmo PR.

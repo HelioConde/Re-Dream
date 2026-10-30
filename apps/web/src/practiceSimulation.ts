@@ -39,7 +39,7 @@ export type TrainingStats = {
   chaseReady: boolean;
   chargeLevel: number; skillCasts: number; lastSkillLevel: number;
   rocketSteps: number; shadowSteps: number; dashCancels: number; ottoShots: number;
-  runs: number; drops: number;
+  runs: number; drops: number; onPlatform: boolean;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -61,7 +61,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0, drops: 0,
+    runs: 0, drops: 0, onPlatform: false,
   };
 
   private now = 0;
@@ -294,6 +294,7 @@ export class PracticeArena {
       }
       if (p.y >= FLOOR) { p.y = FLOOR; p.vy = 0; p.grounded = true; }
     }
+    this.stats.onPlatform = this.onOneWayPlatform();
     if (p.grounded) {
       this.lastGroundedAt = this.now;
       this.diving = false;
@@ -495,6 +496,20 @@ export class PracticeArena {
     this.diving = false;
   }
 
+  /** Training-only convenience: put Luci on a real one-way collision surface.
+   * Does not change physics, map coordinates or the online server. */
+  placeOnPlatformForTraining() {
+    this.suspend();
+    this.player.x = 320;
+    this.player.y = 466;
+    this.player.vx = 0;
+    this.player.vy = 0;
+    this.player.grounded = true;
+    this.dropUntil = 0;
+    this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
+    this.stats.onPlatform = true;
+  }
+
   reset() {
     Object.assign(this.player, {
       x: 180, y: FLOOR, vy: 0, vx: 0, grounded: true, facing: 1,
@@ -507,7 +522,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0, drops: 0,
+    runs: 0, drops: 0, onPlatform: false,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;

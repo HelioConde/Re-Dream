@@ -166,3 +166,9 @@
 .practice-page .touch-attack{font-weight:900}
 @media(max-width:600px){.practice-mp-segments{gap:3px}}
 @media(prefers-reduced-motion:reduce){.practice-mp-segment i{transition:none}}
+
+/* Grounded collision confirmation for one-way platforms in the offline scene. */
+.practice-platform-prompt{position:absolute;z-index:6;left:50%;bottom:7%;transform:translateX(-50%);pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(11,25,48,.86);border:1px solid rgba(129,206,189,.68);box-shadow:0 5px 18px #0007;border-radius:12px;padding:8px 14px;color:#d7fff0;text-align:center;max-width:90%}
+.practice-platform-prompt strong{font:800 clamp(12px,1.6vw,17px)/1.2 Outfit,system-ui,sans-serif;letter-spacing:.04em}
+.practice-platform-prompt small{font-size:clamp(10px,1.2vw,13px);color:#bdddd4}
+@media(max-width:620px){.practice-platform-prompt{bottom:5%;padding:6px 9px}.practice-platform-prompt small{font-size:10px}}

@@ -12,10 +12,15 @@ export class LocalPredictor {
   vy = 0;
   grounded = true;
   initialized = false;
+  private time = 0;
+  private dropUntil = 0;
+  private lastDown = false;
 
   sync(x: number, y: number, input: Control): void {
     if (!this.initialized || Math.abs(this.x - x) > 155 || Math.abs(this.y - y) > 135) {
-      this.x = x; this.y = y; this.vy = 0; this.grounded = y >= FLOOR_Y;
+      this.x = x; this.y = y; this.vy = 0;
+      this.grounded = y >= FLOOR_Y || PLATFORMS.some(p =>
+        Math.abs(y - p.y) < 3 && x >= p.x + 4 && x <= p.x + p.w - 4);
       this.initialized = true;
       return;
     }
@@ -28,6 +33,20 @@ export class LocalPredictor {
   advance(seconds: number, input: Control): void {
     if (!this.initialized) return;
     const dt = Math.min(.05, Math.max(0, seconds));
+    this.time += dt;
+    // The server owns the drop. Predict the same press-edge on the client
+    // so it does not look like ↓ was ignored between 100ms snapshots.
+    const down = input.down === true;
+    if (down && !this.lastDown && !input.jump && !input.attack && !input.skill &&
+        this.grounded && PLATFORMS.some(p =>
+          Math.abs(this.y - p.y) < 3 &&
+          this.x >= p.x + 4 && this.x <= p.x + p.w - 4)) {
+      this.dropUntil = this.time + 0.28;
+      this.y += 9;
+      this.vy = 70;
+      this.grounded = false;
+    }
+    this.lastDown = down;
     const direction = Number(input.right) - Number(input.left);
     this.x = Math.max(22, Math.min(1258, this.x + direction * 310 * dt));
     if (input.jump && this.grounded) {
@@ -40,6 +59,7 @@ export class LocalPredictor {
     this.grounded = false;
     if (this.vy >= 0) {
       for (const p of PLATFORMS) {
+        if (this.time < this.dropUntil) break;
         if (previousY <= p.y + 4 && this.y >= p.y && this.x >= p.x + 4 && this.x <= p.x + p.w - 4) {
           this.y = p.y; this.vy = 0; this.grounded = true;
         }

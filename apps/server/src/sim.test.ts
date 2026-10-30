@@ -119,3 +119,68 @@ test('todos os personagens de teste são aceitos e entradas forjadas rejeitadas'
   }
   assert.equal(room.selectCharacter('a','fake-avatar'),false);
 });
+
+test('seta ↓ sozinha atravessa plataforma vazada na simulação autoritativa', () => {
+  const room = new GameRoom('DROP01');
+  room.addPlayer('p','Luci');
+  room.start('p');
+  const player = room.players.get('p')!;
+  Object.assign(player,{x:300,y:466,grounded:true,vy:0});
+  room.setInput('p',{left:false,right:false,jump:false,attack:false,skill:false,down:true});
+  room.step(1/30);
+  assert.ok(player.y>466,'deve iniciar a queda no primeiro tick');
+  assert.equal(player.grounded,false);
+  room.setInput('p',{left:false,right:false,jump:false,attack:false,skill:false,down:false});
+  for(let i=0;i<45;i++)room.step(1/30);
+  assert.equal(player.y,596);
+  assert.equal(player.grounded,true);
+});
+
+test('servidor memoriza toque breve ↓ até o próximo tick', () => {
+  const room = new GameRoom('DROP02');
+  room.addPlayer('p','Luci');room.start('p');
+  const player=room.players.get('p')!;
+  Object.assign(player,{x:750,y:414,grounded:true,vy:0});
+  const base={left:false,right:false,jump:false,attack:false,skill:false};
+  room.setInput('p',{...base,down:true});
+  room.setInput('p',{...base,down:false});
+  room.step(1/30);
+  assert.ok(player.y>414);
+  assert.equal(player.grounded,false);
+});
+
+test('seta ↓ no chão sólido não atravessa e não causa quedas repetidas', () => {
+  const room=new GameRoom('DROP03');
+  room.addPlayer('p','Luci');room.start('p');
+  const player=room.players.get('p')!;
+  const base={left:false,right:false,jump:false,attack:false,skill:false};
+  room.setInput('p',{...base,down:true});
+  for(let i=0;i<20;i++)room.step(1/30);
+  assert.equal(player.y,596);
+  assert.equal(player.grounded,true);
+  // Pressing down while airborne must not queue an automatic drop on landing.
+  Object.assign(player,{x:300,y:375,vy:250,grounded:false});
+  room.setInput('p',{...base,down:false});
+  room.setInput('p',{...base,down:true});
+  for(let i=0;i<28;i++)room.step(1/30);
+  assert.equal(player.y,466);
+  assert.equal(player.grounded,true);
+  for(let i=0;i<10;i++)room.step(1/30);
+  assert.equal(player.y,466);
+});
+
+test('input malicioso down fora de plataforma não altera colisões nem física', () => {
+  const room=new GameRoom('DROP04');
+  room.addPlayer('p','Luci');room.start('p');
+  const player=room.players.get('p')!;
+  const base={left:false,right:false,jump:false,attack:false,skill:false};
+  Object.assign(player,{x:300,y:596,vy:0,grounded:true});
+  room.setInput('p',{...base,down:true});
+  room.step(1/30);
+  assert.equal(player.y,596);
+  room.setInput('p',{...base,down:false});
+  // a regular jump is still possible immediately after the down input
+  room.setInput('p',{...base,jump:true});
+  room.step(1/30);
+  assert.ok(player.y<596);
+});

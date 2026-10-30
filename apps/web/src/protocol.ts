@@ -3,10 +3,10 @@ export type CharacterId = typeof CHARACTER_IDS[number];
 export const DEFAULT_CHARACTER: CharacterId = 'luci';
 export const isCharacterId = (value: unknown): value is CharacterId =>
   typeof value === 'string' && (CHARACTER_IDS as readonly string[]).includes(value);
-export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
+export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean; down?: boolean };
 // Extra commands are offline-only until the multiplayer server gains matching rules.
 export type PracticeInput = Control & {
-  up?: boolean; down?: boolean; charge?: boolean;
+  up?: boolean; charge?: boolean;
   drop?: boolean;
 };
 export type Player = {
