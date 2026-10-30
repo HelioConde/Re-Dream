@@ -242,3 +242,18 @@ body{background:#071326;color:#eef5ff}
 .practice-hint strong{color:#f9dea9}
 .practice-stats{border-radius:5px}
 @media(max-width:700px){.character-cta-actions{width:100%;flex-direction:column;align-items:stretch}.character-cta-actions button{width:100%}.practice-page{padding:18px 9px 40px}.practice-page .session-actions{display:flex;flex-direction:column}.practice-page .session-top h1{font-size:29px}}
+
+/* Art-direction pass: make the authored battlefield and its fighter the hero. */
+.app-reboot .practice-page .game-shell{border:2px solid #8abeb9;border-radius:12px;background:#18364f;box-shadow:0 0 0 1px #b6ead72a,0 20px 65px #081c30b8;isolation:isolate}
+.app-reboot .practice-page .rd-game-hud{top:11px;left:13px;right:13px}
+.app-reboot .practice-page .rd-hud-player,
+.app-reboot .practice-page .rd-hud-objective{border:1px solid #b0e7cf88;border-radius:11px;background:linear-gradient(115deg,#0a243de8,#1d4764cf);box-shadow:0 8px 19px #071a2bb8;backdrop-filter:blur(5px)}
+.app-reboot .practice-page .rd-hud-face{height:54px;width:54px;border-radius:10px;overflow:hidden;background:radial-gradient(ellipse at 50% 25%,#84cbbd 0,#28556b 70%);border:1px solid #b1e7d8b8;padding:0;display:flex;align-items:center;justify-content:center}
+.app-reboot .practice-page .rd-hud-face img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 2px 2px #051629a0)}
+.app-reboot .practice-page .rd-hud-info>strong{font-size:13px;color:#effff5}
+.app-reboot .practice-page .rd-hud-objective strong{color:#e0ffe9}
+.app-reboot .practice-page .rd-hud-objective span{color:#bce4e3}
+.app-reboot .practice-page .rd-hud-health{border-color:#ffd6a888;border-radius:6px;overflow:hidden}
+.app-reboot .practice-page .practice-event-feed{max-width:min(315px,41%)}
+@media(max-width:620px){.app-reboot .practice-page .rd-hud-face{height:32px;width:32px;border-radius:6px}.app-reboot .practice-page .rd-hud-player,.app-reboot .practice-page .rd-hud-objective{backdrop-filter:none}.app-reboot .practice-page .game-shell{border-radius:8px}.app-reboot .practice-page .rd-hud-info>strong{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.app-reboot .practice-page .rd-hud-player,.app-reboot .practice-page .rd-hud-objective{backdrop-filter:none}}
