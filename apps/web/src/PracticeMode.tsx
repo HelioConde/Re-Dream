@@ -4,6 +4,7 @@ import { PracticeArena, type TrainingStats } from './practiceSimulation';
 import { EMPTY_CONTROLS, type CharacterId, type Control, type PracticeInput, type Snapshot } from './protocol';
 import { characterName } from './characters';
 import type { LocomotionState } from './locomotionFsm';
+import { practiceEventLabel, type PracticeGameEvent } from './practiceEvents';
 
 const locomotionLabels: Record<LocomotionState, string> = {
   idle: 'Parado', walk: 'Andando', dash: 'Dash', run: 'Correndo',
@@ -26,6 +27,13 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
   const pausedRef = useRef(false);
   const [paused, setPaused] = useState(false);
   const [stats, setStats] = useState<TrainingStats>({ ...arena.stats });
+  const [combatEvents, setCombatEvents] = useState<PracticeGameEvent[]>([]);
+  useEffect(() => arena.subscribe(event => {
+    // A bounded, non-authoritative combat log. No events are produced per frame,
+    // and reset clears history without removing the component's subscription.
+    setCombatEvents(previous => event.type === 'reset' ? [] :
+      [event, ...previous].slice(0, 3));
+  }), [arena]);
   const sendInput = useCallback((input: Control) => {
     if (!pausedRef.current) arena.setInput(input);
   }, [arena]);
@@ -128,6 +136,13 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
           <span>HP {stats.targetHp}/260 · derrotados {stats.defeated}</span></div>
       </div>
       <GameCanvas snapshotRef={snapshotRef} playerId={arena.playerId} sendInput={sendInput} mobileRef={mobileRef} practiceMode/>
+      {combatEvents.length > 0 && !paused && <div className="practice-event-feed" role="log"
+          aria-label="Eventos recentes do combate" aria-live="off">
+        {combatEvents.map(event =>
+          <div key={event.sequence} className={'practice-event-item practice-event-'+event.type}>
+            {practiceEventLabel(event)}
+          </div>)}
+      </div>}
       {stats.onPlatform && !paused && !stats.chaseReady && <div className="practice-platform-prompt" role="status">
         <strong>↓ DESCER PLATAFORMA</strong>
         <small>Você pousou na plataforma · toque ↓ uma vez</small>
