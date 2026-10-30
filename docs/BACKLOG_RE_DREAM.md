@@ -37,10 +37,10 @@
 | RD-D02 | Implementado em branch; QA visual pendente | Sentinela de Cristal no lugar do alvo elipsoidal e retrato verdadeiro do Luci no HUD | Gameplay e hitboxes inalterados, nenhuma arte de terceiros |
 | RD-D03 | Aren V2 implementado; pintura final pendente | Melhorias do traje, tiara, insígnia lunar, cristais MP1–3; quadros animados continuam SVG | Testes de SVG e seleção de animações, oficina de inspeção; ainda falta arte ilustrada final |
 | RD-D04 | Planejado | Animações da Sentinela: idle/hurt/stun/defeat | Estado da animação acompanha dano real sem hitbox visual enganador |
-| RD-D05 | Planejado | VFX/SFX autorais orientados pelo Event Bus | Sem eventos duplicados; modo movimento reduzido; medir desempenho |
+| RD-D05 | VFX implementado no treino; SFX pendente | Impactos diferenciados por ação e MP1/2/3; duas camadas novas de profundidade; hit do alvo confirmado | Testes de VFX e XML; movimento reduzido; captura visual e performance reais pendentes |
 | RD-D06 | Parcial: ateliê visual implementado | Galeria de 23 movimentos, quadros, pausa, espelhamento e miniaturas; interface responsiva | Build e testes; capturas 1600×900 e 390×844 reais ainda pendentes |
 
-**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md) e [Aren V2 — QA visual](AREN_V2_VISUAL_QA.md).
+**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md), [Aren V2](AREN_V2_VISUAL_QA.md) e [Visual V3](VISUAL_V3.md).
 
 ## Definição de pronto
 - Critérios observáveis implementados com cobertura automatizada da lógica.
