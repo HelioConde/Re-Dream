@@ -34,13 +34,13 @@
 | ID | Estado | Entrega | Aceite |
 | --- | --- | --- | --- |
 | RD-D01 | Implementado em branch; QA visual pendente | Cenário vetorial original Bosque das Constelações com ruínas, vegetação, profundidade e plataformas nas coordenadas físicas atuais | XML e build aprovados; screenshots desktop/mobile ainda necessários |
-| RD-D02 | Implementado em branch; QA visual pendente | Sentinela de Cristal no lugar do alvo elipsoidal e retrato verdadeiro do Luci no HUD | Gameplay e hitboxes inalterados, nenhuma arte de terceiros |
-| RD-D03 | Aren V2 implementado; pintura final pendente | Melhorias do traje, tiara, insígnia lunar, cristais MP1–3; quadros animados continuam SVG | Testes de SVG e seleção de animações, oficina de inspeção; ainda falta arte ilustrada final |
+| RD-D02 | Implementado; QA visual pendente | Sentinela de Cristal e retrato do Aren no HUD substituem placeholders | Gameplay e hitboxes inalterados, nenhuma arte de terceiros |
+| RD-D03 | Aren Art V4 implementado; pintura final pendente | Nove ataques com poses próprias, Combo IV com finalização lunar e MP3 Dream Crescent, preservando 23 estados | Testes de SVG, poses e seleção; falta QA visual e ilustração final |
 | RD-D04 | Planejado | Animações da Sentinela: idle/hurt/stun/defeat | Estado da animação acompanha dano real sem hitbox visual enganador |
 | RD-D05 | VFX implementado no treino; SFX pendente | Impactos diferenciados por ação e MP1/2/3; duas camadas novas de profundidade; hit do alvo confirmado | Testes de VFX e XML; movimento reduzido; captura visual e performance reais pendentes |
 | RD-D06 | Parcial: ateliê visual implementado | Galeria de 23 movimentos, quadros, pausa, espelhamento e miniaturas; interface responsiva | Build e testes; capturas 1600×900 e 390×844 reais ainda pendentes |
 
-**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md), [Aren V2](AREN_V2_VISUAL_QA.md) e [Visual V3](VISUAL_V3.md).
+**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md), [Aren V2](AREN_V2_VISUAL_QA.md), [Visual V3](VISUAL_V3.md) e [Aren Art V4](AREN_V4_VISUAL_QA.md).
 
 ## Definição de pronto
 - Critérios observáveis implementados com cobertura automatizada da lógica.
