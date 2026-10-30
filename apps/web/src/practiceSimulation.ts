@@ -29,6 +29,7 @@ export type TrainingStats = {
   combo: number; bestCombo: number; mp: number; chargePercent: number;
   dashes: number; aerialHits: number; launchers: number; dives: number;
   chaseJumps: number; juggles: number; juggleChain: number; bestJuggle: number;
+  chaseReady: boolean;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -48,6 +49,7 @@ export class PracticeArena {
     combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
     launchers: 0, dives: 0,
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
+    chaseReady: false,
   };
 
   private now = 0;
@@ -214,6 +216,8 @@ export class PracticeArena {
       this.resetDummyAt = 0;
     }
     if (this.now - this.lastSuccessfulHit > COMBO_WINDOW) this.stats.combo = 0;
+    this.stats.chaseReady = p.grounded && this.now <= this.chaseUntil &&
+      this.targetY < FLOOR - 10;
 
     if (this.controls.charge) {
       this.stats.chargePercent = Math.min(100, Math.floor((this.now - this.chargeStartedAt) / 0.65 * 100));
@@ -354,6 +358,7 @@ export class PracticeArena {
       combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
     launchers: 0, dives: 0,
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
+    chaseReady: false,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
