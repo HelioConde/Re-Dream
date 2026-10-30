@@ -818,3 +818,110 @@ test('suspending and resetting clears locomotion state without casting charged Z
   assert.equal(a.stats.locomotion,'idle');
   assert.equal(a.snapshot().players[0].locomotion,'idle');
 });
+
+test('event bus emits confirmed hits, real MP gain and combo exactly once per strike', () => {
+  const arena=new PracticeArena();
+  const events:import('./practiceEvents').PracticeGameEvent[]=[];
+  arena.subscribe(event=>events.push(event));
+  arena.player.x=800;
+  arena.setInput({...noInput,attack:true});
+  arena.step(1/30);
+  assert.deepEqual(events.map(e=>e.type),[
+    'impactConfirmed','mpChanged','comboChanged',
+  ]);
+  const impact=events.find(e=>e.type==='impactConfirmed');
+  assert.equal(impact?.type==='impactConfirmed' && impact.impact.damage,24);
+  assert.equal(impact?.type==='impactConfirmed' && impact.impact.sequence,1);
+  const mp=events.find(e=>e.type==='mpChanged');
+  assert.equal(mp?.type==='mpChanged' && mp.before,100);
+  assert.equal(mp?.type==='mpChanged' && mp.after,106);
+  for(let i=0;i<5;i++) arena.step(1/30);
+  assert.equal(events.length,3,'render/update frames never generate duplicate hit events');
+});
+
+test('missed swings never emit impact, MP or combo events', () => {
+  const a=new PracticeArena();
+  const received:import('./practiceEvents').PracticeGameEvent[]=[];
+  a.subscribe(event=>received.push(event));
+  a.setInput({...noInput,attack:true});
+  a.step(1/30);
+  assert.deepEqual(received,[]);
+  assert.equal(a.stats.targetHp,260);
+});
+
+test('charged Z emits one cost event and one confirmed hit only after releasing Z', () => {
+  const a=new PracticeArena();
+  const events:import('./practiceEvents').PracticeGameEvent[]=[];
+  a.subscribe(event=>events.push(event));
+  a.player.x=800;
+  a.stats.mp=300;
+  a.setInput({...noInput,charge:true});
+  for(let i=0;i<42;i++)a.step(1/30);
+  assert.equal(a.stats.skillCasts,0);
+  assert.equal(events.some(e=>e.type==='mpChanged' && e.reason==='skill'),false);
+  a.setInput(noInput);
+  a.step(1/30);
+  assert.equal(a.stats.skillCasts,1);
+  const spent=events.filter(e=>e.type==='mpChanged' && e.reason==='skill');
+  assert.equal(spent.length,1);
+  assert.equal(spent[0].type==='mpChanged' && spent[0].level,2);
+  assert.equal(spent[0].type==='mpChanged' && spent[0].before,300);
+  assert.equal(spent[0].type==='mpChanged' && spent[0].after,100);
+  assert.equal(events.filter(e=>e.type==='impactConfirmed').length,2);
+});
+
+test('target defeat is published once after a real confirmed hit', () => {
+  const a=new PracticeArena();
+  const events:import('./practiceEvents').PracticeGameEvent[]=[];
+  a.subscribe(event=>events.push(event));
+  a.player.x=800;
+  a.stats.targetHp=10;
+  a.setInput({...noInput,attack:true});
+  a.step(1/30);
+  assert.deepEqual(events.map(e=>e.type),[
+    'impactConfirmed','mpChanged','dummyDefeated','comboChanged',
+  ]);
+  assert.equal(a.stats.defeated,1);
+  for(let i=0;i<8;i++)a.step(1/30);
+  assert.equal(events.filter(e=>e.type==='dummyDefeated').length,1);
+});
+
+test('reset event clears stale combat feedback but preserves unique impact ids for Phaser', () => {
+  const a=new PracticeArena();
+  const events:import('./practiceEvents').PracticeGameEvent[]=[];
+  const unsubscribe=a.subscribe(event=>events.push(event));
+  a.player.x=800;
+  a.setInput({...noInput,attack:true});
+  a.step(1/30);
+  const first=a.snapshot().impact?.sequence;
+  assert.equal(first,1);
+  a.reset();
+  assert.equal(events.at(-1)?.type,'reset');
+  assert.equal(a.snapshot().impact,undefined);
+  a.player.x=800;
+  a.setInput({...noInput,attack:true});
+  a.step(1/30);
+  const next=a.snapshot().impact?.sequence;
+  assert.ok(next!==undefined && next>first!);
+  assert.equal(events.filter(e=>e.type==='impactConfirmed').length,2);
+  unsubscribe();
+  a.reset();
+  assert.notEqual(events.at(-1)?.type,'reset');
+});
+
+test('pausing with Z held never emits a skill or reset event', () => {
+  const a=new PracticeArena();
+  const events:import('./practiceEvents').PracticeGameEvent[]=[];
+  a.subscribe(event=>events.push(event));
+  a.player.x=800;
+  a.setInput({...noInput,charge:true});
+  for(let i=0;i<32;i++)a.step(1/30);
+  const confirmedBefore=events.filter(e=>e.type==='impactConfirmed').length;
+  a.suspend();
+  // In the real UI, suspend also stops the RAF-driven simulation. Directly
+  // stepping a paused arena may still expire an old combo, but cannot cast Z.
+  for(let i=0;i<10;i++)a.step(1/30);
+  assert.equal(events.filter(e=>e.type==='impactConfirmed').length,confirmedBefore);
+  assert.equal(events.some(e=>e.type==='mpChanged' && e.reason==='skill'),false);
+  assert.equal(events.some(e=>e.type==='reset'),false);
+});

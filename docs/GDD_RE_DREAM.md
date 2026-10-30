@@ -23,6 +23,7 @@ Jogo **original** de ação e plataformas 2D com atmosfera de fantasia, combate 
 | ↓ para descer plataforma fina: entrada, predição e servidor autoritativo | Cliente + servidor online (requer deploy do backend) | `GameCanvas.tsx`, `prediction.ts`, `apps/server/src/sim.ts` |
 | Combo básico, launcher, juggle, mergulho/estocada e Otto adaptado | Praticar offline | `practiceSimulation.ts` |
 | Segurar Z e **soltar** para magia MP1/MP2/MP3 | Praticar offline | `practiceSimulation.ts` |
+| Event Bus tipado para impacto, MP, combos, KO e reset | Praticar offline, histórico visual local | `practiceEvents.ts`, `PracticeMode.tsx` |
 | Salas online, ondas e chefe de demonstração | Multiplayer | `apps/server/src/sim.ts` |
 | Progressão persistente, loot, itens equipáveis, novas regiões | Pendente | escopo futuro |
 
@@ -38,11 +39,12 @@ Cliente React + Phaser 4 + TypeScript, publicado estaticamente via GitHub Pages;
 - **Qualidade:** `npm test` e `npm run build`, QA visual manual, verificação de inputs e colisões, revisão de licenças dos assets.
 
 ## Próxima versão a validar
-A decisão de estados de locomoção offline já foi extraída como FSM pura, documentada em `docs/LOCOMOTION_FSM.md` e ligada ao seletor de sprites e indicador de ESTADO. **Ainda proposto:** extrair FSM de combate (incluindo cargas Z), eventos locais tipados para feedback visual e medir *frame time* com hardware real; nenhum desses itens está concluído.
+A decisão de estados de locomoção offline já foi extraída como FSM pura, documentada em `docs/LOCOMOTION_FSM.md` e ligada ao seletor de sprites e indicador de ESTADO. **Ainda proposto:** extrair FSM de combate (incluindo cargas Z), migrar gradualmente efeitos visuais e sons originais para o Event Bus e medir *frame time* com hardware real. O Event Bus local e o histórico de combate já foram implementados; a migração do VFX Phaser ainda não.
 
 ## Histórico de decisões
 - 2026-10-30: GDD inicial redigido a partir da base existente e do fluxo de skills adaptado.
 - 2026-10-30: Descida de plataforma passou a exigir apenas ↓ (toque curto também funciona), preservando Otto e Shadow Step; validação lógica em testes de simulação local.
 - 2026-10-30: Relato de playtest: ↓ não funcionou. Identificada lacuna no multiplayer (cliente não enviava DOWN, servidor descartava a tecla e predição não atravessava plataforma); adicionados testes para a ponte de input e para o backend. Ajuda de teste do treino recebeu posicionamento na plataforma e indicador de pouso. Publicar o backend separadamente é obrigatório para paridade online.
 - 2026-10-30: FSM incremental de locomoção implementada offline, preservando dash→run, Rocket/Shadow, descida da plataforma, Otto e magias exclusivamente por Z. O servidor de multiplayer não foi alterado nesta etapa.
+- 2026-10-30: Event Bus tipado de treino para acertos, MP, combos, KO e reset, com histórico limitado de eventos. Impactos mantêm IDs crescentes mesmo após reset; VFX existente preservado (`docs/PRACTICE_EVENTS.md`).
 - Qualquer mudança em controle/MP deve atualizar este GDD, documentação do gameplay e testes no mesmo PR.

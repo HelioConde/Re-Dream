@@ -17,9 +17,9 @@
 ## Épico B — Eventos e apresentação
 | ID | Ordem | Tarefa verificável | Dependências | Aceite |
 | --- | --- | --- | --- | --- |
-| RD-B01 | 1 | Especificar eventos tipados de impacto, combo, MP, morte e reset | GDD | Contrato de payload/ordem, sem alterar rede |
-| RD-B02 | 2 | Introduzir Event Bus local isolado do transporte WebSocket | B01 | Unsubscribe/cleanup e emissão única comprovados por testes |
-| RD-B03 | 3 | Migrar HUD, SFX e VFX para assinaturas do bus de forma incremental | B02 | Sem dupla contagem/dano; visual confirmado por captura |
+| RD-B01 | Implementado no treino | Especificar eventos tipados de impacto confirmado, combo, MP, derrota e reset | `docs/PRACTICE_EVENTS.md`, testes de payload/ordem |
+| RD-B02 | Implementado no treino | Event Bus por arena com sequência monotônica, unsubscribe e limpeza do histórico | Testes do bus e da simulação; nenhum WebSocket alterado |
+| RD-B03 | Parcial: feed de eventos no HUD | Histórico discreto recebe bus; VFX ainda lê `snapshot.impact`, SFX não migrado | Testes lógicos; QA visual humano pendente |
 
 ## Épico C — QA, performance e lançamento
 | ID | Ordem | Tarefa verificável | Dependências | Aceite |
@@ -38,4 +38,4 @@
 - PR separado por mudança lógica; rollback claro.
 
 ## Fila para seleção
-**Próxima história sugerida:** RD-B01 (especificar eventos tipados para VFX/HUD/MP sem alterar o WebSocket). Depois RD-A03 (FSM de combate e carga Z). Não misturar epics grandes numa PR.
+**Próxima história sugerida:** RD-A03 (FSM de combate e carga Z). Depois concluir RD-B03 com feedback VFX/SFX original e QA visual, mantendo servidor WebSocket isolado. Não misturar epics grandes numa PR.

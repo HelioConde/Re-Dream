@@ -172,3 +172,12 @@
 .practice-platform-prompt strong{font:800 clamp(12px,1.6vw,17px)/1.2 Outfit,system-ui,sans-serif;letter-spacing:.04em}
 .practice-platform-prompt small{font-size:clamp(10px,1.2vw,13px);color:#bdddd4}
 @media(max-width:620px){.practice-platform-prompt{bottom:5%;padding:6px 9px}.practice-platform-prompt small{font-size:10px}}
+
+/* Local-only confirmed combat events; noninteractive so they never steal controls. */
+.practice-event-feed{position:absolute;left:14px;bottom:13px;z-index:4;max-width:min(320px,44%);display:flex;flex-direction:column-reverse;gap:5px;pointer-events:none}
+.practice-event-item{padding:6px 10px;border:1px solid #8a9dc34d;background:rgba(8,18,40,.86);color:#e2ebff;border-radius:8px;font-size:clamp(9px,1vw,12px);font-weight:700;line-height:1.25;box-shadow:0 4px 15px #050e2480}
+.practice-event-impactConfirmed{border-color:#f0b78188;color:#ffe4b9}
+.practice-event-mpChanged{border-color:#9c9bfa77;color:#d8d1ff}
+.practice-event-dummyDefeated{border-color:#e59fd98a;color:#fce1fa}
+.practice-event-comboChanged{border-color:#9ad9b67c;color:#caffdd}
+@media(max-width:620px){.practice-event-feed{left:6px;bottom:6px;max-width:55%;gap:3px}.practice-event-item{padding:3px 5px;font-size:9px;border-radius:5px}}
