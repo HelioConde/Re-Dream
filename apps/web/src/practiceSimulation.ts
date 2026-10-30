@@ -14,7 +14,8 @@ const COMBO_WINDOW = 1.05;
 const ATTACK_BUFFER_WINDOW = 0.17;
 const MP_SKILL_COST = 35;
 
-type CombatAction = 'attack' | 'air_attack' | 'dash_attack' | 'skill';
+type CombatAction = 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive';
+type ImpactKind = 'basic' | 'air' | 'dash' | 'skill' | 'launcher' | 'dive';
 type TrainingPlayer = {
   x: number; y: number; vy: number; vx: number; grounded: boolean;
   facing: number; hp: number; flash: number; score: number;
@@ -23,7 +24,7 @@ type TrainingPlayer = {
 export type TrainingStats = {
   targetHp: number; defeated: number; strikes: number; lastDamage: number;
   combo: number; bestCombo: number; mp: number; chargePercent: number;
-  dashes: number; aerialHits: number;
+  dashes: number; aerialHits: number; launchers: number; dives: number;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -41,6 +42,7 @@ export class PracticeArena {
   readonly stats: TrainingStats = {
     targetHp: DUMMY_HP, defeated: 0, strikes: 0, lastDamage: 0,
     combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
+    launchers: 0, dives: 0,
   };
 
   private now = 0;
@@ -51,7 +53,10 @@ export class PracticeArena {
   private lastImpactAt = Number.NEGATIVE_INFINITY;
   private lastImpactDamage = 0;
   private lastImpactDirection = 1;
-  private lastImpactKind: 'basic' | 'air' | 'dash' | 'skill' = 'basic';
+  private lastImpactKind: ImpactKind = 'basic';
+  private targetY = FLOOR;
+  private targetVy = 0;
+  private diving = false;
   private lastSuccessfulHit = Number.NEGATIVE_INFINITY;
   private lastLeftTap = Number.NEGATIVE_INFINITY;
   private lastRightTap = Number.NEGATIVE_INFINITY;
@@ -76,7 +81,8 @@ export class PracticeArena {
     const next: PracticeInput = {
       left: input.left === true, right: input.right === true,
       jump: input.jump === true, attack: input.attack === true,
-      skill: input.skill === true, down: input.down === true, charge: input.charge === true,
+      skill: input.skill === true, up: input.up === true,
+      down: input.down === true, charge: input.charge === true,
     };
     if (next.left && !this.controls.left) this.tapDirection(-1);
     if (next.right && !this.controls.right) this.tapDirection(1);
@@ -126,7 +132,12 @@ export class PracticeArena {
     p.vx = velocityDirection * (dashing ? DASH_SPEED : WALK_SPEED);
     p.x = Math.max(22, Math.min(1258, p.x + p.vx * dt));
 
-    if (this.jumpQueuedUntil >= this.now && (p.grounded || this.now - this.lastGroundedAt <= 0.09)) {
+    // ↑ + attack during a grounded combo is a launcher, not a jump.
+    const launcherQueued = p.grounded && this.controls.up === true &&
+      (this.controls.attack || this.now <= this.attackBufferUntil) &&
+      this.stats.combo > 0 && this.now - this.lastSuccessfulHit <= COMBO_WINDOW;
+    if (!launcherQueued && this.jumpQueuedUntil >= this.now &&
+        (p.grounded || this.now - this.lastGroundedAt <= 0.09)) {
       p.vy = -650;
       p.grounded = false;
       this.lastGroundedAt = Number.NEGATIVE_INFINITY;
@@ -148,12 +159,34 @@ export class PracticeArena {
       }
       if (p.y >= FLOOR) { p.y = FLOOR; p.vy = 0; p.grounded = true; }
     }
-    if (p.grounded) this.lastGroundedAt = this.now;
+    if (p.grounded) {
+      this.lastGroundedAt = this.now;
+      this.diving = false;
+    }
+    if (this.stats.targetHp > 0 && this.targetY < FLOOR) {
+      this.targetVy = Math.min(this.targetVy + 1200 * dt, 950);
+      this.targetY = Math.min(FLOOR, this.targetY + this.targetVy * dt);
+      if (this.targetY >= FLOOR) this.targetVy = 0;
+    }
+    if (this.diving && !p.grounded && this.stats.targetHp > 0 &&
+        Math.abs(DUMMY_X - p.x) <= 108 && (DUMMY_X - p.x) * p.facing >= -5 &&
+        Math.abs(p.y - this.targetY) <= 64) {
+      this.hit(50, 108, 64, false, 'dive');
+      if (this.stats.lastDamage > 0) {
+        this.diving = false;
+        p.vy = -165;
+        this.stats.dives++;
+        this.stats.aerialHits++;
+        this.recordCombo(p.comboStage);
+      }
+    }
 
     p.flash = Math.max(0, p.flash - dt);
     this.targetFlash = Math.max(0, this.targetFlash - dt);
     if (this.resetDummyAt > 0 && this.now >= this.resetDummyAt) {
       this.stats.targetHp = DUMMY_HP;
+      this.targetY = FLOOR;
+      this.targetVy = 0;
       this.resetDummyAt = 0;
     }
     if (this.now - this.lastSuccessfulHit > COMBO_WINDOW) this.stats.combo = 0;
@@ -178,23 +211,46 @@ export class PracticeArena {
     const p = this.player;
     const airborne = !p.grounded;
     const dashAttack = this.now < this.dashUntil && !airborne;
+    const launcher = !airborne && this.controls.up === true &&
+      this.stats.combo > 0 && this.now - this.lastSuccessfulHit <= COMBO_WINDOW;
+    const dive = airborne && this.controls.down === true;
+    if (dive) {
+      this.diving = true;
+      p.vy = Math.max(p.vy, 820);
+      // Dive crosses one-way platforms but never the solid floor.
+      this.dropUntil = this.now + 0.7;
+      this.action = 'dive';
+      this.actionStartedAt = this.now;
+      this.nextAttack = this.now + 0.43;
+      return true;
+    }
+    if (launcher) this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
     const chain = this.now - this.lastSuccessfulHit <= COMBO_WINDOW ? Math.min(4, p.comboStage + 1) : 1;
-    const damage = dashAttack ? 36 : airborne ? 30 : [24, 29, 35, 44][chain - 1];
-    const range = dashAttack ? 148 : airborne ? 123 : 116;
+    const damage = launcher ? 38 : dashAttack ? 36 : airborne ? 30 : [24, 29, 35, 44][chain - 1];
+    const range = launcher ? 140 : dashAttack ? 148 : airborne ? 123 : 116;
     this.hit(damage, range, airborne ? 155 : 92, false,
-      dashAttack ? 'dash' : airborne ? 'air' : 'basic');
+      launcher ? 'launcher' : dashAttack ? 'dash' : airborne ? 'air' : 'basic');
+    if (launcher && this.stats.lastDamage > 0) {
+      this.targetVy = -535;
+      this.targetY = Math.min(this.targetY, FLOOR - 5);
+      this.stats.launchers++;
+    }
     if (this.stats.lastDamage > 0) {
-      p.comboStage = chain;
-      this.stats.combo++;
-      this.stats.bestCombo = Math.max(this.stats.bestCombo, this.stats.combo);
-      this.lastSuccessfulHit = this.now;
+      this.recordCombo(chain);
       if (airborne) this.stats.aerialHits++;
     } else if (this.stats.combo === 0) p.comboStage = 1;
     p.flash = 0.16;
-    this.action = dashAttack ? 'dash_attack' : airborne ? 'air_attack' : 'attack';
+    this.action = launcher ? 'launcher' : dashAttack ? 'dash_attack' : airborne ? 'air_attack' : 'attack';
     this.actionStartedAt = this.now;
     this.nextAttack = this.now + (dashAttack ? 0.3 : 0.25);
     return true;
+  }
+
+  private recordCombo(stage: number) {
+    this.player.comboStage = stage;
+    this.stats.combo++;
+    this.stats.bestCombo = Math.max(this.stats.bestCombo, this.stats.combo);
+    this.lastSuccessfulHit = this.now;
   }
 
   private useSkill() {
@@ -208,14 +264,14 @@ export class PracticeArena {
   }
 
   private hit(damage: number, range: number, verticalRange: number, area: boolean,
-      kind: 'basic' | 'air' | 'dash' | 'skill') {
+      kind: ImpactKind) {
     const p = this.player;
     this.stats.strikes++;
     this.stats.lastDamage = 0;
     if (this.stats.targetHp <= 0 || this.resetDummyAt > 0) return;
     const dx = DUMMY_X - p.x;
     if ((!area && dx * p.facing < -4) || Math.abs(dx) > range ||
-        Math.abs(p.y - FLOOR) > verticalRange) return;
+        Math.abs(p.y - this.targetY) > verticalRange) return;
     const dealt = Math.min(this.stats.targetHp, damage);
     this.stats.targetHp -= dealt;
     this.stats.lastDamage = dealt;
@@ -242,6 +298,7 @@ export class PracticeArena {
     this.attackBufferUntil = Number.NEGATIVE_INFINITY;
     this.dashUntil = 0;
     this.player.vx = 0;
+    this.diving = false;
   }
 
   reset() {
@@ -252,9 +309,11 @@ export class PracticeArena {
     Object.assign(this.stats, {
       targetHp: DUMMY_HP, defeated: 0, strikes: 0, lastDamage: 0,
       combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
+    launchers: 0, dives: 0,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
+    this.targetY = FLOOR; this.targetVy = 0; this.diving = false;
     this.impactSequence = 0; this.lastImpactAt = Number.NEGATIVE_INFINITY;
     this.lastImpactDamage = 0; this.lastImpactDirection = 1; this.lastImpactKind = 'basic';
     this.lastSuccessfulHit = Number.NEGATIVE_INFINITY;
@@ -272,15 +331,17 @@ export class PracticeArena {
   snapshot(): Snapshot {
     const p = this.player;
     const elapsed = (this.now - this.actionStartedAt) * 1000;
-    const animationDuration = this.action === 'skill' ? 460 : 330;
+    const animationDuration = this.action === 'skill' ? 460 :
+      this.action === 'dive' ? 650 : this.action === 'launcher' ? 420 : 330;
     const animating = this.action && elapsed >= 0 && elapsed < animationDuration;
     const impactAge = this.now - this.lastImpactAt;
     const recoiling = impactAge >= 0 && impactAge < 0.3;
     const recoilFactor = recoiling ? Math.pow(1 - impactAge / 0.3, 2) : 0;
-    const lift = this.lastImpactKind === 'skill' ? 27 : this.lastImpactKind === 'air' ? 16 : 7;
+    const lift = this.lastImpactKind === 'skill' ? 27 :
+      this.lastImpactKind === 'launcher' ? 11 : this.lastImpactKind === 'air' ? 16 : 7;
     const impact = this.impactSequence > 0 && impactAge < 0.55 ? {
       sequence: this.impactSequence, damage: this.lastImpactDamage,
-      x: DUMMY_X, y: FLOOR - 27, direction: this.lastImpactDirection,
+      x: DUMMY_X, y: this.targetY - 27, direction: this.lastImpactDirection,
       kind: this.lastImpactKind,
     } as const : undefined;
     return {
@@ -299,7 +360,7 @@ export class PracticeArena {
       enemies: this.stats.targetHp > 0 ? [{
         // Visual-only recoil: collision remains at DUMMY_X, preserving training accuracy.
         id: 1, x: DUMMY_X + this.lastImpactDirection * 22 * recoilFactor,
-        y: FLOOR - lift * recoilFactor, hp: this.stats.targetHp,
+        y: this.targetY - lift * recoilFactor, hp: this.stats.targetHp,
         maxHp: DUMMY_HP, boss: false, flash: this.targetFlash,
       }] : [],
     };
