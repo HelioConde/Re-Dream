@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><title>Véu lunar do bosque — Re:Dream</title>
+<defs><radialGradient id="halo"><stop stop-color="#c7f5e6" stop-opacity=".26"/><stop offset=".68" stop-color="#91ceba" stop-opacity=".06"/><stop offset="1" stop-color="#91ceba" stop-opacity="0"/></radialGradient><linearGradient id="mist"><stop stop-color="#96decf" stop-opacity="0"/><stop offset=".48" stop-color="#96decf" stop-opacity=".12"/><stop offset="1" stop-color="#96decf" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="997" cy="164" rx="270" ry="208" fill="url(#halo)"/>
+<path d="M-60 369Q137 342 332 384T762 363T1330 391" fill="none" stroke="url(#mist)" stroke-width="72"/>
+<path d="M-70 513Q211 469 388 510T766 485T1341 526" fill="none" stroke="#a9f1d8" stroke-width="25" opacity=".048"/>
+<path d="M0 539Q216 514 432 535T850 531T1280 539" fill="none" stroke="#b3ebe3" stroke-width="16" opacity=".065"/>
+<circle cx="29" cy="60" r="1.3" fill="#d8f6e9" opacity="0.17"/>
+<circle cx="216" cy="163" r="1.78" fill="#a5f1d7" opacity="0.23"/>
+<circle cx="403" cy="266" r="2.26" fill="#a5f1d7" opacity="0.28"/>
+<circle cx="590" cy="369" r="2.74" fill="#d8f6e9" opacity="0.34"/>
+<circle cx="777" cy="472" r="1.3" fill="#a5f1d7" opacity="0.39"/>
+<circle cx="964" cy="145" r="1.78" fill="#a5f1d7" opacity="0.17"/>
+<circle cx="1151" cy="248" r="2.26" fill="#d8f6e9" opacity="0.23"/>
+<circle cx="128" cy="351" r="2.74" fill="#a5f1d7" opacity="0.28"/>
+<circle cx="315" cy="454" r="1.3" fill="#a5f1d7" opacity="0.34"/>
+<circle cx="502" cy="127" r="1.78" fill="#d8f6e9" opacity="0.39"/>
+<circle cx="689" cy="230" r="2.26" fill="#a5f1d7" opacity="0.17"/>
+<circle cx="876" cy="333" r="2.74" fill="#a5f1d7" opacity="0.23"/>
+<circle cx="1063" cy="436" r="1.3" fill="#d8f6e9" opacity="0.28"/>
+<circle cx="40" cy="109" r="1.78" fill="#a5f1d7" opacity="0.34"/>
+<circle cx="227" cy="212" r="2.26" fill="#a5f1d7" opacity="0.39"/>
+<circle cx="414" cy="315" r="2.74" fill="#d8f6e9" opacity="0.17"/>
+<circle cx="601" cy="418" r="1.3" fill="#a5f1d7" opacity="0.23"/>
+<circle cx="788" cy="91" r="1.78" fill="#a5f1d7" opacity="0.28"/>
+<circle cx="975" cy="194" r="2.26" fill="#d8f6e9" opacity="0.34"/>
+<circle cx="1162" cy="297" r="2.74" fill="#a5f1d7" opacity="0.39"/>
+<circle cx="139" cy="400" r="1.3" fill="#a5f1d7" opacity="0.17"/>
+<circle cx="326" cy="73" r="1.78" fill="#d8f6e9" opacity="0.23"/>
+<circle cx="513" cy="176" r="2.26" fill="#a5f1d7" opacity="0.28"/>
+<circle cx="700" cy="279" r="2.74" fill="#a5f1d7" opacity="0.34"/>
+<circle cx="887" cy="382" r="1.3" fill="#d8f6e9" opacity="0.39"/>
+<circle cx="1074" cy="485" r="1.78" fill="#a5f1d7" opacity="0.17"/>
+<circle cx="51" cy="158" r="2.26" fill="#a5f1d7" opacity="0.23"/>
+<circle cx="238" cy="261" r="2.74" fill="#d8f6e9" opacity="0.28"/></svg>
