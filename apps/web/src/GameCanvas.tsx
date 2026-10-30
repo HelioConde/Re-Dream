@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import Phaser from 'phaser';
 import type { Control, PracticeImpact, PracticeInput, Snapshot } from './protocol';
+import { readGameInput } from './inputMapping';
 import { LocalPredictor } from './prediction';
 import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
@@ -80,28 +81,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       update(time: number) {
         const keys = this.keys;
         const mobile = mobileRef.current;
-        // In practice, only a held-and-released Z can cast abilities.
-        // Multiplayer keeps its existing A/D/W/Z/K/X bindings untouched.
-        const up = keys.UP.isDown || keys.W.isDown || mobile.jump === true;
-        const down = keys.DOWN.isDown || mobile.down === true;
-        const input: PracticeInput = practiceMode ? {
-          left: keys.LEFT.isDown || mobile.left,
-          right: keys.RIGHT.isDown || mobile.right,
-          jump: up,
-          up,
-          down,
-          drop: (keys.SPACE.isDown || mobile.drop === true) && down,
-          attack: keys.J.isDown || mobile.attack,
-          charge: keys.Z.isDown || mobile.charge === true,
-          skill: false,
-        } : {
-          left: keys.A.isDown || keys.LEFT.isDown || mobile.left,
-          right: keys.D.isDown || keys.RIGHT.isDown || mobile.right,
-          jump: keys.W.isDown || keys.UP.isDown || keys.SPACE.isDown || mobile.jump,
-          attack: keys.J.isDown || keys.Z.isDown || mobile.attack,
-          skill: keys.K.isDown || keys.X.isDown || mobile.skill,
-          down,
-        };
+        // Both modes send the same ↓ key state. The server must own online drops.
+        const input = readGameInput(keys, mobile, practiceMode);
         const inputKey = Object.values(input).map(value => Number(value)).join('');
         if (inputKey !== this.lastInput || time - this.lastSent >= 50) {
           sendRef.current(input);
