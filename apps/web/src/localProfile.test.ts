@@ -22,7 +22,7 @@ describe('localStorage de Re:Dream', () => {
   it('persiste o apelido, sala e histórico apenas no navegador', () => {
     const storage = memoryStorage();
     const profile = {
-      nickname: 'Aventureira', characterId: 'wanderer' as const, lastRoom: 'ABC123',
+      nickname: 'Aventureira', characterId: 'aren' as const, lastRoom: 'ABC123',
       victories: 2, defeats: 1, lastPlayed: '2026-10-24T10:00:00.000Z',
     };
     saveLocalProfile(profile, storage);
@@ -30,11 +30,17 @@ describe('localStorage de Re:Dream', () => {
     assert.ok(storage.getItem(PROFILE_KEY));
   });
 
+  it('antigos personagens salvos migram automaticamente para Aren', () => {
+    const storage=memoryStorage();
+    storage.setItem(PROFILE_KEY, JSON.stringify({...EMPTY_PROFILE,characterId:'rose'}));
+    assert.equal(readLocalProfile(storage).characterId,'aren');
+  });
+
   it('migra o apelido da chave antiga', () => {
     const storage = memoryStorage();
     storage.setItem('redream-name', 'Conde');
     assert.equal(readLocalProfile(storage).nickname, 'Conde');
-    assert.equal(readLocalProfile(storage).characterId, 'luci');
+    assert.equal(readLocalProfile(storage).characterId, 'aren');
   });
 
   it('não confia em números negativos, datas inválidas ou valores malformados', () => {
@@ -44,7 +50,7 @@ describe('localStorage de Re:Dream', () => {
     }));
     const p = readLocalProfile(storage);
     assert.equal(p.nickname.length, 20);
-    assert.equal(p.characterId, 'luci');
+    assert.equal(p.characterId, 'aren');
     assert.equal(p.lastRoom, '');
     assert.equal(p.victories, 0);
     assert.equal(p.defeats, 0);
