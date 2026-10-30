@@ -106,9 +106,9 @@ export class PracticeArena {
   private action: CombatAction | null = null;
   private actionStartedAt = Number.NEGATIVE_INFINITY;
 
-  constructor(characterId: CharacterId = 'luci', nickname = 'Luci') {
+  constructor(characterId: CharacterId = 'aren', nickname = 'Aren') {
     this.characterId = characterId;
-    this.nickname = nickname.slice(0, 20) || 'Luci';
+    this.nickname = nickname.slice(0, 20) || 'Aren';
   }
 
   setInput(input: PracticeInput) {
