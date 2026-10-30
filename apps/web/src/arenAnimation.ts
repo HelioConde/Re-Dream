@@ -87,3 +87,21 @@ export class ArenLandingTracker {
   }
   remove(id:string){this.previous.delete(id);}
 }
+
+/** Online snapshots do not expose the offline combo stage, so follow
+ * discrete confirmed attack starts without letting a held key repeat stages. */
+export class ArenComboTracker {
+  private state=new Map<string,{lastElapsed:number|null;lastAt:number;combo:number}>();
+  update(id:string,elapsed:number|null,time:number):number {
+    const old=this.state.get(id) ?? {lastElapsed:null,lastAt:-Infinity,combo:0};
+    const started=elapsed!==null && (old.lastElapsed===null || elapsed<old.lastElapsed);
+    if(started){
+      old.combo=time-old.lastAt<=1300?(old.combo%4)+1:1;
+      old.lastAt=time;
+    }
+    old.lastElapsed=elapsed;
+    this.state.set(id,old);
+    return old.combo || 1;
+  }
+  remove(id:string){this.state.delete(id);}
+}
