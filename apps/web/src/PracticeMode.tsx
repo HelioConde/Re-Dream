@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import GameCanvas from './GameCanvas';
+import ArenAnimationInspector from './ArenAnimationInspector';
 import { PracticeArena, type TrainingStats } from './practiceSimulation';
 import { EMPTY_CONTROLS, type CharacterId, type Control, type PracticeInput, type Snapshot } from './protocol';
 import { characterName } from './characters';
@@ -26,6 +27,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
   const mobileRef = useRef<PracticeInput>({ ...EMPTY_CONTROLS });
   const pausedRef = useRef(false);
   const [paused, setPaused] = useState(false);
+  const [inspectAnimations, setInspectAnimations] = useState(false);
   const [stats, setStats] = useState<TrainingStats>({ ...arena.stats });
   const [combatEvents, setCombatEvents] = useState<PracticeGameEvent[]>([]);
   useEffect(() => arena.subscribe(event => {
@@ -123,6 +125,10 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
           title="Posiciona Aren sobre uma plataforma vazada, para conferir se ↓ funciona">
           ↓ Testar plataforma
         </button>
+        <button type="button" className="button button-outline" aria-pressed={inspectAnimations}
+          onClick={()=>setInspectAnimations(v=>!v)}>
+          {inspectAnimations ? '✕ Fechar ateliê' : '✦ Inspecionar animações'}
+        </button>
         <button type="button" className="button button-ghost" onClick={onExit}>← Seleção</button>
       </div>
     </div>
@@ -160,6 +166,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
         <button type="button" className="button button-primary" onClick={resumeTraining}>▶ Continuar treino</button>
       </div>}
     </section>
+    {inspectAnimations && <ArenAnimationInspector/>}
     <div className="game-bottom practice-stats">
       <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>🏃 CORRIDAS <strong>{stats.runs}</strong></span><span>◈ ESTADO <strong>{locomotionLabels[stats.locomotion]}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span><span>🚀 ROCKET <strong>{stats.rocketSteps}</strong></span><span>↓ SHADOW <strong>{stats.shadowSteps}</strong></span><span>↓ DESCIDAS <strong>{stats.drops}</strong></span><span>↔ CANCEL <strong>{stats.dashCancels}</strong></span><span>✦ OTTO <strong>{stats.ottoShots}</strong></span></div>
       <div className="practice-combat-meters" aria-label="Indicadores de combate">
