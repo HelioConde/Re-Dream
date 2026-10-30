@@ -133,3 +133,51 @@ test('costume V2 tem identidade lunar consistente e magias têm cristais diferen
   assert.notEqual(skill1,skill2);
   assert.notEqual(skill2,skill3);
 });
+
+test('V4: each of the four combo strikes has its own choreographed sabre arc', () => {
+  const get=(action:string,index:number)=>
+    readFileSync(join(process.cwd(),'public/art/aren',action+'-'+index+'.svg'),'utf8');
+  const swings=['attack_1','attack_2','attack_3','attack_4'] as const;
+  const poses = swings.map(action => get(action,3));
+  for(let i=0;i<swings.length;i++){
+    assert.match(poses[i],new RegExp('data-swing="'+swings[i]+'"'));
+    assert.match(poses[i],/#d7c99c/); // belt and crescent-sabre guard
+    assert.match(poses[i],/#f5fff2/); // readable blade core
+  }
+  assert.equal(new Set(poses).size,4,'all four cuts need different body/weapon poses');
+  assert.match(poses[3],/data-finisher="moon"/);
+  for(const other of poses.slice(0,3)) assert.doesNotMatch(other,/data-finisher/);
+});
+
+test('V4: launcher, dive and Otto have different intentional sword trajectories', () => {
+  const asset=(action:string)=>readFileSync(join(process.cwd(),
+    'public/art/aren',action+'-3.svg'),'utf8');
+  const attacks=['launcher','dive','otto','air_attack','dash_attack'];
+  const bodyFrames=attacks.map(asset);
+  for(let i=0;i<attacks.length;i++){
+    assert.match(bodyFrames[i],new RegExp('data-swing="'+attacks[i]+'"'));
+  }
+  assert.equal(new Set(bodyFrames).size,5);
+});
+
+test('V4: MP3 has a signature dream crescent that MP1 and MP2 cannot display', () => {
+  const asset=(action:string)=>readFileSync(join(process.cwd(),
+    'public/art/aren',action+'-3.svg'),'utf8');
+  const mp3=asset('skill_3');
+  assert.match(mp3,/data-mp3="dream-crescent"/);
+  assert.match(mp3,/#e8c7ff/);
+  assert.doesNotMatch(asset('skill_1'),/data-mp3/);
+  assert.doesNotMatch(asset('skill_2'),/data-mp3/);
+  assert.equal(mp3.includes('<image'),false);
+});
+
+test('V4: key poses remain distinct across anticipation, impact, recovery', () => {
+  for(const action of ['attack_1','attack_2','attack_3','attack_4','launcher','dive','otto','skill_3']){
+    const frames=AREN_FRAME_COUNTS[action as keyof typeof AREN_FRAME_COUNTS];
+    const read=(i:number)=>readFileSync(join(process.cwd(),
+      'public/art/aren',action+'-'+i+'.svg'),'utf8');
+    const first=read(0),mid=read(Math.floor(frames/2)),last=read(frames-1);
+    assert.notEqual(first,mid,action+' anticipation must differ from contact');
+    assert.notEqual(mid,last,action+' contact must differ from recovery');
+  }
+});
