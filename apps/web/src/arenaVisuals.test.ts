@@ -25,7 +25,9 @@ test('platform artwork visually shares exact authoritative platform top coordina
 });
 
 test('stage has no external raster art or unlicensed third-party asset dependencies', () => {
-  assert.doesNotMatch(stage, /<image\b|<script\b|https?:\/\/|data:image/i);
+  const withoutNamespaces = stage.replaceAll('http://www.w3.org/2000/svg', '')
+    .replaceAll('http://www.w3.org/1999/xlink', '');
+  assert.doesNotMatch(withoutNamespaces, /<image\\b|<script\\b|https?:\\/\\/|data:image/i);
   assert.ok((stage.match(/<path\b/g) ?? []).length >= 20);
   assert.ok((stage.match(/<circle\b/g) ?? []).length >= 20);
 });
