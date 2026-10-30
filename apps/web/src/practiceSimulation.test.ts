@@ -925,3 +925,44 @@ test('pausing with Z held never emits a skill or reset event', () => {
   assert.equal(events.some(e=>e.type==='mpChanged' && e.reason==='skill'),false);
   assert.equal(events.some(e=>e.type==='reset'),false);
 });
+
+test('MP1/MP2/MP3 only on release carry their real level to impact snapshot and event bus', () => {
+  for(const level of [1,2,3] as const){
+    const a=new PracticeArena();
+    a.player.x=800;
+    a.stats.mp=300;
+    const impacts:import('./practiceEvents').PracticeGameEvent[]=[];
+    a.subscribe(event=>{if(event.type==='impactConfirmed')impacts.push(event);});
+    a.setInput({...noInput,charge:true});
+    for(let i=0;i<level*21;i++)a.step(1/30);
+    assert.equal(a.stats.skillCasts,0);
+    assert.equal(impacts.some(e=>e.type==='impactConfirmed' && e.impact.kind==='skill'),false);
+    a.setInput(noInput);
+    a.step(1/30);
+    const magic=impacts.filter(e=>e.type==='impactConfirmed' && e.impact.kind==='skill');
+    assert.equal(magic.length,1);
+    if(magic[0].type==='impactConfirmed'){
+      assert.equal(magic[0].impact.skillLevel,level);
+      assert.equal(a.snapshot().impact?.skillLevel,level);
+    }
+  }
+});
+
+test('basic and missed hits never inherit an old MP level', () => {
+  const a=new PracticeArena();
+  a.player.x=800;
+  a.stats.mp=300;
+  const seen:import('./practiceEvents').PracticeGameEvent[]=[];
+  a.subscribe(e=>{if(e.type==='impactConfirmed')seen.push(e)});
+  a.setInput({...noInput,charge:true});
+  for(let i=0;i<23;i++)a.step(1/30);
+  a.setInput(noInput);a.step(1/30);
+  assert.ok(seen.some(e=>e.type==='impactConfirmed' && e.impact.skillLevel===1));
+  a.reset();
+  assert.equal(a.snapshot().impact,undefined);
+  a.player.x=800;
+  a.setInput({...noInput,attack:true});a.step(1/30);
+  const last=seen.at(-1);
+  assert.equal(last?.type==='impactConfirmed' && last.impact.kind,'basic');
+  assert.equal(last?.type==='impactConfirmed' && last.impact.skillLevel,undefined);
+});
