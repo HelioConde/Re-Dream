@@ -20,6 +20,19 @@ class ArenaArtworkTest(unittest.TestCase):
         self.assertEqual(self.root.get("width"), "1280")
         self.assertEqual(self.root.get("height"), "720")
 
+    def test_v3_transparent_layers_are_valid_local_svg_16_9(self):
+        for name in ("forest-atmosphere.svg", "forest-foreground.svg"):
+            source = ART.with_name(name)
+            root = ET.parse(source).getroot()
+            self.assertEqual(root.tag, SVG + "svg", name)
+            self.assertEqual(root.get("viewBox"), "0 0 1280 720", name)
+            self.assertEqual(root.get("width"), "1280", name)
+            self.assertEqual(root.get("height"), "720", name)
+            self.assertFalse(root.findall(f".//{SVG}image"), name)
+            self.assertFalse(root.findall(f".//{SVG}script"), name)
+            # No opaque full-screen rectangle may hide characters and platforms.
+            self.assertFalse(root.findall(f".//{SVG}rect"), name)
+
     def test_platforms_are_anchored_to_gameplay_collision_positions(self):
         for platform_id, x, y in [
             ("platform-lower", 220, 466),
