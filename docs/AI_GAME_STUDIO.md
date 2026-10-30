@@ -10,7 +10,7 @@ O arquivo HTML5 compartilhado descreve templates Phaser/PixiJS/Three.js; **Re:Dr
 | --- | --- | --- |
 | `/gdd-dinamico` | Atualizar conceito, regras e escopo | `docs/GDD_RE_DREAM.md` |
 | `/backlog-gameplay` | Quebrar mecânica em histórias implementáveis | `docs/BACKLOG_RE_DREAM.md` |
-| `/gameplay-fsm` | Projetar transições Idle/Walk/Dash/Run/Jump/Attack | Diagrama, tabela e testes propostos |
+| `/gameplay-fsm` | Projetar estados e prioridades de movimentação/combate | FSM local de locomoção integrada; combate continua planejado |
 | `/gameplay-events` | Contratos Event Bus para UI/VFX/SFX | Eventos tipados e plano de migração |
 | `/engine-converter` | Traduzir lógica entre Godot/Unity/Phaser | Código e divergências de física/input |
 | `/debug-stacktrace` | Investigar stack trace e falhas de Actions | Hipótese, linha, reprodução e correção |
