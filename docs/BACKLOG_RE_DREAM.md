@@ -35,12 +35,12 @@
 | --- | --- | --- | --- |
 | RD-D01 | Implementado em branch; QA visual pendente | Cenário vetorial original Bosque das Constelações com ruínas, vegetação, profundidade e plataformas nas coordenadas físicas atuais | XML e build aprovados; screenshots desktop/mobile ainda necessários |
 | RD-D02 | Implementado em branch; QA visual pendente | Sentinela de Cristal no lugar do alvo elipsoidal e retrato verdadeiro do Luci no HUD | Gameplay e hitboxes inalterados, nenhuma arte de terceiros |
-| RD-D03 | Reboot estrutural implementado; arte final ainda pendente | Aren único com 151 quadros SVG originais para 23 ações, incluindo combinações e MP1–3 | CI e frames gerados; falta ilustração quadro a quadro fiel à ficha conceitual e QA visual do gameplay |
+| RD-D03 | Aren V2 implementado; pintura final pendente | Melhorias do traje, tiara, insígnia lunar, cristais MP1–3; quadros animados continuam SVG | Testes de SVG e seleção de animações, oficina de inspeção; ainda falta arte ilustrada final |
 | RD-D04 | Planejado | Animações da Sentinela: idle/hurt/stun/defeat | Estado da animação acompanha dano real sem hitbox visual enganador |
 | RD-D05 | Planejado | VFX/SFX autorais orientados pelo Event Bus | Sem eventos duplicados; modo movimento reduzido; medir desempenho |
-| RD-D06 | Planejado | Revisar interface de batalha e HUD responsiva em todas resoluções | Capturas 1600×900, 390×844 e gameplay; sem controles encobertos |
+| RD-D06 | Parcial: ateliê visual implementado | Galeria de 23 movimentos, quadros, pausa, espelhamento e miniaturas; interface responsiva | Build e testes; capturas 1600×900 e 390×844 reais ainda pendentes |
 
-**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md) e [reboot de Aren](AREN_REBOOT.md).
+**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md) e [Aren V2 — QA visual](AREN_V2_VISUAL_QA.md).
 
 ## Definição de pronto
 - Critérios observáveis implementados com cobertura automatizada da lógica.
@@ -51,4 +51,4 @@
 - PR separado por mudança lógica; rollback claro.
 
 ## Fila para seleção
-**Próxima história sugerida:** RD-A03 (FSM de combate e carga Z). Depois concluir RD-B03 com feedback VFX/SFX original e QA visual, mantendo servidor WebSocket isolado. Não misturar epics grandes numa PR.
+**Próxima história sugerida:** RD-C01 (capturar screenshots e baseline de desempenho da nova arte no navegador). Depois finalizar ilustrações 2D dos 23 estados do Aren antes de ampliar a FSM de combate. Não misturar epics grandes numa PR.
