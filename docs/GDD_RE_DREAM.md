@@ -25,6 +25,7 @@ Jogo **original** de ação e plataformas 2D com atmosfera de fantasia, combate 
 | Segurar Z e **soltar** para magia MP1/MP2/MP3 | Praticar offline | `practiceSimulation.ts` |
 | Event Bus tipado para impacto, MP, combos, KO e reset | Praticar offline, histórico visual local | `practiceEvents.ts`, `PracticeMode.tsx` |
 | Salas online, ondas e chefe de demonstração | Multiplayer | `apps/server/src/sim.ts` |
+| Cenário original Bosque das Constelações, Sentinela de Cristal e HUD do Luci | Implementado no cliente; QA visual em browser pendente | `apps/web/public/art/arena-dream.svg`, `GameCanvas.tsx`, `PracticeMode.tsx` |
 | Progressão persistente, loot, itens equipáveis, novas regiões | Pendente | escopo futuro |
 
 **Controles de referência do modo Praticar:** ↓ em uma plataforma vazada atravessa a plataforma (nunca o chão sólido); ↓+Z/J na borda prioriza Otto; ↓ no ar preserva Shadow Step. ←/→ andar; duplo toque faz dash e segurar o segundo toque mantém corrida; ↑ pula; Z inicia golpe e, ao segurar/soltar, conjura níveis 1/2/3 conforme MP disponível. A/S/D não são atalhos de magia. J/W são alternativas locais documentadas. O multiplayer tem controles diferentes até eventual unificação validada.
@@ -40,6 +41,9 @@ Cliente React + Phaser 4 + TypeScript, publicado estaticamente via GitHub Pages;
 
 ## Próxima versão a validar
 A decisão de estados de locomoção offline já foi extraída como FSM pura, documentada em `docs/LOCOMOTION_FSM.md` e ligada ao seletor de sprites e indicador de ESTADO. **Ainda proposto:** extrair FSM de combate (incluindo cargas Z), migrar gradualmente efeitos visuais e sons originais para o Event Bus e medir *frame time* com hardware real. O Event Bus local e o histórico de combate já foram implementados; a migração do VFX Phaser ainda não.
+
+## Direção de arte
+O feedback do jogador (2026-10-30) confirma melhora na fluidez, porém indica gráficos distantes da experiência desejada. A prioridade passou a ser **coerência visual da arena, personagens e animações**, acima de novas mecânicas. A primeira intervenção troca o palco geométrico por cena original em camadas e um novo alvo desenhado, sem considerar a qualidade de arte final resolvida. Ver `docs/ART_DIRECTION_RE_DREAM.md`.
 
 ## Histórico de decisões
 - 2026-10-30: GDD inicial redigido a partir da base existente e do fluxo de skills adaptado.

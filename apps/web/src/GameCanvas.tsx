@@ -41,12 +41,12 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private avatars = new Map<string, Phaser.GameObjects.Image>();
       private remoteMotion = new Map<string, { x: number; until: number }>();
       private positions = new Map<string, { x: number; y: number }>();
-      private stars = Array.from({ length: 46 }, (_, i) => ({
-        x: (i * 311 + 67) % 1280, y: (i * 113 + 31) % 520, phase: i * 0.73,
-      }));
 
       constructor() { super('dungeon'); }
       preload() {
+        // Original layered 2D fantasy art. The stage matches the authoritative
+        // ground (y=596) and one-way platform locations (220/466, 690/414).
+        this.load.svg('dream-stage', import.meta.env.BASE_URL + 'art/arena-dream.svg');
         for (const key of LUCI_ANIMATION_KEYS) {
           this.load.spritesheet('luci_' + key,
             import.meta.env.BASE_URL + 'sprites/luci/' + key + '.png',
@@ -68,8 +68,26 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       create() {
         // Two actual eight-frame directional walk GIFs, with a consistent 64x64 layout.
         // The ZIP has no attack/death poses; do not invent or mislabel frames.
-        this.cameras.main.setBackgroundColor('#101935');
-        this.draw = this.add.graphics();
+        this.cameras.main.setBackgroundColor('#142b44');
+        if (this.textures.exists('dream-stage')) {
+          this.add.image(640, 360, 'dream-stage').setDisplaySize(1280, 720).setDepth(-20);
+        } else {
+          // Loader/network fallback: gameplay remains visible and controllable.
+          const fallback = this.add.graphics().setDepth(-20);
+          fallback.fillGradientStyle(0x17263f, 0x294768, 0x457878, 0x244750, 1);
+          fallback.fillRect(0, 0, 1280, 720);
+          fallback.fillStyle(0x284e59);
+          fallback.fillRect(0, 596, 1280, 124);
+          fallback.fillStyle(0x82b99a);
+          fallback.fillRect(0, 594, 1280, 10);
+          for (const platform of [{ x: 220, y: 466, w: 220 }, { x: 690, y: 414, w: 250 }]) {
+            fallback.fillStyle(0x3b6070);
+            fallback.fillRoundedRect(platform.x, platform.y, platform.w, 31, 7);
+            fallback.fillStyle(0x82bea3);
+            fallback.fillRoundedRect(platform.x, platform.y, platform.w, 9, 5);
+          }
+        }
+        this.draw = this.add.graphics().setDepth(0);
         this.hitLayer = this.add.graphics().setDepth(8);
         this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         this.keys = this.input.keyboard!.addKeys(
@@ -93,37 +111,9 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         this.lastFrame = time;
 
         const g = this.draw;
+        // Static authored backdrop and platforms are rendered once in create,
+        // instead of redrawing the entire environment at 60 fps.
         g.clear();
-        g.fillGradientStyle(0x111830, 0x151f41, 0x34416a, 0x183959, 1);
-        g.fillRect(0, 0, 1280, 720);
-        g.fillStyle(0xd9c4ff, 0.16);
-        g.fillCircle(1070, 125, 86);
-        g.fillStyle(0xf6eaff, 0.88);
-        g.fillCircle(1070, 125, 51);
-        for (const s of this.stars) {
-          g.fillStyle(0xcbbfff, 0.28 + Math.sin(time * .0013 + s.phase) * .2);
-          g.fillCircle(s.x, s.y + Math.sin(time * .0008 + s.phase) * 7, 1.8);
-        }
-        g.fillStyle(0x25375a, .85);
-        g.fillTriangle(0, 510, 285, 205, 575, 510);
-        g.fillTriangle(305, 510, 655, 245, 1040, 510);
-        g.fillTriangle(795, 510, 1120, 270, 1280, 510);
-        g.fillStyle(0x1e4354, 1);
-        for (let i = 0; i < 18; i++) {
-          const x = i * 78;
-          g.fillRect(x, 382 + (i % 4) * 18, 17, 210);
-          g.fillCircle(x + 9, 385 + (i % 4) * 18, 48);
-        }
-        g.fillStyle(0x243b49);
-        g.fillRect(0, 600, 1280, 120);
-        g.fillStyle(0x8eb8a5);
-        g.fillRect(0, 596, 1280, 9);
-        for (const platform of [{ x: 220, y: 466, w: 220 }, { x: 690, y: 414, w: 250 }]) {
-          g.fillStyle(0x395566);
-          g.fillRoundedRect(platform.x, platform.y, platform.w, 20, 5);
-          g.fillStyle(0xa1cba5);
-          g.fillRoundedRect(platform.x, platform.y, platform.w, 7, 4);
-        }
 
         const snapshot = snapshotRef.current;
         if (!snapshot) return;
@@ -145,27 +135,16 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           const key = 'enemy-' + enemy.id;
           seen.add(key);
           const p = this.smooth(key, enemy.x, enemy.y);
-          const size = enemy.boss ? 58 : 31;
+          const size = enemy.boss ? 91 : 63;
           if (practiceMode && enemy.y < 584) {
-            // A world-space landing shadow helps the player read aerial distance.
-            g.fillStyle(0x08172d, 0.42);
-            g.fillEllipse(enemy.x, 595, 48, 10);
-            g.lineStyle(1, 0xb7d1ff, 0.22);
+            g.fillStyle(0x08172d, 0.28);
+            g.fillEllipse(enemy.x, 595, 64, 11);
+            g.lineStyle(1, 0xb7f5dc, 0.23);
             g.lineBetween(enemy.x, enemy.y + 5, enemy.x, 587);
           }
-          g.fillStyle(enemy.boss ? 0xb65bce : 0x50b7ad);
-          g.fillEllipse(p.x, p.y - size * .7, size * 1.5, size * 1.3);
-          g.fillStyle(0xf7edf9);
-          g.fillCircle(p.x - size * .25, p.y - size * .8, size * .1);
-          g.fillCircle(p.x + size * .25, p.y - size * .8, size * .1);
-          g.fillStyle(0x241f41);
-          g.fillCircle(p.x - size * .25, p.y - size * .8, size * .05);
-          g.fillCircle(p.x + size * .25, p.y - size * .8, size * .05);
-          this.healthbar(g, p.x - size * .7, p.y - size * 1.7, size * 1.4, enemy.hp / enemy.maxHp, 0xed91e0);
-          if (enemy.flash > 0) {
-            g.lineStyle(4, 0xfff9e9, .85);
-            g.strokeCircle(p.x, p.y - size * .7, size * 1.1);
-          }
+          this.drawGuardian(g, p.x, p.y, size, enemy.boss, enemy.flash, time);
+          this.healthbar(g, p.x - size * .72, p.y - size * 1.96,
+            size * 1.44, enemy.hp / enemy.maxHp, enemy.boss ? 0xeaa4f6 : 0x91efc7);
         }
 
         for (const player of snapshot.players) {
@@ -257,6 +236,11 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             this.hitLayer.lineStyle(2, 0xf6fcff, 0.9);
             this.hitLayer.lineBetween(p.x, p.y - 52, p.x, p.y - 12);
           }
+          // Shared ground shadow makes Luci and the authored scene feel connected.
+          if (!Boolean(player.airborne) && (isYou ? practiceMode : true)) {
+            g.fillStyle(0x102a35, 0.36);
+            g.fillEllipse(p.x, p.y + 1, player.characterId === 'luci' ? 58 : 39, 10);
+          }
           const {texture,frame} = animation;
           let avatar = this.avatars.get(key);
           if (!avatar && this.textures.exists(texture)) {
@@ -319,6 +303,55 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         }
         for (const key of this.positions.keys()) {
           if (!seen.has(key)) this.positions.delete(key);
+        }
+      }
+
+      private drawGuardian(
+        g: Phaser.GameObjects.Graphics, x: number, y: number,
+        size: number, boss: boolean, flash: number, time: number,
+      ) {
+        // Original moss-and-crystal training sentinel, not a placeholder blob.
+        // Feet are anchored to enemy.y; visual geometry never changes hitboxes.
+        const unit = size / 63;
+        const pulse = this.reducedMotion ? 0 : Math.sin(time * 0.0021 + x * 0.04) * 2;
+        const cx = x, top = y - size * 1.58 + pulse;
+        g.fillStyle(0x0b2a37, 0.36);
+        g.fillEllipse(cx, y + 3, size * 1.14, 13 * unit);
+        g.fillStyle(boss ? 0x675b89 : 0x415569);
+        g.fillRoundedRect(cx - 25 * unit, y - 32 * unit, 21 * unit, 30 * unit, 5 * unit);
+        g.fillRoundedRect(cx + 5 * unit, y - 32 * unit, 21 * unit, 30 * unit, 5 * unit);
+        g.fillStyle(boss ? 0x5a577b : 0x365563);
+        g.fillRoundedRect(cx - 29 * unit, top + 29 * unit, 58 * unit, 67 * unit, 15 * unit);
+        g.fillStyle(0x253d4d);
+        g.fillRoundedRect(cx - 24 * unit, top + 38 * unit, 48 * unit, 52 * unit, 11 * unit);
+        // Detached stone shoulder plates with luminous moss edging.
+        g.fillStyle(0x547a73);
+        g.fillRoundedRect(cx - 39 * unit, top + 33 * unit, 18 * unit, 33 * unit, 5 * unit);
+        g.fillRoundedRect(cx + 21 * unit, top + 33 * unit, 18 * unit, 33 * unit, 5 * unit);
+        g.lineStyle(2.3 * unit, 0x8cdbb2, 0.65);
+        g.lineBetween(cx - 34 * unit, top + 37 * unit, cx - 25 * unit, top + 38 * unit);
+        g.lineBetween(cx + 25 * unit, top + 38 * unit, cx + 34 * unit, top + 37 * unit);
+        // The core and carved triangular crown define an unmistakable silhouette.
+        g.fillStyle(boss ? 0xb58ce9 : 0x89f4da, 0.24);
+        g.fillCircle(cx, top + 62 * unit, 18 * unit);
+        g.fillStyle(boss ? 0xc9a7f2 : 0x7ddbc8);
+        g.fillTriangle(cx, top + 46 * unit, cx + 15 * unit, top + 60 * unit, cx, top + 79 * unit);
+        g.fillTriangle(cx, top + 46 * unit, cx - 15 * unit, top + 60 * unit, cx, top + 79 * unit);
+        g.fillStyle(0xe1fef2, 0.88);
+        g.fillTriangle(cx, top + 52 * unit, cx + 6 * unit, top + 60 * unit, cx, top + 72 * unit);
+        g.fillStyle(boss ? 0x8c669e : 0x3f6f66);
+        g.fillRoundedRect(cx - 23 * unit, top, 46 * unit, 43 * unit, 12 * unit);
+        g.fillStyle(0x9fd0b8);
+        g.fillTriangle(cx - 20 * unit, top + 6 * unit, cx - 33 * unit, top - 12 * unit, cx - 2 * unit, top + 7 * unit);
+        g.fillTriangle(cx + 20 * unit, top + 6 * unit, cx + 33 * unit, top - 12 * unit, cx + 2 * unit, top + 7 * unit);
+        g.fillStyle(0x173a49);
+        g.fillRoundedRect(cx - 15 * unit, top + 16 * unit, 30 * unit, 12 * unit, 4 * unit);
+        g.fillStyle(0xd1ffe7);
+        g.fillCircle(cx - 7 * unit, top + 22 * unit, 3.3 * unit);
+        g.fillCircle(cx + 7 * unit, top + 22 * unit, 3.3 * unit);
+        if (flash > 0) {
+          g.lineStyle(3 * unit, 0xfff5c3, Math.min(1, flash * 4));
+          g.strokeCircle(cx, top + 54 * unit, 44 * unit);
         }
       }
 
