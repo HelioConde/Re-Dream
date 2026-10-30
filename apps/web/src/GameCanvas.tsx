@@ -3,6 +3,7 @@ import type { RefObject } from 'react';
 import Phaser from 'phaser';
 import type { Control, PracticeImpact, PracticeInput, Snapshot } from './protocol';
 import { readGameInput } from './inputMapping';
+import { buildCombatVfx, impactColor } from './combatVfx';
 import { LocalPredictor } from './prediction';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
 import { AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, selectArenAnimation, chooseArenAction, ArenActionPhaseTracker, ArenLandingTracker, ArenComboTracker, type ArenVisualState } from './arenAnimation';
@@ -26,6 +27,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private keys!: Record<string, Phaser.Input.Keyboard.Key>;
       private draw!: Phaser.GameObjects.Graphics;
       private hitLayer!: Phaser.GameObjects.Graphics;
+      private moonMist?: Phaser.GameObjects.Image;
+      private nearFoliage?: Phaser.GameObjects.Image;
       private lastImpactSequence = 0;
       private impactBursts: Array<PracticeImpact & { startedAt: number }> = [];
       private reducedMotion = false;
@@ -48,6 +51,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         // Original layered 2D fantasy art. The stage matches the authoritative
         // ground (y=596) and one-way platform locations (220/466, 690/414).
         this.load.svg('dream-stage', import.meta.env.BASE_URL + 'art/arena-dream.svg');
+        this.load.svg('forest-atmosphere', import.meta.env.BASE_URL + 'art/forest-atmosphere.svg');
+        this.load.svg('forest-foreground', import.meta.env.BASE_URL + 'art/forest-foreground.svg');
         // Every animation contains distinct transparent original Aren poses.
         for (const [action, count] of Object.entries(AREN_FRAME_COUNTS)) {
           for (let index = 0; index < count; index++) {
@@ -77,6 +82,16 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             fallback.fillRoundedRect(platform.x, platform.y, platform.w, 9, 5);
           }
         }
+        // Distinct non-colliding authored layers: depth adds atmosphere without
+        // altering the y=596 floor or the two existing one-way platforms.
+        if (this.textures.exists('forest-atmosphere')) {
+          this.moonMist = this.add.image(640, 360, 'forest-atmosphere')
+            .setDisplaySize(1280, 720).setDepth(-11).setAlpha(.88);
+        }
+        if (this.textures.exists('forest-foreground')) {
+          this.nearFoliage = this.add.image(640, 360, 'forest-foreground')
+            .setDisplaySize(1280, 720).setDepth(6);
+        }
         this.draw = this.add.graphics().setDepth(0);
         this.hitLayer = this.add.graphics().setDepth(8);
         this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -99,7 +114,11 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         }
         const dt = this.lastFrame ? Math.min(.05, (time - this.lastFrame) / 1000) : 1 / 60;
         this.lastFrame = time;
-
+        // Calm ambient parallax. Reduced-motion mode holds both layers still.
+        if (!this.reducedMotion) {
+          if (this.moonMist) this.moonMist.x = 640 + Math.sin(time * .00016) * 11;
+          if (this.nearFoliage) this.nearFoliage.x = 640 + Math.sin(time * .0004) * 3;
+        }
         const g = this.draw;
         // Static authored backdrop and platforms are rendered once in create,
         // instead of redrawing the entire environment at 60 fps.
@@ -349,6 +368,14 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         g.fillTriangle(cx, top + 46 * unit, cx - 15 * unit, top + 60 * unit, cx, top + 79 * unit);
         g.fillStyle(0xe1fef2, 0.88);
         g.fillTriangle(cx, top + 52 * unit, cx + 6 * unit, top + 60 * unit, cx, top + 72 * unit);
+        // Carved lunar crest, beveled plates and an ambient crystal highlight.
+        g.lineStyle(2 * unit, boss ? 0xe7d8ff : 0xb5f9df, .72);
+        g.strokeEllipse(cx, top + 62 * unit, 43 * unit, 49 * unit);
+        g.lineStyle(1.5 * unit, 0x193d4d, .72);
+        g.lineBetween(cx - 25 * unit, top + 41 * unit, cx - 13 * unit, top + 54 * unit);
+        g.lineBetween(cx + 25 * unit, top + 41 * unit, cx + 13 * unit, top + 54 * unit);
+        g.fillStyle(0xf7ffe4, .44);
+        g.fillCircle(cx + 5 * unit, top + 55 * unit, 2.4 * unit);
         g.fillStyle(boss ? 0x8c669e : 0x3f6f66);
         g.fillRoundedRect(cx - 23 * unit, top, 46 * unit, 43 * unit, 12 * unit);
         g.fillStyle(0x9fd0b8);
@@ -373,7 +400,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             fontFamily: 'Arial, sans-serif',
             fontSize: skill ? '34px' : '28px',
             fontStyle: 'bold',
-            color: skill ? '#f3c8ff' : '#fff5c9',
+            color: '#'+impactColor(impact).toString(16).padStart(6, '0'),
             stroke: '#1b2043', strokeThickness: 7,
           }).setOrigin(.5).setDepth(10);
         this.tweens.add({
@@ -393,23 +420,25 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private renderImpactBursts(now: number) {
         const g = this.hitLayer;
         g.clear();
-        this.impactBursts = this.impactBursts.filter(burst => now - burst.startedAt < 260);
-        if (this.reducedMotion) return;
+        // No unbounded particles or external textures. Hits are spawned only
+        // by the authoritative offline simulation, never by pressing Z alone.
+        this.impactBursts = this.impactBursts.filter(burst =>
+          now - burst.startedAt < (burst.kind === 'skill' ? 420 : 290));
         for (const burst of this.impactBursts) {
-          const t = Math.min(1, (now - burst.startedAt) / 260);
-          const size = burst.kind === 'skill' ? 66 : 42;
-          const alpha = Math.max(0, 1 - t);
-          const color = burst.kind === 'skill' ? 0xd7a2ff : 0xffdfa0;
-          g.lineStyle(5 * (1 - t * 0.65), color, alpha * 0.9);
-          g.strokeCircle(burst.x, burst.y, 8 + size * t);
-          for (let i = 0; i < 8; i++) {
-            const angle = Math.PI * 2 * i / 8;
-            const dist = 12 + size * t;
-            g.lineStyle(3, 0xffffff, alpha * 0.8);
-            g.lineBetween(burst.x + Math.cos(angle) * (dist - 8),
-              burst.y + Math.sin(angle) * (dist - 8),
-              burst.x + Math.cos(angle) * dist,
-              burst.y + Math.sin(angle) * dist);
+          const frame = buildCombatVfx(
+            burst, now - burst.startedAt, this.reducedMotion,
+          );
+          for (const ring of frame.rings) {
+            g.lineStyle(ring.width, ring.color, ring.alpha);
+            g.strokeCircle(ring.x, ring.y, ring.radius);
+          }
+          for (const ray of frame.rays) {
+            g.lineStyle(ray.width, ray.color, ray.alpha);
+            g.lineBetween(ray.x1, ray.y1, ray.x2, ray.y2);
+          }
+          for (const spark of frame.sparks) {
+            g.fillStyle(spark.color, spark.alpha);
+            g.fillCircle(spark.x, spark.y, spark.size);
           }
         }
       }

@@ -77,6 +77,7 @@ export class PracticeArena {
   private lastImpactDamage = 0;
   private lastImpactDirection = 1;
   private lastImpactKind: ImpactKind = 'basic';
+  private lastImpactSkillLevel: 1 | 2 | 3 | undefined;
   private targetY = FLOOR;
   private targetVy = 0;
   private diving = false;
@@ -435,7 +436,7 @@ export class PracticeArena {
       reason: 'skill', level,
     });
     this.hit([0, 65, 115, 180][level], [0, 174, 208, 252][level],
-      [0, 145, 190, 250][level], true, 'skill');
+      [0, 145, 190, 250][level], true, 'skill', level);
     this.nextSkill = this.now + 1.2 + level * 0.25;
     this.player.flash = 0.35 + (level - 1) * 0.12;
     this.action = 'skill';
@@ -447,7 +448,7 @@ export class PracticeArena {
   }
 
   private hit(damage: number, range: number, verticalRange: number, area: boolean,
-      kind: ImpactKind) {
+      kind: ImpactKind, skillLevel?: 1 | 2 | 3) {
     const p = this.player;
     this.stats.strikes++;
     this.stats.lastDamage = 0;
@@ -466,13 +467,14 @@ export class PracticeArena {
     this.lastImpactDamage = dealt;
     this.lastImpactDirection = p.facing;
     this.lastImpactKind = kind;
+    this.lastImpactSkillLevel = skillLevel;
     // Reuse the existing impact sequence so Phaser's impact renderer remains
     // the only VFX consumer. Event Bus observers receive the same confirmed hit.
     this.events.publish({
       type: 'impactConfirmed',
       impact: {
         sequence: this.impactSequence, damage: dealt, x: DUMMY_X,
-        y: this.targetY - 27, direction: p.facing, kind,
+        y: this.targetY - 27, direction: p.facing, kind, skillLevel,
       },
     });
     if (this.stats.mp !== previousMp) {
@@ -572,6 +574,7 @@ export class PracticeArena {
     // and resetting ids could suppress a later confirmed hit with the same id.
     this.lastImpactAt = Number.NEGATIVE_INFINITY;
     this.lastImpactDamage = 0; this.lastImpactDirection = 1; this.lastImpactKind = 'basic';
+    this.lastImpactSkillLevel = undefined;
     this.lastSuccessfulHit = Number.NEGATIVE_INFINITY;
     this.attackBufferUntil = Number.NEGATIVE_INFINITY;
     this.lastLeftTap = Number.NEGATIVE_INFINITY;
@@ -605,6 +608,7 @@ export class PracticeArena {
       sequence: this.impactSequence, damage: this.lastImpactDamage,
       x: DUMMY_X, y: this.targetY - 27, direction: this.lastImpactDirection,
       kind: this.lastImpactKind,
+      skillLevel: this.lastImpactSkillLevel,
     } as const : undefined;
     return {
       impact,

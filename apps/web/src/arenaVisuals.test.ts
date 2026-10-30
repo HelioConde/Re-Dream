@@ -44,3 +44,29 @@ test('Phaser renders the scenery as a static image with a safe fallback', () => 
   // Gameplay collisions and entity rendering still use the original snapshots.
   assert.match(canvas, /const snapshot = snapshotRef\.current/);
 });
+
+test('camadas V3 são SVGs locais transparentes, sem cobrir colisões nem importar imagens', () => {
+  for (const filename of ['forest-atmosphere.svg','forest-foreground.svg']) {
+    const source=readFileSync(join(process.cwd(),'public/art',filename),'utf8');
+    assert.match(source, /width="1280" height="720" viewBox="0 0 1280 720"/);
+    assert.match(source, /<\/svg>\s*$/);
+    assert.equal(source.includes('<image'),false);
+    assert.equal(source.includes('<script'),false);
+    assert.equal(source.includes('<foreignObject'),false);
+    assert.equal(source.includes('data:image'),false);
+    assert.equal(source.replaceAll('http://www.w3.org/2000/svg','').includes('http://'),false);
+  }
+  // Exact platform positions are still kept in the underlying stage file.
+  assert.match(stage,/id="platform-lower"/);
+  assert.match(stage,/id="platform-upper"/);
+  assert.match(canvas,/this\.load\.svg\('forest-atmosphere'/);
+  assert.match(canvas,/this\.load\.svg\('forest-foreground'/);
+  assert.match(canvas,/\.setDepth\(-11\)/);
+  assert.match(canvas,/\.setDepth\(6\)/);
+});
+
+test('impacto é alimentado por resultado confirmado e não pelas entradas do teclado', () => {
+  assert.match(canvas,/snapshot\.impact\.sequence !== this\.lastImpactSequence/);
+  assert.match(canvas,/buildCombatVfx\(/);
+  assert.match(canvas,/this\.reducedMotion/);
+});

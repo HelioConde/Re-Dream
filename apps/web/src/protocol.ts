@@ -30,6 +30,8 @@ export type Enemy = { id: number; x: number; y: number; hp: number; maxHp: numbe
 export type PracticeImpact = {
   sequence: number; damage: number; x: number; y: number;
   direction: number; kind: 'basic' | 'air' | 'dash' | 'skill' | 'launcher' | 'dive' | 'otto';
+  /** Cosmetic detail only; present for confirmed MP hits. */
+  skillLevel?: 1 | 2 | 3;
 };
 export type Snapshot = {
   impact?: PracticeImpact;
