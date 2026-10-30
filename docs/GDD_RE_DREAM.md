@@ -8,7 +8,7 @@ Jogo **original** de ação e plataformas 2D com atmosfera de fantasia, combate 
 1. **Resposta imediata:** setas, dash, corrida após o segundo toque segurado e ataques rápidos.
 2. **Domínio gradual:** launcher, perseguição aérea, juggle, Otto, Rocket/Shadow Step e carga de MP oferecem profundidade sem atalhos automáticos.
 3. **Cooperação clara:** salas e servidor autoritativo; sem prometer persistência/escala não implementadas.
-4. **Identidade própria:** Luci, visuais originais quando disponíveis, licenças auditadas.
+4. **Identidade própria:** Aren é o protagonista único do reboot, com visual noturno, capa teal e poderes de cristal; licenças auditadas.
 
 ## Loop de jogo
 **Implementado:** seleção de personagem → escolher modo Praticar ou criar/entrar em sala → movimentar, pular, atacar → no multiplayer, combater ondas e chefe de demonstração → voltar à navegação.
@@ -25,7 +25,7 @@ Jogo **original** de ação e plataformas 2D com atmosfera de fantasia, combate 
 | Segurar Z e **soltar** para magia MP1/MP2/MP3 | Praticar offline | `practiceSimulation.ts` |
 | Event Bus tipado para impacto, MP, combos, KO e reset | Praticar offline, histórico visual local | `practiceEvents.ts`, `PracticeMode.tsx` |
 | Salas online, ondas e chefe de demonstração | Multiplayer | `apps/server/src/sim.ts` |
-| Cenário original Bosque das Constelações, Sentinela de Cristal e HUD do Luci | Implementado no cliente; QA visual em browser pendente | `apps/web/public/art/arena-dream.svg`, `GameCanvas.tsx`, `PracticeMode.tsx` |
+| Cenário original Bosque das Constelações, Sentinela de Cristal e HUD do Aren | Implementado no cliente; QA visual em browser pendente | `apps/web/public/art/arena-dream.svg`, `GameCanvas.tsx`, `PracticeMode.tsx` |
 | Progressão persistente, loot, itens equipáveis, novas regiões | Pendente | escopo futuro |
 
 **Controles de referência do modo Praticar:** ↓ em uma plataforma vazada atravessa a plataforma (nunca o chão sólido); ↓+Z/J na borda prioriza Otto; ↓ no ar preserva Shadow Step. ←/→ andar; duplo toque faz dash e segurar o segundo toque mantém corrida; ↑ pula; Z inicia golpe e, ao segurar/soltar, conjura níveis 1/2/3 conforme MP disponível. A/S/D não são atalhos de magia. J/W são alternativas locais documentadas. O multiplayer tem controles diferentes até eventual unificação validada.
@@ -44,6 +44,9 @@ A decisão de estados de locomoção offline já foi extraída como FSM pura, do
 
 ## Direção de arte
 O feedback do jogador (2026-10-30) confirma melhora na fluidez, porém indica gráficos distantes da experiência desejada. A prioridade passou a ser **coerência visual da arena, personagens e animações**, acima de novas mecânicas. A primeira intervenção troca o palco geométrico por cena original em camadas e um novo alvo desenhado, sem considerar a qualidade de arte final resolvida. Ver `docs/ART_DIRECTION_RE_DREAM.md`.
+
+## Reboot do protagonista
+Após o feedback do usuário sobre o descompasso gráfico, o elenco inteiro foi removido do jogo atual e Aren é o único herói selecionável. O sistema implementa 23 ações e gera 151 quadros vetoriais originais (ver `docs/AREN_REBOOT.md`). A ficha conceitual continua referência para a fase futura de arte final, que **não** deve ser considerada concluída. Multiplayer requer deploy separado do servidor remoto; o cliente possui compatibilidade temporária para ingressar em servidores antigos.
 
 ## Histórico de decisões
 - 2026-10-30: GDD inicial redigido a partir da base existente e do fluxo de skills adaptado.

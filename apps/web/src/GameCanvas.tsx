@@ -4,9 +4,8 @@ import Phaser from 'phaser';
 import type { Control, PracticeImpact, PracticeInput, Snapshot } from './protocol';
 import { readGameInput } from './inputMapping';
 import { LocalPredictor } from './prediction';
-import { selectSprite, animalIds, prototypeAtlases } from './characterAnimation';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
-import { LUCI_ANIMATION_KEYS, LUCI_FRAME_SIZE, LUCI_DISPLAY_SIZE, selectLuciAnimation, LuciComboTracker } from './luciAnimation';
+import { AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, selectArenAnimation, ArenLandingTracker, ArenComboTracker } from './arenAnimation';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -35,7 +34,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private lastInput = '';
       private predictor = new LocalPredictor();
       private attackPlayback = new AttackPlayback();
-      private luciCombos = new LuciComboTracker();
+      private arenCombos = new ArenComboTracker();
+      private landings = new ArenLandingTracker();
       private lastServerSnapshot: Snapshot | null = null;
       private labels = new Map<string, Phaser.GameObjects.Text>();
       private avatars = new Map<string, Phaser.GameObjects.Image>();
@@ -47,27 +47,16 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         // Original layered 2D fantasy art. The stage matches the authoritative
         // ground (y=596) and one-way platform locations (220/466, 690/414).
         this.load.svg('dream-stage', import.meta.env.BASE_URL + 'art/arena-dream.svg');
-        for (const key of LUCI_ANIMATION_KEYS) {
-          this.load.spritesheet('luci_' + key,
-            import.meta.env.BASE_URL + 'sprites/luci/' + key + '.png',
-            { frameWidth: LUCI_FRAME_SIZE, frameHeight: LUCI_FRAME_SIZE });
+        // Every animation contains distinct transparent original Aren poses.
+        for (const [action, count] of Object.entries(AREN_FRAME_COUNTS)) {
+          for (let index = 0; index < count; index++) {
+            const name = 'aren-' + action + '-' + index;
+            this.load.svg(name, import.meta.env.BASE_URL + 'art/aren/' + action + '-' + index + '.svg');
+          }
         }
-        this.load.spritesheet('hero-rose', import.meta.env.BASE_URL + 'sprites/rose-hero-real.webp', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('hero-sprout',import.meta.env.BASE_URL+'sprites/imported/sprout/sprout-character.png',{frameWidth:16,frameHeight:16});
-        for(const id of prototypeAtlases) {
-          this.load.spritesheet(id,import.meta.env.BASE_URL+'sprites/prototype/'+id+'.png',{frameWidth:64,frameHeight:64});
-        }
-        for(const animal of animalIds) {
-          // A static 32x32 animal still needs a numbered frame for setFrame(0).
-          this.load.spritesheet('animal-'+animal,import.meta.env.BASE_URL+'sprites/imported/animals/'+animal+'.png',{frameWidth:32,frameHeight:32});
-        }
-        // Author-provided GIF animations are packed into two real 8-frame directional strips.
-        this.load.spritesheet('hero-left', import.meta.env.BASE_URL + 'sprites/imported/char/left.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('hero-right', import.meta.env.BASE_URL + 'sprites/imported/char/right.png', { frameWidth: 64, frameHeight: 64 });
       }
       create() {
-        // Two actual eight-frame directional walk GIFs, with a consistent 64x64 layout.
-        // The ZIP has no attack/death poses; do not invent or mislabel frames.
+        // Original art, single playable hero. No legacy character asset loads.
         this.cameras.main.setBackgroundColor('#142b44');
         if (this.textures.exists('dream-stage')) {
           this.add.image(640, 360, 'dream-stage').setDisplaySize(1280, 720).setDepth(-20);
@@ -183,33 +172,30 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
               );
           const attacking = attackElapsed !== null;
           const comboStage = isYou && practiceMode
-            ? player.comboStage ?? 1
-            : player.characterId === 'luci'
-              ? this.luciCombos.update(key, attackElapsed, time) : 1;
-          const animation = player.characterId === 'luci'
-            ? selectLuciAnimation({
-                facing: immediateFacing,
-                moving,
-                airborne: isYou && practiceMode ? Boolean(player.airborne) : isYou ? !this.predictor.grounded :
-                  (player.y < 592 && Math.abs(player.y - 466) > 5 && Math.abs(player.y - 414) > 5),
-                falling: isYou && practiceMode ? Boolean(player.falling) : isYou ? this.predictor.vy >= 0 : false,
-                attacking,
-                skill: isYou && practiceMode ? player.combatAction === 'skill' : isYou && input.skill,
-                dashing: isYou && practiceMode && Boolean(player.dashing),
-                running: isYou && practiceMode && Boolean(player.running),
-                locomotion: isYou && practiceMode ? player.locomotion : undefined,
-                dashAttacking: isYou && practiceMode && player.combatAction === 'dash_attack',
-                launching: isYou && practiceMode && player.combatAction === 'launcher',
-                diving: isYou && practiceMode && (player.combatAction === 'dive' || player.combatAction === 'otto'),
-                comboStage,
-                attackElapsed,
-                timeMs: isYou && practiceMode && player.combatAction === 'skill'
-                  ? player.actionElapsedMs ?? 0 : time,
-              })
-            : selectSprite(
-                player.characterId, immediateFacing, moving,
-                attacking, isYou && input.skill, attackElapsed ?? time,
-              );
+            ? player.comboStage ?? 1 : this.arenCombos.update(key, attackElapsed, time);
+          const airborne = isYou && practiceMode ? Boolean(player.airborne)
+            : isYou ? !this.predictor.grounded :
+              (player.y < 592 && Math.abs(player.y - 466) > 5 && Math.abs(player.y - 414) > 5);
+          const landing = this.landings.update(key, airborne, time);
+          const animation = selectArenAnimation({
+            facing: immediateFacing,
+            moving,
+            airborne,
+            falling: isYou && practiceMode ? Boolean(player.falling)
+              : isYou ? this.predictor.vy >= 0 : false,
+            dashing: isYou && practiceMode && Boolean(player.dashing),
+            running: isYou && practiceMode && Boolean(player.running),
+            locomotion: isYou && practiceMode ? player.locomotion : undefined,
+            charging: isYou && practiceMode && Boolean(player.charging),
+            landing,
+            hurt: player.flash > 0.5,
+            combatAction: isYou && practiceMode ? player.combatAction
+              : isYou && input.skill ? 'skill' : attacking ? 'attack' : undefined,
+            skillLevel: player.skillLevel,
+            comboStage,
+            attackElapsedMs: attackElapsed ?? player.actionElapsedMs,
+            timeMs: time,
+          });
           if (isYou && practiceMode && !this.reducedMotion &&
               player.combatAction === 'skill' && (player.skillLevel ?? 1) > 1) {
             // The authored skill sprite is reused; each level gets a distinct
@@ -236,46 +222,32 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             this.hitLayer.lineStyle(2, 0xf6fcff, 0.9);
             this.hitLayer.lineBetween(p.x, p.y - 52, p.x, p.y - 12);
           }
-          // Shared ground shadow makes Luci and the authored scene feel connected.
-          if (!Boolean(player.airborne) && (isYou ? practiceMode : true)) {
+          // Match the new hero's contact shadow to the stage plane.
+          if (!airborne) {
             g.fillStyle(0x102a35, 0.36);
-            g.fillEllipse(p.x, p.y + 1, player.characterId === 'luci' ? 58 : 39, 10);
+            g.fillEllipse(p.x, p.y + 1, 55, 10);
           }
-          const {texture,frame} = animation;
+          const {texture} = animation;
           let avatar = this.avatars.get(key);
           if (!avatar && this.textures.exists(texture)) {
-            avatar = this.add.image(p.x, p.y, texture, frame)
+            avatar = this.add.image(p.x, p.y, texture)
               .setOrigin(.5, 1)
-              .setDisplaySize(player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108, player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108)
+              .setDisplaySize(AREN_DISPLAY_SIZE, AREN_DISPLAY_SIZE)
               .setDepth(3);
             this.avatars.set(key, avatar);
           }
           if (avatar) {
-            if (avatar.texture.key !== texture) avatar.setTexture(texture, frame);
-            avatar.setFrame(frame);
+            if (avatar.texture.key !== texture && this.textures.exists(texture)) avatar.setTexture(texture);
             avatar.setFlipX(animation.flipX);
-            avatar.setDisplaySize(player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108, player.characterId === 'luci' ? LUCI_DISPLAY_SIZE : 108);
-            // Tiny anticipation and recoil only for the static animal art.
-            // No artificial animation frames are generated.
-            const isCat = player.characterId === 'cat';
-            const phase = attackElapsed === null ? 0 : attackElapsed / BASIC_ATTACK_ANIM_MS;
-            avatar.setRotation(isCat && attacking ? immediateFacing * 0.085 * Math.sin(phase * Math.PI) : 0);
-            avatar.setPosition(
-              p.x + (isCat && attacking ? immediateFacing * 8 * Math.sin(phase * Math.PI) : 0),
-              p.y + 6 - (isCat && attacking ? 4 * Math.sin(phase * Math.PI) : 0),
-            );
+            avatar.setDisplaySize(AREN_DISPLAY_SIZE, AREN_DISPLAY_SIZE);
+            // Art feet are at y≈180 on a 192px canvas; +15 aligns them with the collision plane.
+            avatar.setPosition(p.x, p.y + 15);
           } else {
-            g.fillStyle(0x7269bf);
-            g.fillRoundedRect(p.x - 13, p.y - 56, 26, 55, 6);
-            g.fillStyle(0xffdebe);
-            g.fillCircle(p.x, p.y - 62, 11);
-          }
-          // The Bunny already has authentic sword frames; don't overlay a
-          // generic circle. Static animals receive a short directional claw
-          // swipe instead of a misleading fake character animation.
-          if (attacking && player.characterId !== 'bunny' && player.characterId !== 'luci') {
-            this.drawSwipe(g, p.x, p.y, immediateFacing, attackElapsed! / BASIC_ATTACK_ANIM_MS,
-              player.characterId === 'cat');
+            // Clear loading failure rather than silently rendering an old cast.
+            g.fillStyle(0x64b9b0);
+            g.fillRoundedRect(p.x-16,p.y-72,32,65,6);
+            g.fillStyle(0xf0d0aa);
+            g.fillCircle(p.x,p.y-77,14);
           }
           this.healthbar(g, p.x - 24, p.y - 101, 48, player.hp / 100, 0x78d9a2);
           let label = this.labels.get(key);
@@ -298,7 +270,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             this.avatars.delete(key);
             this.remoteMotion.delete(key);
             this.attackPlayback.remove(key);
-            this.luciCombos.remove(key);
+            this.arenCombos.remove(key);
+            this.landings.remove(key);
           }
         }
         for (const key of this.positions.keys()) {

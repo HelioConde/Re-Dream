@@ -24,14 +24,10 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Test
         run: npm test
-      - name: Install sprite importer
-        run: python -m pip install Pillow
+      - name: Validate every Aren animation as transparent SVG
+        run: python -m unittest discover -s scripts -p 'test_aren_art.py' -v
       - name: Validate original forest stage SVG and physical platform alignment
         run: python -m unittest discover -s scripts -p 'test_arena_art.py' -v
-      - name: Prepare Luci animation spritesheets
-        run: python scripts/import_luci_sprites.py
-      - name: Verify consistent Luci sprite scale and foot alignment
-        run: python -m unittest discover -s scripts -p 'test_luci_frame_packing.py' -v
       - name: Build
         env:
           GITHUB_PAGES: 'true'

@@ -1,8 +1,8 @@
 import type { LocomotionState } from './locomotionFsm';
 
-export const CHARACTER_IDS = ['luci', 'rose', 'wanderer', 'sprout', 'bunny', 'retro', 'retrohat', 'mana_dapper', 'mana_bob', 'cat', 'fox', 'rabbit', 'wolf', 'panda', 'owl'] as const;
+export const CHARACTER_IDS = ['aren'] as const;
 export type CharacterId = typeof CHARACTER_IDS[number];
-export const DEFAULT_CHARACTER: CharacterId = 'luci';
+export const DEFAULT_CHARACTER: CharacterId = 'aren';
 export const isCharacterId = (value: unknown): value is CharacterId =>
   typeof value === 'string' && (CHARACTER_IDS as readonly string[]).includes(value);
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean; down?: boolean };
@@ -17,6 +17,7 @@ export type Player = {
   // Optional offline training metadata; multiplayer snapshots stay compatible.
   comboStage?: number; airborne?: boolean; falling?: boolean;
   dashing?: boolean; running?: boolean; velocityX?: number;
+  charging?: boolean;
   locomotion?: LocomotionState;
   rocket?: boolean; shadow?: boolean; skillLevel?: 1 | 2 | 3;
   combatAction?: 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive' | 'otto';

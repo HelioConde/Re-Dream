@@ -120,7 +120,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
         </button>
         <button type="button" className="button button-outline" onClick={reset}>↻ Reiniciar treino</button>
         <button type="button" className="button button-outline" onClick={testPlatformDrop} disabled={paused}
-          title="Posiciona o Luci sobre uma plataforma vazada, para conferir se ↓ funciona">
+          title="Posiciona Aren sobre uma plataforma vazada, para conferir se ↓ funciona">
           ↓ Testar plataforma
         </button>
         <button type="button" className="button button-ghost" onClick={onExit}>← Seleção</button>
@@ -129,11 +129,9 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     <section className="game-shell" aria-label="Modo praticar offline do Re:Dream">
       <div className="rd-game-hud" aria-label="Status de treinamento">
         <div className="rd-hud-player"><span className="rd-hud-face" aria-hidden="true">
-          {characterId === 'luci'
-            ? <img src={import.meta.env.BASE_URL + 'sprites/luci/preview.png'} alt="" />
-            : <span>✦</span>}
+          <img src={import.meta.env.BASE_URL + 'art/aren/idle-0.svg'} alt="" />
         </span>
-          <div className="rd-hud-info"><strong>{nickname || 'Luci'} · Fighter</strong>
+          <div className="rd-hud-info"><strong>{nickname || 'Aren'} · Buscador de Sonhos</strong>
             <div className="rd-hud-health"><span style={{ width: '100%' }}/></div><small>HP 100 / 100 · treinamento</small></div>
         </div>
         <div className="rd-hud-objective"><strong>✦ Sentinela de Cristal</strong>
@@ -197,9 +195,9 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
             onLostPointerCapture={()=>touch(key,false)}>{label}</button>)}
       </div>
     </div>
-    <aside className="practice-hint"><strong>Movimentos avançados do Luci:</strong> setas ←/→ para andar; pressione duas vezes rapidamente a mesma direção para dash e **mantenha a segunda pressão** para correr continuamente após o dash. Soltar a seta interrompe a corrida. ↑ durante o dash ativa Rocket Step.
+    <aside className="practice-hint"><strong>Movimentos avançados de Aren:</strong> setas ←/→ para andar; pressione duas vezes rapidamente a mesma direção para dash e **mantenha a segunda pressão** para correr continuamente após o dash. Soltar a seta interrompe a corrida. ↑ durante o dash ativa Rocket Step.
       Toque ↓ durante o Rocket para Shadow Step (descida rápida); pressione a direção oposta durante o dash para cancelar o avanço.
-      Para conferir o comando imediatamente, use o botão "↓ Testar plataforma": ele coloca o Luci sobre uma plataforma vazada; depois toque ↓. Em cima dela, basta tocar ↓ (no teclado ou celular) para atravessá-la. O chão sólido continua firme. ↓+Z na borda mantém a prioridade do Otto; ↓+Espaço permanece um atalho opcional de descida imediata.
+      Para conferir o comando imediatamente, use o botão "↓ Testar plataforma": ele coloca Aren sobre uma plataforma vazada; depois toque ↓. Em cima dela, basta tocar ↓ (no teclado ou celular) para atravessá-la. O chão sólido continua firme. ↓+Z na borda mantém a prioridade do Otto; ↓+Espaço permanece um atalho opcional de descida imediata.
       Z é o ataque principal: toques sucessivos fazem combo e segurar por cerca de 0,65 / 1,30 / 1,95 s carrega os níveis de MP 1, 2 e 3; solte para executar o nível carregado quando houver MP.
       Não existem atalhos para soltar magia: segure Z e solte no nível escolhido. Cada barra custa 100 MP; ataques recuperam MP.
       ↑+Z durante um combo lança o inimigo, ↑ novamente persegue e ↓+Z no ar finaliza com estocada.

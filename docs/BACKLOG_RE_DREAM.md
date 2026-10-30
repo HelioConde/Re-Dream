@@ -35,12 +35,12 @@
 | --- | --- | --- | --- |
 | RD-D01 | Implementado em branch; QA visual pendente | Cenário vetorial original Bosque das Constelações com ruínas, vegetação, profundidade e plataformas nas coordenadas físicas atuais | XML e build aprovados; screenshots desktop/mobile ainda necessários |
 | RD-D02 | Implementado em branch; QA visual pendente | Sentinela de Cristal no lugar do alvo elipsoidal e retrato verdadeiro do Luci no HUD | Gameplay e hitboxes inalterados, nenhuma arte de terceiros |
-| RD-D03 | Próximo | Sprite sheets originais do Luci consistentes com visual final anime 2D, armadura e efeitos separados | Idle/walk/run/jump/attack/MP1–3 em dimensões/pivô fixos; teste visual em jogo |
+| RD-D03 | Reboot estrutural implementado; arte final ainda pendente | Aren único com 151 quadros SVG originais para 23 ações, incluindo combinações e MP1–3 | CI e frames gerados; falta ilustração quadro a quadro fiel à ficha conceitual e QA visual do gameplay |
 | RD-D04 | Planejado | Animações da Sentinela: idle/hurt/stun/defeat | Estado da animação acompanha dano real sem hitbox visual enganador |
 | RD-D05 | Planejado | VFX/SFX autorais orientados pelo Event Bus | Sem eventos duplicados; modo movimento reduzido; medir desempenho |
 | RD-D06 | Planejado | Revisar interface de batalha e HUD responsiva em todas resoluções | Capturas 1600×900, 390×844 e gameplay; sem controles encobertos |
 
-**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md).
+**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md) e [reboot de Aren](AREN_REBOOT.md).
 
 ## Definição de pronto
 - Critérios observáveis implementados com cobertura automatizada da lógica.

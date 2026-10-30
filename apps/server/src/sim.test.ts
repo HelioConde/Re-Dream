@@ -73,18 +73,16 @@ test('liderança passa ao próximo membro do lobby quando o anfitrião sai', () 
   assert.equal(room.start('friend'), true);
 });
 
-test('personagens são registrados e podem ser trocados apenas no lobby', () => {
+test('Aren é o único personagem válido nas salas novas', () => {
   const room = new GameRoom('SKINS1');
-  room.addPlayer('rose', 'Rose', 'rose');
-  room.addPlayer('friend', 'Friend', 'wanderer');
-  assert.deepEqual(room.snapshot().players.map(player => player.characterId), ['rose', 'wanderer']);
-  assert.equal(room.selectCharacter('friend', 'rose'), true);
-  assert.equal(room.snapshot().players[1].characterId, 'rose');
-  assert.equal(room.selectCharacter('friend', 'hacked'), false);
-  assert.equal(room.selectCharacter('unknown', 'wanderer'), false);
-  assert.equal(room.start('rose'), true);
-  assert.equal(room.selectCharacter('friend', 'wanderer'), false);
-  assert.equal(room.snapshot().players[1].characterId, 'rose');
+  room.addPlayer('host', 'Aren', 'aren');
+  room.addPlayer('friend', 'Friend', 'aren');
+  assert.deepEqual(room.snapshot().players.map(p=>p.characterId),['aren','aren']);
+  assert.equal(room.selectCharacter('friend', 'aren'),true);
+  assert.equal(room.selectCharacter('friend', 'luci'),false);
+  assert.equal(room.selectCharacter('friend', 'rose'),false);
+  assert.equal(room.start('host'),true);
+  assert.equal(room.selectCharacter('friend', 'aren'),false);
 });
 
 test('tentativa de personagem inválido não cria jogador', () => {
@@ -93,31 +91,28 @@ test('tentativa de personagem inválido não cria jogador', () => {
   assert.equal(room.size, 0);
 });
 
-test('escolhas diferentes não alteram física nem combate da sala', () => {
+test('dois jogadores com Aren conservam física e movimento sincronizado', () => {
   const room = new GameRoom('SKINS3');
-  room.addPlayer('a', 'Rosa', 'rose');
-  room.addPlayer('b', 'Viajante', 'wanderer');
+  room.addPlayer('a', 'Aren', 'aren');
+  room.addPlayer('b', 'Amigo', 'aren');
   room.start('a');
-  room.setInput('a', { left:false,right:true,jump:false,attack:false,skill:false });
-  room.setInput('b', { left:false,right:true,jump:false,attack:false,skill:false });
+  room.setInput('a',{left:false,right:true,jump:false,attack:false,skill:false});
+  room.setInput('b',{left:false,right:true,jump:false,attack:false,skill:false});
   const before=room.snapshot().players.map(p=>p.x);
-  for(let i=0;i<10;i++) room.step(1/30);
+  for(let i=0;i<10;i++)room.step(1/30);
   const after=room.snapshot().players.map(p=>p.x);
   assert.equal(after[0]-before[0],after[1]-before[1]);
-  assert.deepEqual(room.snapshot().players.map(p=>p.characterId),['rose','wanderer']);
+  assert.deepEqual(room.snapshot().players.map(p=>p.characterId),['aren','aren']);
 });
 
-test('todos os personagens de teste são aceitos e entradas forjadas rejeitadas', () => {
+test('antigo elenco é rejeitado pelo servidor', () => {
   const room=new GameRoom('ROSTER');
-  for(const id of ['sprout','bunny','retro','retrohat','mana_dapper','mana_bob','cat','fox','rabbit','wolf','panda','owl'] as const){
+  room.addPlayer('a','Teste');
+  assert.equal(room.snapshot().players[0].characterId,'aren');
+  for(const id of ['luci','rose','wanderer','sprout','bunny','retro','cat','fox','wolf','panda','owl']){
     assert.equal(room.selectCharacter('a',id),false);
   }
-  room.addPlayer('a','Teste');
-  for(const id of ['sprout','bunny','retro','retrohat','mana_dapper','mana_bob','cat','fox','rabbit','wolf','panda','owl'] as const){
-    assert.equal(room.selectCharacter('a',id),true);
-    assert.equal(room.snapshot().players[0].characterId,id);
-  }
-  assert.equal(room.selectCharacter('a','fake-avatar'),false);
+  assert.equal(room.selectCharacter('a','aren'),true);
 });
 
 test('seta ↓ sozinha atravessa plataforma vazada na simulação autoritativa', () => {

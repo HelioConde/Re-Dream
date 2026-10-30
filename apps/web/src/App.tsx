@@ -5,7 +5,7 @@ import PracticeMode from './PracticeMode';
 import { resolveStandaloneRoute } from './routeState';
 import AdventureHub from './AdventureHub';
 import CharacterSelect from './CharacterSelect';
-import { CHARACTERS, characterName, getCharacter } from './characters';
+import { characterName, getCharacter } from './characters';
 import type { CharacterId, Control, ServerMessage, Snapshot } from './protocol';
 import { clearLocalProfile, EMPTY_PROFILE, readLocalProfile, saveLocalProfile } from './localProfile';
 
@@ -59,7 +59,7 @@ export default function App() {
     clearLocalProfile();
     setLocalProfile({ ...EMPTY_PROFILE });
     setName('');
-    setSelectedCharacter('luci');
+    setSelectedCharacter('aren');
     setRoomInput('');
   };
 
@@ -125,6 +125,10 @@ export default function App() {
     try {
       const socket = new WebSocket(websocketUrl);
       socketRef.current = socket;
+      let legacyIdAttempted = false;
+      // Render may still be running the previous server. A one-time wire-only
+      // compatibility alias lets that server accept a join; all clients using
+      // this build still render Aren and only Aren.
       socket.onopen = () => socket.send(JSON.stringify({ type: 'join', name: safeName, room: normalizedRoom || undefined, characterId: selectedCharacter }));
       socket.onmessage = event => {
         let message: ServerMessage;
@@ -148,6 +152,12 @@ export default function App() {
           snapshotRef.current = message;
           setSnapshot(message);
         } else if (message.type === 'error') {
+          if (message.message === 'Personagem inválido.' && !legacyIdAttempted && selectedCharacter === 'aren') {
+            legacyIdAttempted = true;
+            socket.send(JSON.stringify({ type: 'join', name: safeName,
+              room: normalizedRoom || undefined, characterId: 'luci' }));
+            return;
+          }
           setError(message.message);
           socket.close();
         }
@@ -188,12 +198,6 @@ export default function App() {
     saveLocalProfile(updated);
     setLocalProfile(updated);
   };
-  const changeLobbyCharacter = (characterId: CharacterId) => {
-    if (socketRef.current?.readyState !== WebSocket.OPEN || snapshot?.status !== 'lobby') return;
-    chooseCharacter(characterId);
-    socketRef.current.send(JSON.stringify({ type: 'select', characterId }));
-  };
-
   const startPractice = () => {
     if (connection === 'connecting' || room) return;
     setPracticeActive(true);
@@ -229,7 +233,7 @@ export default function App() {
       </header>}
 
       {practiceActive ? (
-        <PracticeMode characterId={selectedCharacter} nickname={name.trim() || 'Luci'} onExit={exitPractice}/>
+        <PracticeMode characterId={selectedCharacter} nickname={name.trim() || 'Aren'} onExit={exitPractice}/>
       ) : isLobby ? (
         <main className="lobby-page" id="jogar">
           <div className="lobby-ambient" aria-hidden="true">✧</div>
@@ -247,7 +251,7 @@ export default function App() {
               {Array.from({ length: 4 }, (_, i) => {
                 const adventurer = snapshot?.players[i];
                 return <div className={'lobby-slot ' + (adventurer ? 'occupied' : '')} key={i} role="listitem">
-                  <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'rose') : '')}
+                  <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'aren') : '')}
                     style={adventurer ? {
                       backgroundImage: `url(${import.meta.env.BASE_URL}${getCharacter(adventurer.characterId).preview})`,
                       backgroundSize: getCharacter(adventurer.characterId).artSize,
@@ -259,14 +263,9 @@ export default function App() {
               })}
             </div>
             <div className="lobby-pick">
-              <span className="eyebrow">MEU PERSONAGEM · TROQUE ANTES DA PARTIDA</span>
-              <div className="lobby-pick-options" role="group" aria-label="Trocar personagem no lobby">
-                {CHARACTERS.map(character => <button
-                  type="button" key={character.id}
-                  className={'lobby-pick-choice '+(me?.characterId === character.id ? 'active' : '')}
-                  aria-pressed={me?.characterId === character.id}
-                  onClick={() => changeLobbyCharacter(character.id)}
-                >{character.name}</button>)}
+              <span className="eyebrow">PROTAGONISTA DO REBOOT</span>
+              <div className="lobby-pick-options" role="status">
+                <span className="lobby-pick-choice active">✦ Aren · Buscador de Sonhos</span>
               </div>
             </div>
             <div className="lobby-quest">

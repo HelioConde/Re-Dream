@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { PracticeArena } from './practiceSimulation';
 
 const noInput = { left: false, right: false, jump: false, attack: false, skill: false };
-test('Luci is the offline practice default with a regenerating target', () => {
+test('Aren is the offline practice default with a regenerating target', () => {
   const arena = new PracticeArena();
-  assert.equal(arena.snapshot().players[0].characterId, 'luci');
+  assert.equal(arena.snapshot().players[0].characterId, 'aren');
   assert.equal(arena.snapshot().enemies[0].hp, 260);
   assert.equal(arena.snapshot().status, 'playing');
   assert.equal(arena.snapshot().room, 'TREINO');

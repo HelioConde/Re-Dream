@@ -106,9 +106,9 @@ export class PracticeArena {
   private action: CombatAction | null = null;
   private actionStartedAt = Number.NEGATIVE_INFINITY;
 
-  constructor(characterId: CharacterId = 'luci', nickname = 'Luci') {
+  constructor(characterId: CharacterId = 'aren', nickname = 'Aren') {
     this.characterId = characterId;
-    this.nickname = nickname.slice(0, 20) || 'Luci';
+    this.nickname = nickname.slice(0, 20) || 'Aren';
   }
 
   setInput(input: PracticeInput) {
@@ -617,6 +617,7 @@ export class PracticeArena {
         airborne: !p.grounded, falling: p.vy >= 0,
         dashing: this.now < this.dashUntil, running: this.running, velocityX: p.vx,
         locomotion: this.currentLocomotion(),
+        charging: this.controls.charge === true,
         rocket: this.rocketUntil > this.now && !p.grounded,
         shadow: this.shadowUntil > this.now && !p.grounded,
         skillLevel: this.action === 'skill' ? this.currentSkillLevel : undefined,
