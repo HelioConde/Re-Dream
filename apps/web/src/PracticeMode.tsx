@@ -88,6 +88,13 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     setStats({ ...arena.stats });
     snapshotRef.current = arena.snapshot();
   };
+  const testPlatformDrop = () => {
+    if (pausedRef.current) return;
+    mobileRef.current = { ...EMPTY_CONTROLS };
+    arena.placeOnPlatformForTraining();
+    snapshotRef.current = arena.snapshot();
+    setStats({ ...arena.stats });
+  };
 
   return <main className="session practice-page" id="praticar">
     <div className="session-top">
@@ -98,6 +105,10 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
           {paused ? '▶ Continuar' : 'Ⅱ Pausar'}
         </button>
         <button type="button" className="button button-outline" onClick={reset}>↻ Reiniciar treino</button>
+        <button type="button" className="button button-outline" onClick={testPlatformDrop} disabled={paused}
+          title="Posiciona o Luci sobre uma plataforma vazada, para conferir se ↓ funciona">
+          ↓ Testar plataforma
+        </button>
         <button type="button" className="button button-ghost" onClick={onExit}>← Seleção</button>
       </div>
     </div>
@@ -163,7 +174,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     </div>
     <aside className="practice-hint"><strong>Movimentos avançados do Luci:</strong> setas ←/→ para andar; pressione duas vezes rapidamente a mesma direção para dash e **mantenha a segunda pressão** para correr continuamente após o dash. Soltar a seta interrompe a corrida. ↑ durante o dash ativa Rocket Step.
       Toque ↓ durante o Rocket para Shadow Step (descida rápida); pressione a direção oposta durante o dash para cancelar o avanço.
-      Em cima de uma plataforma vazada, basta tocar ↓ (no teclado ou celular) para atravessá-la. O chão sólido continua firme. ↓+Z na borda mantém a prioridade do Otto; ↓+Espaço permanece um atalho opcional de descida imediata.
+      Para conferir o comando imediatamente, use o botão "↓ Testar plataforma": ele coloca o Luci sobre uma plataforma vazada; depois toque ↓. Em cima dela, basta tocar ↓ (no teclado ou celular) para atravessá-la. O chão sólido continua firme. ↓+Z na borda mantém a prioridade do Otto; ↓+Espaço permanece um atalho opcional de descida imediata.
       Z é o ataque principal: toques sucessivos fazem combo e segurar por cerca de 0,65 / 1,30 / 1,95 s carrega os níveis de MP 1, 2 e 3; solte para executar o nível carregado quando houver MP.
       Não existem atalhos para soltar magia: segure Z e solte no nível escolhido. Cada barra custa 100 MP; ataques recuperam MP.
       ↑+Z durante um combo lança o inimigo, ↑ novamente persegue e ↓+Z no ar finaliza com estocada.
