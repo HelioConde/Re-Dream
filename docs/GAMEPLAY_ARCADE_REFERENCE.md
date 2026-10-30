@@ -8,7 +8,7 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 
 - Direção com setas: um toque mantém caminhada de 310 px/s; **duplo toque em até 290 ms** ativa um dash de 240 ms a 685 px/s. Se a segunda pressão continuar segurada, o dash termina em uma **corrida contínua** de 455 px/s. Soltar a direção encerra a corrida; inverter a direção cancela o movimento.
 - Salto em ↑ (W alternativo no treino); janela curta para aceitar saltos no momento certo.
-- Descer de uma plataforma vazada **pressionando ↓ sozinho** (toque breve ou segurando). Há 120 ms de prioridade de comandos para permitir ↓+Z/J executar Otto/ataque em vez de queda. ↓+Espaço continua opcional como descida imediata; jamais atravessa o chão sólido.
+- Descer de uma plataforma vazada **pressionando ↓ sozinho** (toque breve ou segurando). Há 120 ms de prioridade de comandos para permitir ↓+Z/J executar Otto/ataque em vez de queda. ↓+Espaço continua opcional como descida imediata; jamais atravessa o chão sólido. Em Praticar, o botão «↓ Testar plataforma» coloca Luci sobre a plataforma inferior e aparece o aviso «↓ DESCER PLATAFORMA», evitando confundir chão com plataforma.
 - **J:** sequência de golpes com escala de dano e quatro estágios de animação. Manter J pressionado também funciona como opção acessível.
 - **Ataque no ar:** usa a animação real de ataque aéreo e acerta o alvo quando próximo.
 - **↑ + J/Z no meio de um combo em solo:** executa golpe ascendente com a spritesheet autêntica `uppercut_east` e lança o alvo para cima; ↑ sozinho continua pulando.
@@ -62,7 +62,7 @@ A configuração principal é baseada em **setas + Z**. **A, S e D não ativam h
 - ↓ no chão sólido não atravessa nem teleporta. ↓ enquanto está no ar não deve provocar uma segunda queda automática ao pousar; ↓ no Rocket continua Shadow Step.
 - ↓+Espaço continua como alternativa de descida imediata no teclado, sem se tornar obrigatório.
 - Z curto acerta; Z segurado permite escolher nível 1, 2 ou 3; com MP suficiente, soltar consome 100/200/300. A/S/D/K não devem conjurar, nem deve existir botão MP1/2/3 no celular.
-- O multiplayer mantém os controles anteriores enquanto o sistema de habilidades carregadas exclusivamente com Z não for integrado ao servidor autoritativo.
+- No multiplayer, a seta ↓ agora é enviada ao servidor e prevista localmente para permitir atravessar plataformas finas. **Requer atualização do servidor WebSocket hospedado fora do GitHub Pages**. O sistema de magias online continua com os controles anteriores até migração separada.
 
 ## Limites atuais
 
@@ -80,7 +80,7 @@ Próximas etapas, em ordem:
 1. Abrir /Re-Dream/#personagens, escolher Luci e clicar em **Praticar offline**.
 2. Apertar →, soltar, apertar → novamente rapidamente: o contador de dash deve aumentar. **Manter a segunda pressão** deve iniciar corrida contínua após o dash, incrementando CORRIDAS; soltar deve parar.
 2a. Pressionar Z uma vez perto do alvo: o primeiro impacto deve ocorrer antes de soltar. Soltar rapidamente não deve gerar segundo golpe.
-3. Subir numa plataforma e apertar ↓ **sozinho** (mesmo toque breve): atravessar a plataforma sem atravessar o chão. Testar ↓+Z na borda como Otto e ↓ no ar como Shadow Step.
+3. No modo Praticar, clicar «↓ Testar plataforma», esperar o indicador «↓ DESCER PLATAFORMA» e apertar ↓ **sozinho** (mesmo toque breve): atravessar a plataforma sem atravessar o chão. Testar ↓+Z na borda como Otto e ↓ no ar como Shadow Step. No multiplayer, depois de atualizar o servidor, testar ↓ também em sala online.
 4. Chegar perto do boneco e atacar 3-4 vezes: contador de combo e danos devem progredir.
 5. Pular perto do alvo e atacar: contador de ataques aéreos deve aumentar.
 5a. Aproximar do boneco, J e depois ↑+J; ao surgir o indicador, soltar ↑ e apertar ↑ de novo para perseguir. Atacar com J no ar e conferir o contador JUGGLES.
