@@ -9,6 +9,8 @@ const WALK_SPEED = 310;
 const RUN_SPEED = 455; // Sustain acceleration only after a held second dash tap.
 const DASH_SPEED = 685;
 const DASH_DURATION = 0.24;
+// Brief chord priority allows ↓+Z Otto without making ↓ alone unresponsive.
+const PLATFORM_DROP_CHORD_WINDOW = 0.12;
 const DOUBLE_TAP_WINDOW = 0.29;
 const COMBO_WINDOW = 1.05;
 const CHASE_WINDOW = 0.55;
@@ -37,7 +39,7 @@ export type TrainingStats = {
   chaseReady: boolean;
   chargeLevel: number; skillCasts: number; lastSkillLevel: number;
   rocketSteps: number; shadowSteps: number; dashCancels: number; ottoShots: number;
-  runs: number;
+  runs: number; drops: number;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -59,7 +61,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0,
+    runs: 0, drops: 0,
   };
 
   private now = 0;
@@ -87,6 +89,7 @@ export class PracticeArena {
   private lastGroundedAt = 0;
   private jumpQueuedUntil = Number.NEGATIVE_INFINITY;
   private dropUntil = 0;
+  private queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
   private dashUntil = 0;
   private dashDirection = 0;
   private runArmed = false;
@@ -136,15 +139,17 @@ export class PracticeArena {
     if ((next.attack && !this.controls.attack) || (next.charge && !this.controls.charge)) {
       this.attackBufferUntil = this.now + ATTACK_BUFFER_WINDOW;
     }
-    // Drop requires ↓+Space, leaving ↓ free for aerial Shadow Step and ↓+Z.
-    if (next.down && next.drop && !this.controls.drop &&
-        this.player.grounded && this.player.y < FLOOR - 5) {
-      // Pass through one-way platforms, never the solid ground.
-      this.dropUntil = this.now + 0.26;
-      this.player.y += 9;
-      this.player.vy = 70;
-      this.player.grounded = false;
-      this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
+    // A new ↓ press while standing on a thin platform drops through it.
+    // Allow a short chord window so pressing ↓ followed quickly by Z/J
+    // still performs an Otto/ground attack instead of an unintended drop.
+    if (!next.down || next.jump || next.attack || next.charge) {
+      this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
+    } else if (next.down && !this.controls.down && this.onOneWayPlatform()) {
+      this.queuedPlatformDropAt = this.now + PLATFORM_DROP_CHORD_WINDOW;
+    }
+    // Keep ↓+Space as an optional immediate-drop shortcut.
+    if (next.down && next.drop && !this.controls.drop && this.onOneWayPlatform()) {
+      this.dropThroughPlatform();
     }
     if (next.down && this.player.grounded && this.player.y < FLOOR - 5 &&
         ((next.attack && !this.controls.attack) || (next.charge && !this.controls.charge))) {
@@ -159,6 +164,27 @@ export class PracticeArena {
       this.stats.chargePercent = 0;
     }
     this.controls = next;
+  }
+
+  private onOneWayPlatform(): boolean {
+    const p = this.player;
+    return p.grounded && PLATFORMS.some(platform =>
+      Math.abs(p.y - platform.y) < 3 &&
+      p.x >= platform.x + 4 && p.x <= platform.x + platform.w - 4);
+  }
+
+  private dropThroughPlatform() {
+    // Never tunnel through solid ground; prevent coyote jump after dropping.
+    if (!this.onOneWayPlatform()) return;
+    const p = this.player;
+    this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
+    this.dropUntil = this.now + 0.28;
+    p.y += 9;
+    p.vy = 70;
+    p.grounded = false;
+    this.lastGroundedAt = Number.NEGATIVE_INFINITY;
+    this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
+    this.stats.drops++;
   }
 
   private tapDirection(dir: -1 | 1) {
@@ -194,6 +220,14 @@ export class PracticeArena {
     const p = this.player;
     const dir = Number(this.controls.right) - Number(this.controls.left);
     if (dir !== 0) p.facing = Math.sign(dir);
+    if (this.queuedPlatformDropAt !== Number.NEGATIVE_INFINITY &&
+        this.now >= this.queuedPlatformDropAt) {
+      this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
+      if (this.controls.down && !this.controls.jump &&
+          !this.controls.attack && !this.controls.charge) {
+        this.dropThroughPlatform();
+      }
+    }
     const dashing = this.dashUntil > this.now;
     // Only a sustained second press produces a run, starting after the dash.
     // Releasing, reversing or leaving the ground returns to normal movement.
@@ -448,6 +482,7 @@ export class PracticeArena {
     this.stats.chargePercent = 0;
     this.stats.chargeLevel = 0;
     this.ottoPending = false;
+    this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
     this.rocketUntil = 0;
     this.shadowUntil = 0;
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
@@ -472,7 +507,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0,
+    runs: 0, drops: 0,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
@@ -486,7 +521,8 @@ export class PracticeArena {
     this.lastRightTap = Number.NEGATIVE_INFINITY;
     this.lastGroundedAt = 0;
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
-    this.dropUntil = 0; this.dashUntil = 0; this.dashDirection = 0;
+    this.dropUntil = 0; this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
+    this.dashUntil = 0; this.dashDirection = 0;
     this.runArmed = false; this.running = false; this.runDirection = 0;
     this.chargeStartedAt = 0; this.pendingChargeRelease = null;
     this.currentSkillLevel = 1;
