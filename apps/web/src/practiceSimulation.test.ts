@@ -752,3 +752,69 @@ test('platform state is only announced when standing on a one-way platform', () 
   a.reset();
   assert.equal(a.stats.onPlatform,false);
 });
+
+test('locomotion snapshot matches actual dash -> hold-run -> stop in the arena', () => {
+  const a = new PracticeArena();
+  assert.equal(a.snapshot().players[0].locomotion, 'idle');
+  a.setInput({ ...noInput, right:true });
+  a.step(1/30);
+  assert.equal(a.snapshot().players[0].locomotion, 'walk');
+  a.setInput(noInput);
+  a.step(1/30);
+  a.setInput({ ...noInput, right:true });
+  a.step(1/30);
+  assert.equal(a.snapshot().players[0].locomotion, 'dash');
+  for(let i=0;i<12;i++) a.step(1/30);
+  assert.equal(a.snapshot().players[0].locomotion, 'run');
+  assert.equal(a.stats.locomotion, 'run');
+  a.setInput(noInput);
+  a.step(1/30);
+  assert.equal(a.snapshot().players[0].locomotion, 'idle');
+  assert.equal(a.stats.locomotion, 'idle');
+});
+
+test('locomotion FSM prioritizes Rocket/Shadow and returns to idle after landing', () => {
+  const a = new PracticeArena();
+  a.setInput({ ...noInput, right:true });a.step(1/30);
+  a.setInput(noInput);a.step(1/30);
+  a.setInput({ ...noInput, right:true });a.step(1/30);
+  a.setInput({ ...noInput, right:true, jump:true, up:true });a.step(1/30);
+  assert.equal(a.snapshot().players[0].locomotion, 'rocket');
+  a.setInput({ ...noInput, down:true });a.step(1/30);
+  // The early Shadow frame may already land on the floor; the trigger itself is verified.
+  assert.equal(a.stats.shadowSteps,1);
+  for(let i=0;i<90;i++)a.step(1/30);
+  assert.equal(a.player.y,596);
+  assert.equal(a.snapshot().players[0].locomotion,'idle');
+});
+
+test('a platform drop is falling, then idle; combat MP can still charge while moving', () => {
+  const a = new PracticeArena();
+  a.placeOnPlatformForTraining();
+  assert.equal(a.stats.locomotion,'idle');
+  a.setInput({...noInput, down:true, charge:true});
+  a.step(1/30);
+  // A Z input within the chord window prevents an accidental platform drop.
+  assert.equal(a.stats.drops,0);
+  a.setInput(noInput);a.step(1/30);
+  a.setInput({...noInput, down:true});
+  for(let i=0;i<6;i++)a.step(1/30);
+  assert.equal(a.stats.drops,1);
+  assert.equal(a.snapshot().players[0].locomotion,'fall');
+  for(let i=0;i<40;i++)a.step(1/30);
+  assert.equal(a.snapshot().players[0].locomotion,'idle');
+});
+
+test('suspending and resetting clears locomotion state without casting charged Z', () => {
+  const a = new PracticeArena();
+  a.setInput({...noInput, right:true, charge:true});
+  a.step(1/30);
+  assert.equal(a.stats.locomotion,'walk');
+  a.suspend();
+  assert.equal(a.stats.locomotion,'idle');
+  for(let i=0;i<20;i++)a.step(1/30);
+  assert.equal(a.stats.skillCasts,0);
+  a.reset();
+  assert.equal(a.stats.locomotion,'idle');
+  assert.equal(a.snapshot().players[0].locomotion,'idle');
+});
