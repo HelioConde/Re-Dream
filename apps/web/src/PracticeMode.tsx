@@ -8,7 +8,7 @@ type Props = { characterId: CharacterId; nickname: string; onExit: () => void };
 const touchLabels: Record<'left'|'right'|'jump'|'down'|'drop'|'attack'|'charge', string> = {
   left: 'Mover para a esquerda', right: 'Mover para a direita',
   jump: 'Pular', down: 'Descer da plataforma',
-  drop: 'Descer segurando para baixo', attack: 'Atacar com J',
+  drop: 'Descer imediatamente de uma plataforma', attack: 'Atacar com J',
   charge: 'Atacar com Z ou segurar e soltar para executar habilidade',
 };
 export default function PracticeMode({ characterId, nickname, onExit }: Props) {
@@ -123,7 +123,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       </div>}
     </section>
     <div className="game-bottom practice-stats">
-      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>🏃 CORRIDAS <strong>{stats.runs}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span><span>🚀 ROCKET <strong>{stats.rocketSteps}</strong></span><span>↓ SHADOW <strong>{stats.shadowSteps}</strong></span><span>↔ CANCEL <strong>{stats.dashCancels}</strong></span><span>✦ OTTO <strong>{stats.ottoShots}</strong></span></div>
+      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>🏃 CORRIDAS <strong>{stats.runs}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span><span>🚀 ROCKET <strong>{stats.rocketSteps}</strong></span><span>↓ SHADOW <strong>{stats.shadowSteps}</strong></span><span>↓ DESCIDAS <strong>{stats.drops}</strong></span><span>↔ CANCEL <strong>{stats.dashCancels}</strong></span><span>✦ OTTO <strong>{stats.ottoShots}</strong></span></div>
       <div className="practice-combat-meters" aria-label="Indicadores de combate">
         <div className="practice-meter">
           <div className="practice-meter-label"><span>✦ MP · 3 níveis</span><strong>{stats.mp}/300</strong></div>
@@ -139,7 +139,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
         </div>
         <strong className="practice-combo-label" aria-live="off">{stats.juggleChain > 0 ? stats.juggleChain+' AIR JUGGLE · '+stats.combo+' HIT' : stats.combo > 1 ? stats.combo+' HIT COMBO' : 'COMBO · '+stats.bestCombo+' recorde'}</strong>
       </div>
-      <div className="controls-legend"><span>← →: um toque anda · dois dão dash · segurar o segundo mantém corrida</span><span>Dash + ↑: Rocket Step · ↓ no ar: Shadow Step</span><span>Dash + direção oposta: cancelar</span><span>↓ + Espaço: descer plataforma</span><span>Z: combo · segure e solte: MP nível 1/2/3</span><span>Magias: somente segurando Z e soltando no nível desejado</span><span>↑+Z no combo: lançar · ↑ novamente: perseguir</span><span>↓+Z no ar: estocada · ↓+Z na borda: Otto</span><span>J e W: alternativas para ataque e salto</span></div>
+      <div className="controls-legend"><span>← →: um toque anda · dois dão dash · segurar o segundo mantém corrida</span><span>Dash + ↑: Rocket Step · ↓ no ar: Shadow Step</span><span>Dash + direção oposta: cancelar</span><span>↓: descer plataforma vazada · ↓+Espaço: opcional</span><span>Z: combo · segure e solte: MP nível 1/2/3</span><span>Magias: somente segurando Z e soltando no nível desejado</span><span>↑+Z no combo: lançar · ↑ novamente: perseguir</span><span>↓+Z no ar: estocada · ↓+Z na borda: Otto</span><span>J e W: alternativas para ataque e salto</span></div>
     </div>
     <div className="touch-controls" aria-label="Controles de treino para dispositivos móveis">
       <div className="touch-group">
@@ -150,7 +150,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
             onLostPointerCapture={()=>touch(key,false)}>{label}</button>)}
       </div>
       <div className="touch-group">
-        {([['attack','J'],['charge','Z'],['drop','↓+Espaço']] as const).map(([key,label]) =>
+        {([['attack','J'],['charge','Z']] as const).map(([key,label]) =>
           <button key={key} type="button" className="touch-key touch-attack" aria-label={touchLabels[key]} disabled={paused}
             onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);touch(key,true);}}
             onPointerUp={()=>touch(key,false)} onPointerCancel={()=>touch(key,false)}
@@ -159,7 +159,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     </div>
     <aside className="practice-hint"><strong>Movimentos avançados do Luci:</strong> setas ←/→ para andar; pressione duas vezes rapidamente a mesma direção para dash e **mantenha a segunda pressão** para correr continuamente após o dash. Soltar a seta interrompe a corrida. ↑ durante o dash ativa Rocket Step.
       Toque ↓ durante o Rocket para Shadow Step (descida rápida); pressione a direção oposta durante o dash para cancelar o avanço.
-      Na borda de uma plataforma, ↓+Z executa ataque de descida (Otto); para atravessar plataformas sem atacar, use ↓+Espaço.
+      Em cima de uma plataforma vazada, basta tocar ↓ (no teclado ou celular) para atravessá-la. O chão sólido continua firme. ↓+Z na borda mantém a prioridade do Otto; ↓+Espaço permanece um atalho opcional de descida imediata.
       Z é o ataque principal: toques sucessivos fazem combo e segurar por cerca de 0,65 / 1,30 / 1,95 s carrega os níveis de MP 1, 2 e 3; solte para executar o nível carregado quando houver MP.
       Não existem atalhos para soltar magia: segure Z e solte no nível escolhido. Cada barra custa 100 MP; ataques recuperam MP.
       ↑+Z durante um combo lança o inimigo, ↑ novamente persegue e ↓+Z no ar finaliza com estocada.
