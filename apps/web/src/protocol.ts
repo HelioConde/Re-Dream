@@ -18,6 +18,8 @@ export type Player = {
   comboStage?: number; airborne?: boolean; falling?: boolean;
   dashing?: boolean; running?: boolean; velocityX?: number;
   charging?: boolean;
+  /** Visual-only MP tier while holding Z (0–3); not a multiplayer control. */
+  chargeLevel?: number;
   locomotion?: LocomotionState;
   rocket?: boolean; shadow?: boolean; skillLevel?: 1 | 2 | 3;
   combatAction?: 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive' | 'otto';
