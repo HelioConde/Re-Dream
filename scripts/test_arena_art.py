@@ -35,8 +35,10 @@ class ArenaArtworkTest(unittest.TestCase):
         self.assertFalse(self.root.findall(f".//{SVG}image"))
         self.assertFalse(self.root.findall(f".//{SVG}script"))
         art = ART.read_text(encoding="utf-8")
-        self.assertNotIn("http://", art)
-        self.assertNotIn("https://", art.replace("http://www.w3.org/2000/svg", ""))
+        local = art.replace("http://www.w3.org/2000/svg", "")
+        local = local.replace("http://www.w3.org/1999/xlink", "")
+        self.assertNotIn("http://", local)
+        self.assertNotIn("https://", local)
 
 
 if __name__ == "__main__":
