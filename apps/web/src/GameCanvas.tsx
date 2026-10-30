@@ -80,17 +80,28 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       update(time: number) {
         const keys = this.keys;
         const mobile = mobileRef.current;
-        const input: PracticeInput = {
+        // Practice uses GC-style arrows + Z and A/S/D for skills.
+        // Multiplayer keeps its existing A/D/W/Z/K/X bindings untouched.
+        const up = keys.UP.isDown || keys.W.isDown || mobile.jump === true;
+        const down = keys.DOWN.isDown || mobile.down === true;
+        const input: PracticeInput = practiceMode ? {
+          left: keys.LEFT.isDown || mobile.left,
+          right: keys.RIGHT.isDown || mobile.right,
+          jump: up,
+          up,
+          down,
+          drop: (keys.SPACE.isDown || mobile.drop === true) && down,
+          attack: keys.J.isDown || mobile.attack,
+          charge: keys.Z.isDown || mobile.charge === true,
+          skill: keys.K.isDown || mobile.skill,
+          skillLevel: (keys.D.isDown ? 3 : keys.S.isDown ? 2 : keys.A.isDown ? 1 :
+            mobile.skillLevel ?? 0) as 0 | 1 | 2 | 3,
+        } : {
           left: keys.A.isDown || keys.LEFT.isDown || mobile.left,
           right: keys.D.isDown || keys.RIGHT.isDown || mobile.right,
           jump: keys.W.isDown || keys.UP.isDown || keys.SPACE.isDown || mobile.jump,
-          attack: keys.J.isDown || (!practiceMode && keys.Z.isDown) || mobile.attack,
+          attack: keys.J.isDown || keys.Z.isDown || mobile.attack,
           skill: keys.K.isDown || keys.X.isDown || mobile.skill,
-          ...(practiceMode ? {
-            up: keys.W.isDown || keys.UP.isDown || mobile.jump === true,
-            down: keys.S.isDown || keys.DOWN.isDown || mobile.down === true,
-            charge: keys.Z.isDown,
-          } : {}),
         };
         const inputKey = Object.values(input).map(value => Number(value)).join('');
         if (inputKey !== this.lastInput || time - this.lastSent >= 50) {
@@ -238,6 +249,14 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
                 player.characterId, immediateFacing, moving,
                 attacking, isYou && input.skill, attackElapsed ?? time,
               );
+          if (isYou && practiceMode && !this.reducedMotion && (player.rocket || player.shadow)) {
+            // Original movement trail; no borrowed images from the reference game.
+            const length = player.rocket ? 82 : 34;
+            const color = player.rocket ? 0x9fd6ff : 0xe7baff;
+            this.hitLayer.lineStyle(player.rocket ? 5 : 3, color, 0.55);
+            this.hitLayer.lineBetween(p.x - player.facing * length, p.y - 18,
+              p.x - player.facing * 9, p.y - 18);
+          }
           if (isYou && practiceMode && player.combatAction === 'dive' &&
               !this.reducedMotion) {
             // Original trail effect (not a fabricated sprite): visualize the plunge.
