@@ -27,7 +27,11 @@ test('platform artwork visually shares exact authoritative platform top coordina
 test('stage has no external raster art or unlicensed third-party asset dependencies', () => {
   const withoutNamespaces = stage.replaceAll('http://www.w3.org/2000/svg', '')
     .replaceAll('http://www.w3.org/1999/xlink', '');
-  assert.doesNotMatch(withoutNamespaces, /<image\\b|<script\\b|https?:\\/\\/|data:image/i);
+  assert.equal(withoutNamespaces.includes('<image'), false);
+  assert.equal(withoutNamespaces.includes('<script'), false);
+  assert.equal(withoutNamespaces.includes('http://'), false);
+  assert.equal(withoutNamespaces.includes('https://'), false);
+  assert.equal(withoutNamespaces.includes('data:image'), false);
   assert.ok((stage.match(/<path\b/g) ?? []).length >= 20);
   assert.ok((stage.match(/<circle\b/g) ?? []).length >= 20);
 });
