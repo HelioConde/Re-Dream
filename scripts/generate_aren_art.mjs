@@ -136,7 +136,7 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
       ' 113 l3 8 q-22 10 -49 -1z',
       '#436d72','stroke="'+color.outline+'" stroke-width="2"'),
     line(coreX-15,119,coreX+16,119,'#d7c99c',2.8),
-    circle(coreX+5,119,7.1,'#e8dec8','stroke="#1e4656" stroke-width="2'),
+    circle(coreX+5,119,7.1,'#e8dec8','stroke="#1e4656" stroke-width="2"'),
     path('M'+round(coreX+4)+' 114 q-7 4 -2 10 q6 4 10 -2 q-7 2 -8 -8z',
       '#54baaa'),
     // Split coat tails animate with the direction of the lower body.
