@@ -617,7 +617,7 @@ export class PracticeArena {
         airborne: !p.grounded, falling: p.vy >= 0,
         dashing: this.now < this.dashUntil, running: this.running, velocityX: p.vx,
         locomotion: this.currentLocomotion(),
-        charging: this.controls.charge === true && this.chargeStartedAt > 0,
+        charging: this.controls.charge === true,
         rocket: this.rocketUntil > this.now && !p.grounded,
         shadow: this.shadowUntil > this.now && !p.grounded,
         skillLevel: this.action === 'skill' ? this.currentSkillLevel : undefined,
