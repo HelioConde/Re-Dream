@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc --noEmit && vite build",
+    "build": "node ../../scripts/generate_aren_art.mjs && tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "tsx --test src/*.test.ts"
+    "test": "node ../../scripts/generate_aren_art.mjs && tsx --test src/*.test.ts"
   },
   "dependencies": {
     "phaser": "^4.0.0",
