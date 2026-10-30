@@ -22,6 +22,8 @@ export const LUCI_FRAME_COUNTS = {
   attack_air_east: 13,
   dash_east: 9,
   dash_attack_east: 13,
+  // Authentic PixelLab uppercut frames, already present in the sprite importer.
+  uppercut_east: 17,
   skill_2_east: 17,
 } as const;
 
@@ -37,6 +39,8 @@ export type LuciVisualState = {
   skill: boolean;
   dashing?: boolean;
   dashAttacking?: boolean;
+  launching?: boolean;
+  diving?: boolean;
   comboStage: number;
   attackElapsed: number | null;
   timeMs: number;
@@ -53,7 +57,8 @@ export function selectLuciAnimation(s: LuciVisualState): SpriteChoice {
     action = 'skill_2_east';
     frame = Math.floor(s.timeMs * 16 / 1000) % LUCI_FRAME_COUNTS[action];
   } else if (s.attacking && s.attackElapsed !== null) {
-    action = s.airborne ? 'attack_air_east' : s.dashAttacking ? 'dash_attack_east' :
+    action = s.launching ? 'uppercut_east' : s.diving ? 'attack_air_east' :
+      s.airborne ? 'attack_air_east' : s.dashAttacking ? 'dash_attack_east' :
       ('attack_' + Math.max(1, Math.min(4, s.comboStage || 1)) + '_east') as LuciAction;
     const count = LUCI_FRAME_COUNTS[action];
     frame = Math.max(0, Math.min(count - 1,
