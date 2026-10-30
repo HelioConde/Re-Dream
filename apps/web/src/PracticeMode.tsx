@@ -110,6 +110,10 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
           <span>HP {stats.targetHp}/260 · derrotados {stats.defeated}</span></div>
       </div>
       <GameCanvas snapshotRef={snapshotRef} playerId={arena.playerId} sendInput={sendInput} mobileRef={mobileRef} practiceMode/>
+      {stats.chaseReady && !paused && <div className="practice-chase-prompt" role="status">
+        <strong>↑ PERSEGUIR</strong>
+        <small>Solte e pressione ↑ de novo para continuar o combo no ar</small>
+      </div>}
       {paused && <div className="practice-pause-overlay" role="status" aria-live="polite">
         <span className="eyebrow">✦ TREINAMENTO OFFLINE</span>
         <strong>Treino pausado</strong>
@@ -118,7 +122,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       </div>}
     </section>
     <div className="game-bottom practice-stats">
-      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span></div>
+      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span></div>
       <div className="practice-combat-meters" aria-label="Indicadores de combate">
         <div className="practice-meter">
           <div className="practice-meter-label"><span>✦ MP</span><strong>{stats.mp}/100</strong></div>
@@ -128,9 +132,9 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
           <div className="practice-meter-label"><span>⚡ Carga Z</span><strong>{stats.chargePercent}%</strong></div>
           <div className="practice-meter-track charge"><span style={{width: stats.chargePercent+'%'}}/></div>
         </div>
-        <strong className="practice-combo-label" aria-live="off">{stats.combo > 1 ? stats.combo+' HIT COMBO' : 'COMBO · '+stats.bestCombo+' recorde'}</strong>
+        <strong className="practice-combo-label" aria-live="off">{stats.juggleChain > 0 ? stats.juggleChain+' AIR JUGGLE · '+stats.combo+' HIT' : stats.combo > 1 ? stats.combo+' HIT COMBO' : 'COMBO · '+stats.bestCombo+' recorde'}</strong>
       </div>
-      <div className="controls-legend"><span>← → / A D mover · toque duplo: dash</span><span>↑ / W pular</span><span>↓ / S descer plataforma</span><span>J: combo · ↑+J no combo: lançar</span><span>Durante o pulo ↓+J: estocada</span><span>Z: ataque imediato / segure para carregar</span><span>K / X: habilidade</span></div>
+      <div className="controls-legend"><span>← → / A D mover · toque duplo: dash</span><span>↑ / W pular</span><span>↓ / S descer plataforma</span><span>J: combo · ↑+J no combo: lançar</span><span>Após lançar: solte ↑, pule ↑, ataque J no ar</span><span>Durante o pulo ↓+J: estocada</span><span>Z: ataque imediato / segure para carregar</span><span>K / X: habilidade</span></div>
     </div>
     <div className="touch-controls" aria-label="Controles de treino para dispositivos móveis">
       <div className="touch-group">
@@ -149,7 +153,8 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       </div>
     </div>
     <aside className="practice-hint"><strong>Treino estilo Grand Chase, identidade Re:Dream:</strong> durante o combo, pressione ↑ + J (ou ↑ + Z) para lançar o alvo para cima.
-      Durante um salto, pressione ↓ + J (ou ↓ + Z) para mergulhar com uma estocada. J ou Z sozinho no ar faz o ataque aéreo normal.
+      Solte ↑ e pressione novamente logo após lançar para cancelar a recuperação, alcançar o alvo e acertá-lo com J no ar. Acertos aéreos renovam brevemente a altura do alvo; ↓ + J ou Z é a estocada final que o derruba.
+      Durante um salto normal, ↓ + J (ou ↓ + Z) também faz uma estocada. J ou Z sozinho no ar executa o ataque aéreo normal.
       No celular, use ↑ ou ↓ junto com o botão de ataque. Segurar Z carrega uma habilidade quando houver MP; K ou X ativa uma habilidade direta.
       Duplo toque em ←/→ dá dash; ↓ sozinho, sobre uma plataforma, atravessa a plataforma. O boneco reaparece após ser derrotado. Sem servidor ou recompensas online.</aside>
   </main>;
