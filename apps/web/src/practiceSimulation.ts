@@ -74,7 +74,6 @@ export class PracticeArena {
   private rocketUntil = 0;
   private rocketDirection = 1;
   private shadowUntil = 0;
-  private pendingSkillLevel: 0 | 1 | 2 | 3 = 0;
   private currentSkillLevel: 1 | 2 | 3 = 1;
   private ottoPending = false;
   private chaseUntil = Number.NEGATIVE_INFINITY;
@@ -103,16 +102,14 @@ export class PracticeArena {
     const next: PracticeInput = {
       left: input.left === true, right: input.right === true,
       jump: input.jump === true, attack: input.attack === true,
-      skill: input.skill === true, up: input.up === true,
+      // The legacy skill field is kept false in offline training: abilities
+      // are exclusively selected by holding and releasing Z.
+      skill: false, up: input.up === true,
       down: input.down === true, charge: input.charge === true,
-      drop: input.drop === true, skillLevel: input.skillLevel ?? 0,
+      drop: input.drop === true,
     };
     if (next.left && !this.controls.left) this.tapDirection(-1);
     if (next.right && !this.controls.right) this.tapDirection(1);
-    if (next.skill && !this.controls.skill) this.pendingSkillLevel = 1;
-    if (next.skillLevel && next.skillLevel !== (this.controls.skillLevel ?? 0)) {
-      this.pendingSkillLevel = next.skillLevel;
-    }
     if (next.down && !this.controls.down && this.rocketUntil > this.now && !this.player.grounded) {
       this.shadowUntil = this.now + 0.35;
       this.rocketUntil = 0;
@@ -286,11 +283,6 @@ export class PracticeArena {
       if (level > 0) this.useSkill(level as 1 | 2 | 3);
       this.stats.chargeLevel = 0;
     }
-    if (this.pendingSkillLevel > 0) {
-      const level = this.pendingSkillLevel;
-      this.pendingSkillLevel = 0;
-      this.useSkill(level as 1 | 2 | 3);
-    }
     // J can be held to repeat for accessibility; a fast tap is buffered.
     // Holding Z charges without auto-repeating basic strikes.
     if ((this.controls.attack || this.now <= this.attackBufferUntil) &&
@@ -424,7 +416,6 @@ export class PracticeArena {
     this.pendingChargeRelease = null;
     this.stats.chargePercent = 0;
     this.stats.chargeLevel = 0;
-    this.pendingSkillLevel = 0;
     this.ottoPending = false;
     this.rocketUntil = 0;
     this.shadowUntil = 0;
@@ -462,7 +453,7 @@ export class PracticeArena {
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
     this.dropUntil = 0; this.dashUntil = 0; this.dashDirection = 0;
     this.chargeStartedAt = 0; this.pendingChargeRelease = null;
-    this.pendingSkillLevel = 0; this.currentSkillLevel = 1;
+    this.currentSkillLevel = 1;
     this.rocketUntil = 0; this.rocketDirection = 1;
     this.shadowUntil = 0; this.ottoPending = false;
     this.resetDummyAt = 0; this.targetFlash = 0;

@@ -6,9 +6,9 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 
 ## Primeira implementação: Campo de Prática offline
 
-- Direção com setas ou A/D; **duplo toque em uma direção** em até 290 ms ativa um dash de 240 ms.
-- Salto em ↑, W ou Espaço; janela curta para aceitar saltos no momento certo.
-- Descer da plataforma com ↓ ou S, sem atravessar o chão sólido.
+- Direção com setas; **duplo toque em uma direção** em até 290 ms ativa um dash de 240 ms.
+- Salto em ↑ (W alternativo no treino); janela curta para aceitar saltos no momento certo.
+- Descer da plataforma com ↓ + Espaço, sem atravessar o chão sólido.
 - **J:** sequência de golpes com escala de dano e quatro estágios de animação. Manter J pressionado também funciona como opção acessível.
 - **Ataque no ar:** usa a animação real de ataque aéreo e acerta o alvo quando próximo.
 - **↑ + J/Z no meio de um combo em solo:** executa golpe ascendente com a spritesheet autêntica `uppercut_east` e lança o alvo para cima; ↑ sozinho continua pulando.
@@ -19,8 +19,8 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 - **Finalização:** ↓ + J durante o salto pode arremessar o boneco lançado de volta para o chão. Só ocorre dano quando a estocada realmente encosta no alvo.
 
 - **Ataque durante o dash:** utiliza a spritesheet real de dash attack do Luci.
-- **Z:** o primeiro golpe sai imediatamente ao pressionar; segurar por 650 ms e soltar adiciona a habilidade carregada se houver 35 MP. Soltar Z rapidamente não duplica o golpe.
-- **K/X:** habilidade instantânea se houver MP. MP inicial 40; acertos restauram MP.
+- **Z:** o primeiro golpe sai imediatamente ao pressionar; segurar 0,65 / 1,30 / 1,95 segundo(s) carrega magia nível 1/2/3. **Só soltar Z dispara a habilidade**, se houver MP (100/200/300 pontos). Soltar Z rapidamente não duplica o golpe.
+- **Sem atalhos de magia:** A, S, D e K não conjuram no treino; também não há botões MP instantâneos no celular. MP inicial 100; acertos restauram MP.
 - O alvo de treino mantém a colisão fixa, mas recua visualmente ao receber dano. Indicadores de dano e centelhas só aparecem em golpes confirmados, com efeitos reduzidos ao respeitar a preferência do sistema por menos movimento.
 - Golpes inseridos até 170 ms antes de ficarem disponíveis são armazenados em um pequeno buffer para evitar perder sequências rápidas.
 - O alvo tem 260 HP e retorna após a derrota.
@@ -28,7 +28,7 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 
 ## Controles clássicos adaptados (V5 — modo Praticar)
 
-A configuração principal é baseada em **setas + Z**; no treino, A, S e D não movem o personagem, pois são atalhos MP1/2/3. O modo cooperativo mantém os comandos antigos até migrarmos suas regras.
+A configuração principal é baseada em **setas + Z**. **A, S e D não ativam habilidades**; no treino não existem teclas ou botões para conjuração instantânea. Somente manter Z pressionado e soltá-lo libera uma magia carregada. O modo cooperativo mantém seus controles anteriores até migrarmos suas regras.
 
 | Ação | Teclado |
 | --- | --- |
@@ -42,7 +42,7 @@ A configuração principal é baseada em **setas + Z**; no treino, A, S e D não
 | Otto adaptado | ↓ + Z na borda de plataforma vazada; golpe descendente com colisão |
 | Ataque básico e carregamento | Z; J é alternativa para ataque sem carga |
 | MP1, MP2, MP3 | Segurar Z por 0,65 s / 1,30 s / 1,95 s, soltar e consumir 1/2/3 barras |
-| Atalhos MP | A = MP1, S = MP2, D = MP3 |
+| Atalhos MP | **Inexistentes** — apenas segurar e soltar Z |
 | Launcher e perseguição | ↑+Z no combo, soltar ↑ e pressionar de novo |
 | Estocada aérea | ↓+Z durante o salto |
 
@@ -55,8 +55,8 @@ A configuração principal é baseada em **setas + Z**; no treino, A, S e D não
 - Durante Rocket, ↓: acelerar a queda, contar Shadow; aterrissar no chão sólido sem atravessá-lo.
 - Dash → direção oposta: interromper dash, contador CANCEL aumenta.
 - Subir na borda de plataforma vazada, ↓+Z: Otto descendente; ↓ sozinho não atravessa, ↓+Espaço atravessa.
-- Z curto acerta; Z segurado permite escolher nível 1, 2 ou 3; com MP suficiente, soltar consome 100/200/300. A/S/D ativam diretamente e não drenam repetidamente ao segurar.
-- Modo multiplayer mantém atalhos originais e não recebe as novas regras até termos paridade no servidor.
+- Z curto acerta; Z segurado permite escolher nível 1, 2 ou 3; com MP suficiente, soltar consome 100/200/300. A/S/D/K não devem conjurar, nem deve existir botão MP1/2/3 no celular.
+- O multiplayer mantém os controles anteriores enquanto o sistema de habilidades carregadas exclusivamente com Z não for integrado ao servidor autoritativo.
 
 ## Limites atuais
 
@@ -81,7 +81,7 @@ Próximas etapas, em ordem:
 5b. Deixar o alvo cair: o contador da sequência aérea deve zerar, sem perder o recorde.
 5c. Após lançar e perseguir, ↓+J no ar deve finalizar o alvo em direção ao solo, sem acertar um alvo distante.
 
-6. Pressionar e segurar Z até carga cheia, soltar: habilidade deve consumir MP.
+6. Segurar Z por 0,65 / 1,30 / 1,95 segundos, soltar: cada nível deve consumir a quantidade correta de MP. Apertar A/S/D/K não deve executar magia.
 7. Pausar durante uma carga de Z, continuar: não deve soltar habilidade sozinha.
 8. Testar 390 px de largura: controles móveis e medidores devem estar visíveis sem overflow.
 

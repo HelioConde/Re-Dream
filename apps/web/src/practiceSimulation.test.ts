@@ -35,8 +35,12 @@ test('practice dummy only takes valid hits and automatically reappears', () => {
   assert.equal(arena.stats.targetHp, 260);
   for (let i = 0; i < 12; i++) arena.step(1 / 30);
   assert.equal(arena.stats.targetHp, 236);
-  arena.setInput({ ...noInput, skill: true });
-  for (let i = 0; i < 6; i++) arena.step(1 / 30);
+  arena.setInput({ ...noInput, charge: true });
+  for (let i = 0; i < 22; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.skillCasts, 0);
+  arena.setInput(noInput); // Releasing Z is the only way to cast.
+  arena.step(1 / 30);
+  assert.equal(arena.stats.skillCasts, 1);
   assert.ok(arena.stats.targetHp <= 171);
   arena.reset();
   assert.equal(arena.stats.targetHp, 260);
@@ -472,30 +476,49 @@ test('three MP stocks charge to level 1/2/3 and consume correct costs', () => {
   }
 });
 
-test('A/S/D level shortcuts consume MP only once per press', () => {
-  const damage=[0,65,115,180];
-  for (const level of [1,2,3] as const) {
-    const a=new PracticeArena();
-    a.player.x=800;
-    a.stats.mp=300;
-    a.setInput({...noInput, skillLevel:level});
-    a.step(1/30);
-    for(let i=0;i<20;i++)a.step(1/30);
-    assert.equal(a.stats.targetHp,260-damage[level]);
-    assert.equal(a.stats.skillCasts,1);
-    assert.equal(a.stats.lastSkillLevel,level);
-  }
+test('direct skill requests are ignored: only releasing charged Z can cast', () => {
+  const a = new PracticeArena();
+  a.player.x = 800;
+  a.stats.mp = 300;
+  a.setInput({ ...noInput, skill: true });
+  for (let i = 0; i < 30; i++) a.step(1 / 30);
+  assert.equal(a.stats.skillCasts, 0);
+  assert.equal(a.stats.targetHp, 260);
+  assert.equal(a.stats.mp, 300);
+  // An outdated client must not be able to bypass the new control scheme.
+  a.setInput({ ...noInput, skillLevel: 3 } as unknown as import('./protocol').PracticeInput);
+  for (let i = 0; i < 30; i++) a.step(1 / 30);
+  assert.equal(a.stats.skillCasts, 0);
+  assert.equal(a.stats.targetHp, 260);
+  assert.equal(a.stats.mp, 300);
 });
 
-test('skill shortcuts cannot use higher level without enough MP', () => {
-  const a=new PracticeArena();
-  a.player.x=800;
-  assert.equal(a.stats.mp,100);
-  a.setInput({...noInput,skillLevel:3});
-  a.step(1/30);
-  assert.equal(a.stats.skillCasts,0);
-  assert.equal(a.stats.targetHp,260);
-  assert.equal(a.stats.mp,100);
+test('holding Z does not cast until key release, even at level three', () => {
+  const a = new PracticeArena();
+  a.player.x = 800;
+  a.stats.mp = 300;
+  a.setInput({ ...noInput, charge: true });
+  for (let i = 0; i < 75; i++) a.step(1 / 30);
+  assert.equal(a.stats.chargeLevel, 3);
+  assert.equal(a.stats.skillCasts, 0);
+  assert.equal(a.stats.targetHp, 236); // Immediate basic attack on keydown.
+  a.setInput(noInput);
+  a.step(1 / 30);
+  assert.equal(a.stats.skillCasts, 1);
+  assert.equal(a.stats.lastSkillLevel, 3);
+  assert.equal(a.stats.targetHp, 56);
+});
+
+test('insufficient MP prevents charged Z from casting higher levels', () => {
+  const a = new PracticeArena();
+  a.player.x = 800;
+  a.setInput({ ...noInput, charge: true });
+  for (let i = 0; i < 62; i++) a.step(1 / 30);
+  assert.equal(a.stats.chargeLevel, 3);
+  a.setInput(noInput);
+  a.step(1 / 30);
+  assert.equal(a.stats.skillCasts, 0);
+  assert.equal(a.stats.targetHp, 236);
 });
 
 test('pause and reset clear Rocket, Shadow and charged MP input', () => {
