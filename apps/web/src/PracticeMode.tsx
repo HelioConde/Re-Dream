@@ -112,8 +112,8 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
 
   return <main className="session practice-page" id="praticar">
     <div className="session-top">
-      <div><span className="eyebrow">✦ ÁREA DE TREINAMENTO · OFFLINE</span><h1>Campo de Prática</h1>
-        <p>{characterName(characterId)} · Teste movimentação, saltos, ataques e habilidades sem entrar numa sala.</p></div>
+      <div><span className="eyebrow">✦ BOSQUE DAS CONSTELAÇÕES · OFFLINE</span><h1>Campo de Prática</h1>
+        <p>{characterName(characterId)} · Arena de fantasia 2D com cenário original, movimento avançado e treino de combos.</p></div>
       <div className="session-actions">
         <button type="button" className="button button-outline" onClick={togglePause} aria-pressed={paused}>
           {paused ? '▶ Continuar' : 'Ⅱ Pausar'}
@@ -128,11 +128,15 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     </div>
     <section className="game-shell" aria-label="Modo praticar offline do Re:Dream">
       <div className="rd-game-hud" aria-label="Status de treinamento">
-        <div className="rd-hud-player"><span className="rd-hud-face" aria-hidden="true">✊</span>
+        <div className="rd-hud-player"><span className="rd-hud-face" aria-hidden="true">
+          {characterId === 'luci'
+            ? <img src={import.meta.env.BASE_URL + 'sprites/luci/preview.png'} alt="" />
+            : <span>✦</span>}
+        </span>
           <div className="rd-hud-info"><strong>{nickname || 'Luci'} · Fighter</strong>
             <div className="rd-hud-health"><span style={{ width: '100%' }}/></div><small>HP 100 / 100 · treinamento</small></div>
         </div>
-        <div className="rd-hud-objective"><strong>✦ Alvo de treino</strong>
+        <div className="rd-hud-objective"><strong>✦ Sentinela de Cristal</strong>
           <span>HP {stats.targetHp}/260 · derrotados {stats.defeated}</span></div>
       </div>
       <GameCanvas snapshotRef={snapshotRef} playerId={arena.playerId} sendInput={sendInput} mobileRef={mobileRef} practiceMode/>
