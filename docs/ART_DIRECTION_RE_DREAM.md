@@ -1,5 +1,7 @@
 # Re:Dream — Direção de arte 2D de ação/fantasia
 
+> Nota histórica: o diagnóstico abaixo descreve a versão anterior do jogo. O elenco antigo foi retirado no [reboot de Aren](AREN_REBOOT.md). A ficha conceitual de Aren é a nova meta visual; a primeira implementação usa quadros vetoriais originais, ainda não ilustrações finais.
+
 **Início do trabalho visual:** 2026-10-30. Estado: primeira melhoria do Campo de Prática implementada, **não** equivalência gráfica com Grand Chase.
 
 ## Diagnóstico da diferença visual (feedback do jogador)
