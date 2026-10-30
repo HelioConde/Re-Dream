@@ -1,7 +1,8 @@
 // Original Re:Dream hero: deterministic procedural 2D animation frames.
 // Generates real, distinct transparent SVG poses. No downloaded/third-party art.
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const AREN_FRAMES = {
   idle: 6, walk: 8, run: 8, dash: 6,
@@ -173,7 +174,7 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     '</g></svg>\n';
 }
 
-export function generateArenArt(root=process.cwd()) {
+export function generateArenArt(root=join(dirname(fileURLToPath(import.meta.url)), '..')) {
   const out=join(root,'apps','web','public','art','aren');
   mkdirSync(out,{recursive:true});
   let count=0;
