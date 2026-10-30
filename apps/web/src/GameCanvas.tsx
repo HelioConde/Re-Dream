@@ -51,6 +51,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         // Original layered 2D fantasy art. The stage matches the authoritative
         // ground (y=596) and one-way platform locations (220/466, 690/414).
         this.load.svg('dream-stage', import.meta.env.BASE_URL + 'art/arena-dream.svg');
+        this.load.svg('forest-detail', import.meta.env.BASE_URL + 'art/forest-detail.svg');
         this.load.svg('forest-atmosphere', import.meta.env.BASE_URL + 'art/forest-atmosphere.svg');
         this.load.svg('forest-foreground', import.meta.env.BASE_URL + 'art/forest-foreground.svg');
         // Every animation contains distinct transparent original Aren poses.
@@ -81,6 +82,12 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             fallback.fillStyle(0x82bea3);
             fallback.fillRoundedRect(platform.x, platform.y, platform.w, 9, 5);
           }
+        }
+        // Detailed authored relief: single static SVG texture. The existing
+        // floor and one-way platforms still own all collision positions.
+        if (this.textures.exists('forest-detail')) {
+          this.add.image(640, 360, 'forest-detail')
+            .setDisplaySize(1280, 720).setDepth(-16);
         }
         // Distinct non-colliding authored layers: depth adds atmosphere without
         // altering the y=596 floor or the two existing one-way platforms.
