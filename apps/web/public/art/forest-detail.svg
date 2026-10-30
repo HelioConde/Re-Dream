@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<title>Re:Dream — Bosque das Constelações, detalhes ambientais V6</title>
+<desc>Camada artística original translúcida: cordilheiras com relevos, copa com folhas, portal lunar gravado, cachoeira com espuma, pedras e fissuras do terreno. Não contém colisões ou imagens externas.</desc>
+<defs>
+ <linearGradient id="gateEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c1f0cc" stop-opacity=".56"/><stop offset=".45" stop-color="#6baba2" stop-opacity=".28"/><stop offset="1" stop-color="#204961" stop-opacity=".16"/></linearGradient>
+ <linearGradient id="waterFall" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#e0fff3" stop-opacity=".54"/><stop offset=".7" stop-color="#7edbc5" stop-opacity=".25"/><stop offset="1" stop-color="#8abfb6" stop-opacity=".03"/></linearGradient>
+ <radialGradient id="crystalGlow"><stop stop-color="#c5fbe1" stop-opacity=".55"/><stop offset="1" stop-color="#b6edc9" stop-opacity="0"/></radialGradient>
+</defs>
+<!-- Distant contour lines: broken mountain profiles with soft, low-value lighting. -->
+<g id="mountain-contours" fill="none"><path d="M-67 432Q33 375 84 274Q103 308 183 445" fill="none" stroke="#9ed1c6" stroke-width="1.4" opacity="0.1"/>
+ <path d="M66 319q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M87 441Q187 365 238 303Q257 337 337 445" fill="none" stroke="#9ed1c6" stroke-width="1.9" opacity="0.125"/>
+ <path d="M220 348q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M241 450Q341 355 392 332Q411 366 491 445" fill="none" stroke="#9ed1c6" stroke-width="2.4" opacity="0.15000000000000002"/>
+ <path d="M374 377q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M395 432Q495 345 546 274Q565 308 645 445" fill="none" stroke="#9ed1c6" stroke-width="1.4" opacity="0.1"/>
+ <path d="M528 319q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M549 441Q649 375 700 303Q719 337 799 445" fill="none" stroke="#9ed1c6" stroke-width="1.9" opacity="0.125"/>
+ <path d="M682 348q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M703 450Q803 365 854 332Q873 366 953 445" fill="none" stroke="#9ed1c6" stroke-width="2.4" opacity="0.15000000000000002"/>
+ <path d="M836 377q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M857 432Q957 355 1008 274Q1027 308 1107 445" fill="none" stroke="#9ed1c6" stroke-width="1.4" opacity="0.1"/>
+ <path d="M990 319q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M1011 441Q1111 345 1162 303Q1181 337 1261 445" fill="none" stroke="#9ed1c6" stroke-width="1.9" opacity="0.125"/>
+ <path d="M1144 348q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/>
+<path d="M1165 450Q1265 375 1316 332Q1335 366 1415 445" fill="none" stroke="#9ed1c6" stroke-width="2.4" opacity="0.15000000000000002"/>
+ <path d="M1298 377q-9 11 -13 29m-4 12q-8 9 -8 22" fill="none" stroke="#d4e9dd" stroke-width="1.5" opacity=".13"/></g>
+<g id="constellation-highlights"><g opacity="0.28"><circle cx="340" cy="67" r="1" fill="#d2ffe4"/><path d="M335 67h10m-5 -5v10" stroke="#9ce7d8" stroke-width=".6"/></g>
+<g opacity="0.39"><circle cx="483" cy="128" r="1.6" fill="#d2ffe4"/></g>
+<g opacity="0.5"><circle cx="626" cy="189" r="2.2" fill="#d2ffe4"/></g>
+<g opacity="0.6100000000000001"><circle cx="769" cy="250" r="1" fill="#d2ffe4"/></g>
+<g opacity="0.28"><circle cx="912" cy="81" r="1.6" fill="#d2ffe4"/><path d="M907 81h10m-5 -5v10" stroke="#9ce7d8" stroke-width=".6"/></g>
+<g opacity="0.39"><circle cx="1055" cy="142" r="2.2" fill="#d2ffe4"/></g>
+<g opacity="0.5"><circle cx="398" cy="203" r="1" fill="#d2ffe4"/></g>
+<g opacity="0.6100000000000001"><circle cx="541" cy="264" r="1.6" fill="#d2ffe4"/></g>
+<g opacity="0.28"><circle cx="684" cy="95" r="2.2" fill="#d2ffe4"/><path d="M679 95h10m-5 -5v10" stroke="#9ce7d8" stroke-width=".6"/></g>
+<g opacity="0.39"><circle cx="827" cy="156" r="1" fill="#d2ffe4"/></g>
+<g opacity="0.5"><circle cx="970" cy="217" r="1.6" fill="#d2ffe4"/></g>
+<g opacity="0.6100000000000001"><circle cx="1113" cy="278" r="2.2" fill="#d2ffe4"/></g>
+<g opacity="0.28"><circle cx="456" cy="109" r="1" fill="#d2ffe4"/><path d="M451 109h10m-5 -5v10" stroke="#9ce7d8" stroke-width=".6"/></g>
+<g opacity="0.39"><circle cx="599" cy="170" r="1.6" fill="#d2ffe4"/></g>
+<g opacity="0.5"><circle cx="742" cy="231" r="2.2" fill="#d2ffe4"/></g>
+<g opacity="0.6100000000000001"><circle cx="885" cy="292" r="1" fill="#d2ffe4"/></g>
+<g opacity="0.28"><circle cx="1028" cy="123" r="1.6" fill="#d2ffe4"/><path d="M1023 123h10m-5 -5v10" stroke="#9ce7d8" stroke-width=".6"/></g>
+<g opacity="0.39"><circle cx="371" cy="184" r="2.2" fill="#d2ffe4"/></g>
+<g opacity="0.5"><circle cx="514" cy="245" r="1" fill="#d2ffe4"/></g></g>
+<!-- Organic branch structure and clusters of varied leaves soften the oversized flat ovals. -->
+<g id="canopy-detail">
+ <path d="M-15 306Q60 314 133 255T272 285M44 345Q98 324 138 344M54 254q27 -18 57 -18" fill="none" stroke="#204c52" stroke-width="13" opacity=".40" stroke-linecap="round"/>
+ <path d="M-13 301Q63 302 132 247T267 282M50 336Q101 324 144 337" fill="none" stroke="#82b9a4" stroke-width="3.2" opacity=".24"/>
+ <path d="M15 199q9 -10 18 -5q-5.8500000000000005 11.5 -18 5Z" fill="#a5dabb" opacity="0.16"/>
+ <path d="M18 200l13.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M82 240q14 -16 28 -8q-9.1 18.4 -28 8Z" fill="#418b7f" opacity="0.215"/>
+ <path d="M85 241l21 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M149 281q19 -22 38 -11q-12.35 25.299999999999997 -38 11Z" fill="#418b7f" opacity="0.27"/>
+ <path d="M152 282l28.5 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M216 322q24 -10 48 -5q-15.600000000000001 11.5 -48 5Z" fill="#78b9a4" opacity="0.325"/>
+ <path d="M219 323l36 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M44 363q9 -16 18 -8q-5.8500000000000005 18.4 -18 8Z" fill="#418b7f" opacity="0.16"/>
+ <path d="M47 364l13.5 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M111 236q14 -22 28 -11q-9.1 25.299999999999997 -28 11Z" fill="#a5dabb" opacity="0.215"/>
+ <path d="M114 237l21 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M178 277q19 -10 38 -5q-12.35 11.5 -38 5Z" fill="#78b9a4" opacity="0.27"/>
+ <path d="M181 278l28.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M245 318q24 -16 48 -8q-15.600000000000001 18.4 -48 8Z" fill="#418b7f" opacity="0.325"/>
+ <path d="M248 319l36 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M73 359q9 -22 18 -11q-5.8500000000000005 25.299999999999997 -18 11Z" fill="#418b7f" opacity="0.16"/>
+ <path d="M76 360l13.5 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M140 232q14 -10 28 -5q-9.1 11.5 -28 5Z" fill="#78b9a4" opacity="0.215"/>
+ <path d="M143 233l21 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M207 273q19 -16 38 -8q-12.35 18.4 -38 8Z" fill="#a5dabb" opacity="0.27"/>
+ <path d="M210 274l28.5 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M35 314q24 -22 48 -11q-15.600000000000001 25.299999999999997 -48 11Z" fill="#418b7f" opacity="0.325"/>
+ <path d="M38 315l36 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M102 355q9 -10 18 -5q-5.8500000000000005 11.5 -18 5Z" fill="#78b9a4" opacity="0.16"/>
+ <path d="M105 356l13.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M169 228q14 -16 28 -8q-9.1 18.4 -28 8Z" fill="#418b7f" opacity="0.215"/>
+ <path d="M172 229l21 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M236 269q19 -22 38 -11q-12.35 25.299999999999997 -38 11Z" fill="#418b7f" opacity="0.27"/>
+ <path d="M239 270l28.5 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M64 310q24 -10 48 -5q-15.600000000000001 11.5 -48 5Z" fill="#a5dabb" opacity="0.325"/>
+ <path d="M67 311l36 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M131 351q9 -16 18 -8q-5.8500000000000005 18.4 -18 8Z" fill="#418b7f" opacity="0.16"/>
+ <path d="M134 352l13.5 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M198 224q14 -22 28 -11q-9.1 25.299999999999997 -28 11Z" fill="#418b7f" opacity="0.215"/>
+ <path d="M201 225l21 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M26 265q19 -10 38 -5q-12.35 11.5 -38 5Z" fill="#78b9a4" opacity="0.27"/>
+ <path d="M29 266l28.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M93 306q24 -16 48 -8q-15.600000000000001 18.4 -48 8Z" fill="#418b7f" opacity="0.325"/>
+ <path d="M96 307l36 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M160 347q9 -22 18 -11q-5.8500000000000005 25.299999999999997 -18 11Z" fill="#a5dabb" opacity="0.16"/>
+ <path d="M163 348l13.5 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M227 220q14 -10 28 -5q-9.1 11.5 -28 5Z" fill="#78b9a4" opacity="0.215"/>
+ <path d="M230 221l21 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M55 261q19 -16 38 -8q-12.35 18.4 -38 8Z" fill="#418b7f" opacity="0.27"/>
+ <path d="M58 262l28.5 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M122 302q24 -22 48 -11q-15.600000000000001 25.299999999999997 -48 11Z" fill="#418b7f" opacity="0.325"/>
+ <path d="M125 303l36 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M189 343q9 -10 18 -5q-5.8500000000000005 11.5 -18 5Z" fill="#78b9a4" opacity="0.16"/>
+ <path d="M192 344l13.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M17 216q14 -16 28 -8q-9.1 18.4 -28 8Z" fill="#a5dabb" opacity="0.215"/>
+ <path d="M20 217l21 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M84 257q19 -22 38 -11q-12.35 25.299999999999997 -38 11Z" fill="#418b7f" opacity="0.27"/>
+ <path d="M87 258l28.5 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M151 298q24 -10 48 -5q-15.600000000000001 11.5 -48 5Z" fill="#78b9a4" opacity="0.325"/>
+ <path d="M154 299l36 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M218 339q9 -16 18 -8q-5.8500000000000005 18.4 -18 8Z" fill="#418b7f" opacity="0.16"/>
+ <path d="M221 340l13.5 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M46 212q14 -22 28 -11q-9.1 25.299999999999997 -28 11Z" fill="#418b7f" opacity="0.215"/>
+ <path d="M49 213l21 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M113 253q19 -10 38 -5q-12.35 11.5 -38 5Z" fill="#a5dabb" opacity="0.27"/>
+ <path d="M116 254l28.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M180 294q24 -16 48 -8q-15.600000000000001 18.4 -48 8Z" fill="#418b7f" opacity="0.325"/>
+ <path d="M183 295l36 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M247 335q9 -22 18 -11q-5.8500000000000005 25.299999999999997 -18 11Z" fill="#418b7f" opacity="0.16"/>
+ <path d="M250 336l13.5 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M75 208q14 -10 28 -5q-9.1 11.5 -28 5Z" fill="#78b9a4" opacity="0.215"/>
+ <path d="M78 209l21 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M142 249q19 -16 38 -8q-12.35 18.4 -38 8Z" fill="#418b7f" opacity="0.27"/>
+ <path d="M145 250l28.5 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M209 290q24 -22 48 -11q-15.600000000000001 25.299999999999997 -48 11Z" fill="#a5dabb" opacity="0.325"/>
+ <path d="M212 291l36 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M37 331q9 -10 18 -5q-5.8500000000000005 11.5 -18 5Z" fill="#78b9a4" opacity="0.16"/>
+ <path d="M40 332l13.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M104 204q14 -16 28 -8q-9.1 18.4 -28 8Z" fill="#418b7f" opacity="0.215"/>
+ <path d="M107 205l21 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M171 245q19 -22 38 -11q-12.35 25.299999999999997 -38 11Z" fill="#418b7f" opacity="0.27"/>
+ <path d="M174 246l28.5 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M238 286q24 -10 48 -5q-15.600000000000001 11.5 -48 5Z" fill="#78b9a4" opacity="0.325"/>
+ <path d="M241 287l36 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M66 327q9 -16 18 -8q-5.8500000000000005 18.4 -18 8Z" fill="#a5dabb" opacity="0.16"/>
+ <path d="M69 328l13.5 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M133 200q14 -22 28 -11q-9.1 25.299999999999997 -28 11Z" fill="#418b7f" opacity="0.215"/>
+ <path d="M136 201l21 -8.8" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M200 241q19 -10 38 -5q-12.35 11.5 -38 5Z" fill="#78b9a4" opacity="0.27"/>
+ <path d="M203 242l28.5 -4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+<path d="M28 282q24 -16 48 -8q-15.600000000000001 18.4 -48 8Z" fill="#418b7f" opacity="0.325"/>
+ <path d="M31 283l36 -6.4" stroke="#d1f0ca" stroke-width=".8" opacity=".22"/>
+</g>
+<!-- Stone joints, carvings and small patches of moss on the existing lunar gateway. -->
+<g id="ancient-arch-detail" fill="none">
+ <path d="M579 305Q574 214 666 205Q749 199 787 285" stroke="url(#gateEdge)" stroke-width="6" opacity=".7"/>
+ <path d="M602 304Q602 236 668 235Q745 237 752 309" stroke="#d0f4d8" stroke-width="2.3" opacity=".23"/>
+ <path d="M562 330l18 3m-20 54 20 -2m-18 58 19 -4M776 334l18 3m-20 56 19 -5m-21 59 20 -4" stroke="#b5d4c4" stroke-width="2.8" opacity=".37"/>
+ <path d="M572 356l6 10 -4 22m213 -33 -7 11 7 19m-135 -173 -6 18 9 15m51 -34 5 19 -6 15" stroke="#193d50" stroke-width="3" opacity=".55"/>
+ <path d="M590 449q11 -19 28 -24m-4 22q18 -8 26 -28m103 15q19 -14 38 -8" stroke="#73aa92" stroke-width="3.5" opacity=".48"/>
+ <path d="M668 229v-13m-25 21 -8 -10m55 8 8 -9" stroke="#e1ffef" stroke-width="2" opacity=".34"/>
+ <path d="M565 284l-5 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.22"/>
+<path d="M565 305l6 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.35"/>
+<path d="M565 326l-5 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.48"/>
+<path d="M565 347l6 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.22"/>
+<path d="M565 368l-5 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.35"/>
+<path d="M565 389l6 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.48"/>
+<path d="M565 410l-5 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.22"/>
+<path d="M774 284l6 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.35"/>
+<path d="M774 305l-5 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.48"/>
+<path d="M774 326l6 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.22"/>
+<path d="M774 347l-5 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.35"/>
+<path d="M774 368l6 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.48"/>
+<path d="M774 389l-5 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.22"/>
+<path d="M774 410l6 7 5 -2" stroke="#c1eedb" stroke-width="1.5" fill="none" opacity="0.35"/>
+</g>
+<!-- The right-hand waterfall and the base of its dark cliff: foam and light streaks. -->
+<g id="waterfall-detail">
+ <path d="M1129 450q13 -12 28 -4l12 3 -2 113q-12 21 -36 7z" fill="url(#waterFall)" opacity=".75"/>
+ <path d="M1137 451q-9 27 -3 57t-2 55M1152 453q7 26 4 56t-4 48M1160 460q11 44 7 80" stroke="#e4fff7" stroke-width="2.2" fill="none" opacity=".45"/>
+ <path d="M1120 575q29 -10 61 2m-53 8q22 9 41 0" stroke="#a4e5d4" stroke-width="3" fill="none" opacity=".24"/>
+ <circle cx="1141" cy="569" r="8" fill="url(#crystalGlow)"/>
+ <circle cx="1162" cy="579" r="5" fill="#b3f7e7" opacity=".27"/>
+</g>
+<!-- Existing platform positions are unchanged. Ornament starts BELOW platform surfaces. -->
+<g id="platform-stone-ornament">
+ <path d="M244 486q21 -6 39 2m16 0 26 8m23 -7 40 3m-103 17 -26 7m68 -2 21 5" stroke="#a4c9ad" stroke-width="1.8" fill="none" opacity=".25"/>
+ <path d="M720 436q33 -6 52 3m24 -5 38 9m22 1 40 -3m-126 24 42 -2" stroke="#a4c9ad" stroke-width="1.8" fill="none" opacity=".29"/>
+ <path d="M225 489q-9 14 -6 21" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M216 510q-8 -10 -17 -8q-6 12 17 8" fill="#529f84" opacity=".56"/>
+<path d="M265 489q13 14 4 29" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M273 510q7 -10 17 -8q-6 12 -17 8" fill="#529f84" opacity=".56"/>
+<path d="M305 489q-9 14 4 37" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M296 510q-8 -10 -17 -8q-6 12 17 8" fill="#529f84" opacity=".56"/>
+<path d="M345 489q13 14 -6 45" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M353 510q7 -10 17 -8q-6 12 -17 8" fill="#529f84" opacity=".56"/>
+<path d="M385 489q-9 14 4 21" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M376 510q-8 -10 -17 -8q-6 12 17 8" fill="#529f84" opacity=".56"/>
+<path d="M425 489q13 14 4 29" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M433 510q7 -10 17 -8q-6 12 -17 8" fill="#529f84" opacity=".56"/>
+<path d="M685 437q-9 14 -6 37" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M676 458q-8 -10 -17 -8q-6 12 17 8" fill="#529f84" opacity=".56"/>
+<path d="M730 437q13 14 4 45" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M738 458q7 -10 17 -8q-6 12 -17 8" fill="#529f84" opacity=".56"/>
+<path d="M775 437q-9 14 4 21" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M766 458q-8 -10 -17 -8q-6 12 17 8" fill="#529f84" opacity=".56"/>
+<path d="M820 437q13 14 -6 29" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M828 458q7 -10 17 -8q-6 12 -17 8" fill="#529f84" opacity=".56"/>
+<path d="M865 437q-9 14 4 37" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M856 458q-8 -10 -17 -8q-6 12 17 8" fill="#529f84" opacity=".56"/>
+<path d="M910 437q13 14 4 45" fill="none" stroke="#356f6e" stroke-width="2.4" opacity=".55"/><path d="M918 458q7 -10 17 -8q-6 12 -17 8" fill="#529f84" opacity=".56"/>
+</g>
+<!-- Dry soil texture and small embedded stones beneath the physical floor y=596. -->
+<g id="soil-detail"><path d="M45 631l15 -3m-7.5 5l3.3 7" fill="none" stroke="#89b9aa" stroke-width="1" opacity=".17"/>
+<path d="M124 658l28 1m-14 5l6.16 7" fill="none" stroke="#678f83" stroke-width="1.35" opacity=".17"/>
+<path d="M203 685l41 5m-20.5 5l9.02 7" fill="none" stroke="#678f83" stroke-width="1.7" opacity=".17"/>
+<path d="M282 647l54 -3m-27 5l11.88 7" fill="none" stroke="#89b9aa" stroke-width="1" opacity=".17"/>
+<path d="M361 674l15 1m-7.5 5l3.3 7" fill="none" stroke="#678f83" stroke-width="1.35" opacity=".17"/>
+<path d="M440 636l28 5m-14 5l6.16 7" fill="none" stroke="#678f83" stroke-width="1.7" opacity=".17"/>
+<path d="M519 663l41 -3m-20.5 5l9.02 7" fill="none" stroke="#89b9aa" stroke-width="1" opacity=".17"/>
+<path d="M598 690l54 1m-27 5l11.88 7" fill="none" stroke="#678f83" stroke-width="1.35" opacity=".17"/>
+<path d="M677 652l15 5m-7.5 5l3.3 7" fill="none" stroke="#678f83" stroke-width="1.7" opacity=".17"/>
+<path d="M756 679l28 -3m-14 5l6.16 7" fill="none" stroke="#89b9aa" stroke-width="1" opacity=".17"/>
+<path d="M835 641l41 1m-20.5 5l9.02 7" fill="none" stroke="#678f83" stroke-width="1.35" opacity=".17"/>
+<path d="M914 668l54 5m-27 5l11.88 7" fill="none" stroke="#678f83" stroke-width="1.7" opacity=".17"/>
+<path d="M993 695l15 -3m-7.5 5l3.3 7" fill="none" stroke="#89b9aa" stroke-width="1" opacity=".17"/>
+<path d="M1072 657l28 1m-14 5l6.16 7" fill="none" stroke="#678f83" stroke-width="1.35" opacity=".17"/>
+<path d="M1151 684l41 5m-20.5 5l9.02 7" fill="none" stroke="#678f83" stroke-width="1.7" opacity=".17"/>
+<path d="M1230 646l54 -3m-27 5l11.88 7" fill="none" stroke="#89b9aa" stroke-width="1" opacity=".17"/>
+<path d="M119 673l15 1m-7.5 5l3.3 7" fill="none" stroke="#678f83" stroke-width="1.35" opacity=".17"/>
+<path d="M198 635l28 5m-14 5l6.16 7" fill="none" stroke="#678f83" stroke-width="1.7" opacity=".17"/><path d="M60 637l1.7999999999999998 -4.199999999999999 3.5999999999999996 -0.6000000000000001 1.7999999999999998 3.5999999999999996 -3.9000000000000004 1.7999999999999998Z" fill="#7caca0" opacity="0.14"/>
+<path d="M155 660l3 -7 6 -1 3 6 -6.5 3Z" fill="#4e777b" opacity="0.21000000000000002"/>
+<path d="M250 683l4.2 -9.799999999999999 8.4 -1.4000000000000001 4.2 8.4 -9.1 4.2Z" fill="#4e777b" opacity="0.28"/>
+<path d="M345 648l5.3999999999999995 -12.6 10.799999999999999 -1.8 5.3999999999999995 10.799999999999999 -11.700000000000001 5.3999999999999995Z" fill="#7caca0" opacity="0.35000000000000003"/>
+<path d="M448 671l1.7999999999999998 -4.199999999999999 3.5999999999999996 -0.6000000000000001 1.7999999999999998 3.5999999999999996 -3.9000000000000004 1.7999999999999998Z" fill="#4e777b" opacity="0.14"/>
+<path d="M543 694l3 -7 6 -1 3 6 -6.5 3Z" fill="#4e777b" opacity="0.21000000000000002"/>
+<path d="M638 659l4.2 -9.799999999999999 8.4 -1.4000000000000001 4.2 8.4 -9.1 4.2Z" fill="#7caca0" opacity="0.28"/>
+<path d="M733 682l5.3999999999999995 -12.6 10.799999999999999 -1.8 5.3999999999999995 10.799999999999999 -11.700000000000001 5.3999999999999995Z" fill="#4e777b" opacity="0.35000000000000003"/>
+<path d="M836 647l1.7999999999999998 -4.199999999999999 3.5999999999999996 -0.6000000000000001 1.7999999999999998 3.5999999999999996 -3.9000000000000004 1.7999999999999998Z" fill="#4e777b" opacity="0.14"/>
+<path d="M931 670l3 -7 6 -1 3 6 -6.5 3Z" fill="#7caca0" opacity="0.21000000000000002"/>
+<path d="M1026 693l4.2 -9.799999999999999 8.4 -1.4000000000000001 4.2 8.4 -9.1 4.2Z" fill="#4e777b" opacity="0.28"/>
+<path d="M1121 658l5.3999999999999995 -12.6 10.799999999999999 -1.8 5.3999999999999995 10.799999999999999 -11.700000000000001 5.3999999999999995Z" fill="#4e777b" opacity="0.35000000000000003"/>
+<path d="M64 681l1.7999999999999998 -4.199999999999999 3.5999999999999996 -0.6000000000000001 1.7999999999999998 3.5999999999999996 -3.9000000000000004 1.7999999999999998Z" fill="#7caca0" opacity="0.14"/>
+<path d="M159 646l3 -7 6 -1 3 6 -6.5 3Z" fill="#4e777b" opacity="0.21000000000000002"/>
+<path d="M254 669l4.2 -9.799999999999999 8.4 -1.4000000000000001 4.2 8.4 -9.1 4.2Z" fill="#4e777b" opacity="0.28"/>
+<path d="M349 692l5.3999999999999995 -12.6 10.799999999999999 -1.8 5.3999999999999995 10.799999999999999 -11.700000000000001 5.3999999999999995Z" fill="#7caca0" opacity="0.35000000000000003"/>
+<path d="M452 657l1.7999999999999998 -4.199999999999999 3.5999999999999996 -0.6000000000000001 1.7999999999999998 3.5999999999999996 -3.9000000000000004 1.7999999999999998Z" fill="#4e777b" opacity="0.14"/></g>
+<!-- Small localised bioluminescent patches, away from the character spawn. -->
+<g id="moss-glints">
+ <ellipse cx="385" cy="581" rx="33" ry="14" fill="url(#crystalGlow)" opacity=".20"/>
+ <ellipse cx="742" cy="583" rx="49" ry="11" fill="url(#crystalGlow)" opacity=".16"/>
+ <ellipse cx="1044" cy="584" rx="31" ry="11" fill="url(#crystalGlow)" opacity=".2"/>
+ <path d="M393 586q9 -9 15 -16m-9 19q-16 -4 -18 -13M1058 590l5 -21m-5 13 -10 -9" stroke="#7fb9a0" fill="none" stroke-width="2.2" opacity=".42"/>
+</g>
+</svg>
