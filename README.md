@@ -94,7 +94,7 @@ Salas e combates ficam **em memória de uma única instância do servidor**. Uma
 O projeto inclui um conjunto **enxuto de 9 skills para IA** em `.claude/skills/`, adaptado ao fluxo Phaser + TypeScript do Re:Dream: GDD, backlog, FSM, Event Bus, conversão de engine, stack traces, performance, shaders e prompts de assets.
 
 - [Guia de uso e catálogo](docs/AI_GAME_STUDIO.md)
-- [GDD vivo](docs/GDD_RE_DREAM.md) e [backlog técnico](docs/BACKLOG_RE_DREAM.md)
+- [GDD vivo](docs/GDD_RE_DREAM.md), [FSM de locomoção do Luci](docs/LOCOMOTION_FSM.md) e [backlog técnico](docs/BACKLOG_RE_DREAM.md)
 - [Instruções para Codex e outros agentes](AGENTS.md)
 
 No Claude Code, abra a **raiz** do repositório e use, por exemplo, `/gdd-dinamico` ou `/backlog-gameplay`. No ChatGPT/Codex, leia o `AGENTS.md` e a skill correspondente; o registro de comandos não ocorre automaticamente nesses clientes. A validação estrutural é executada com `npm run test:skills` e também em `npm test`.
