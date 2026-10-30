@@ -304,11 +304,11 @@ export default function App() {
           </section>
           <div className="game-bottom">
             <div className="stats"><span>♥ VIDA <strong>{me?.hp ?? 100}/100</strong></span><span>✧ PONTOS <strong>{me?.score ?? 0}</strong></span><span>⚔ INIMIGOS <strong>{snapshot?.remaining ?? 0}</strong></span></div>
-            <div className="controls-legend"><span>A / D · Mover</span><span>W / Espaço · Pular</span><span>J · Atacar</span><span>K · Especial</span></div>
+            <div className="controls-legend"><span>A / D · Mover</span><span>W / Espaço · Pular</span><span>↓ · Descer plataforma</span><span>J · Atacar</span><span>K · Especial</span></div>
           </div>
           <div className="touch-controls" aria-label="Controles para dispositivos móveis">
             <div className="touch-group">
-              {([['left','◀'],['right','▶'],['jump','↑']] as const).map(([key,label]) => <button key={key} className="touch-key" aria-label={key} onPointerDown={e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); touch(key,true); }} onPointerUp={() => touch(key,false)} onPointerCancel={() => touch(key,false)} onLostPointerCapture={() => touch(key,false)}>{label}</button>)}
+              {([['left','◀'],['right','▶'],['jump','↑'],['down','↓']] as const).map(([key,label]) => <button key={key} className="touch-key" aria-label={key} onPointerDown={e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); touch(key,true); }} onPointerUp={() => touch(key,false)} onPointerCancel={() => touch(key,false)} onLostPointerCapture={() => touch(key,false)}>{label}</button>)}
             </div>
             <div className="touch-group">
               {([['attack','⚔'],['skill','✦']] as const).map(([key,label]) => <button key={key} className="touch-key touch-attack" aria-label={key} onPointerDown={e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); touch(key,true); }} onPointerUp={() => touch(key,false)} onPointerCancel={() => touch(key,false)} onLostPointerCapture={() => touch(key,false)}>{label}</button>)}
