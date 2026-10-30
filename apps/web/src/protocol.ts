@@ -5,21 +5,21 @@ export const isCharacterId = (value: unknown): value is CharacterId =>
   typeof value === 'string' && (CHARACTER_IDS as readonly string[]).includes(value);
 export type Control = { left: boolean; right: boolean; jump: boolean; attack: boolean; skill: boolean };
 // Extra commands are offline-only until the multiplayer server gains matching rules.
-export type PracticeInput = Control & { down?: boolean; charge?: boolean };
+export type PracticeInput = Control & { up?: boolean; down?: boolean; charge?: boolean };
 export type Player = {
   id: string; name: string; characterId: CharacterId; x: number; y: number; hp: number; score: number;
   facing: number; flash: number; color: number;
   // Optional offline training metadata; multiplayer snapshots stay compatible.
   comboStage?: number; airborne?: boolean; falling?: boolean;
   dashing?: boolean; velocityX?: number;
-  combatAction?: 'attack' | 'air_attack' | 'dash_attack' | 'skill';
+  combatAction?: 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive';
   actionElapsedMs?: number;
 };
 export type Enemy = { id: number; x: number; y: number; hp: number; maxHp: number; boss: boolean; flash: number };
 // Feedback is optional and sent only by the offline practice simulation.
 export type PracticeImpact = {
   sequence: number; damage: number; x: number; y: number;
-  direction: number; kind: 'basic' | 'air' | 'dash' | 'skill';
+  direction: number; kind: 'basic' | 'air' | 'dash' | 'skill' | 'launcher' | 'dive';
 };
 export type Snapshot = {
   impact?: PracticeImpact;
