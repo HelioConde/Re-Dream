@@ -39,7 +39,7 @@ export type TrainingStats = {
   chaseReady: boolean;
   chargeLevel: number; skillCasts: number; lastSkillLevel: number;
   rocketSteps: number; shadowSteps: number; dashCancels: number; ottoShots: number;
-  runs: number; drops: number;
+  runs: number; drops: number; onPlatform: boolean;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -61,7 +61,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0, drops: 0,
+    runs: 0, drops: 0, onPlatform: false,
   };
 
   private now = 0;
@@ -294,6 +294,7 @@ export class PracticeArena {
       }
       if (p.y >= FLOOR) { p.y = FLOOR; p.vy = 0; p.grounded = true; }
     }
+    this.stats.onPlatform = this.onOneWayPlatform();
     if (p.grounded) {
       this.lastGroundedAt = this.now;
       this.diving = false;
@@ -507,7 +508,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0, drops: 0,
+    runs: 0, drops: 0, onPlatform: false,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
