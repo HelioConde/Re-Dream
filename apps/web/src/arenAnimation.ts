@@ -1,7 +1,16 @@
 import type { LocomotionState } from './locomotionFsm';
 import type { SpriteChoice } from './characterAnimation';
 
-export const AREN_DISPLAY_SIZE = 235;
+/** Art-to-stage proportions validated against the user's 1280×720 playtest.
+ * 192px authored frames used to render at 235px (Aren visually dwarfing the
+ * training sentinel and intersecting the underside of one-way platforms).
+ * This is presentation only; hitboxes and movement remain authoritative.
+ */
+export const AREN_DISPLAY_SIZE = 160;
+export const AREN_FRAME_SIZE = 192;
+export const AREN_FOOT_ANCHOR_Y = 192;
+export const AREN_HEALTHBAR_OFFSET_Y = AREN_DISPLAY_SIZE + 4;
+export const AREN_NAME_OFFSET_Y = AREN_DISPLAY_SIZE + 25;
 // Mirror of scripts/generate_aren_art.mjs; verified in CI by animation tests.
 export const AREN_FRAME_COUNTS = {
   idle: 6, walk: 8, run: 8, dash: 6,

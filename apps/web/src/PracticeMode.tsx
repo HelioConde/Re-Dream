@@ -114,7 +114,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
 
   return <main className="session practice-page" id="praticar">
     <div className="session-top">
-      <div><span className="eyebrow">✦ BOSQUE DAS CONSTELAÇÕES · AREN ART V4</span><h1>Campo de Prática</h1>
+      <div><span className="eyebrow">✦ BOSQUE DAS CONSTELAÇÕES · AREN V5 · ESCALA REVISADA</span><h1>Campo de Prática</h1>
         <p>{characterName(characterId)} · Arena de fantasia 2D com cenário original, movimento avançado e treino de combos.</p></div>
       <div className="session-actions">
         <button type="button" className="button button-outline" onClick={togglePause} aria-pressed={paused}>
