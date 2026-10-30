@@ -10,6 +10,9 @@ const DASH_SPEED = 685;
 const DASH_DURATION = 0.24;
 const DOUBLE_TAP_WINDOW = 0.29;
 const COMBO_WINDOW = 1.05;
+const CHASE_WINDOW = 0.55;
+const JUGGLE_LIFT = -185;
+const MAX_AIR_JUGGLE = 4;
 // Accept fast button presses shortly before a strike becomes available.
 const ATTACK_BUFFER_WINDOW = 0.17;
 const MP_SKILL_COST = 35;
@@ -25,6 +28,7 @@ export type TrainingStats = {
   targetHp: number; defeated: number; strikes: number; lastDamage: number;
   combo: number; bestCombo: number; mp: number; chargePercent: number;
   dashes: number; aerialHits: number; launchers: number; dives: number;
+  chaseJumps: number; juggles: number; juggleChain: number; bestJuggle: number;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -43,6 +47,7 @@ export class PracticeArena {
     targetHp: DUMMY_HP, defeated: 0, strikes: 0, lastDamage: 0,
     combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
     launchers: 0, dives: 0,
+    chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
   };
 
   private now = 0;
@@ -57,6 +62,8 @@ export class PracticeArena {
   private targetY = FLOOR;
   private targetVy = 0;
   private diving = false;
+  private chaseUntil = Number.NEGATIVE_INFINITY;
+  private airJuggleCount = 0;
   private lastSuccessfulHit = Number.NEGATIVE_INFINITY;
   private lastLeftTap = Number.NEGATIVE_INFINITY;
   private lastRightTap = Number.NEGATIVE_INFINITY;
@@ -133,13 +140,25 @@ export class PracticeArena {
     p.x = Math.max(22, Math.min(1258, p.x + p.vx * dt));
 
     // ↑ + attack during a grounded combo is a launcher, not a jump.
-    const launcherQueued = p.grounded && this.controls.up === true &&
+    const launchFollowUp = this.now <= this.chaseUntil && this.targetY < FLOOR - 10;
+    const launcherQueued = p.grounded && !launchFollowUp && this.controls.up === true &&
       (this.controls.attack || this.now <= this.attackBufferUntil) &&
       this.stats.combo > 0 && this.now - this.lastSuccessfulHit <= COMBO_WINDOW;
     if (!launcherQueued && this.jumpQueuedUntil >= this.now &&
         (p.grounded || this.now - this.lastGroundedAt <= 0.09)) {
-      p.vy = -650;
+      // A fresh jump after the launcher cancels its recovery into an air chase.
+      const chaseJump = launchFollowUp && p.grounded;
+      p.vy = chaseJump ? -760 : -650;
       p.grounded = false;
+      if (chaseJump) {
+        this.stats.chaseJumps++;
+        this.chaseUntil = Number.NEGATIVE_INFINITY;
+        this.nextAttack = Math.min(this.nextAttack, this.now + 0.065);
+        if (this.action === 'launcher') {
+          this.action = null;
+          this.actionStartedAt = Number.NEGATIVE_INFINITY;
+        }
+      }
       this.lastGroundedAt = Number.NEGATIVE_INFINITY;
       this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
     }
@@ -166,7 +185,12 @@ export class PracticeArena {
     if (this.stats.targetHp > 0 && this.targetY < FLOOR) {
       this.targetVy = Math.min(this.targetVy + 1200 * dt, 950);
       this.targetY = Math.min(FLOOR, this.targetY + this.targetVy * dt);
-      if (this.targetY >= FLOOR) this.targetVy = 0;
+      if (this.targetY >= FLOOR) {
+        this.targetVy = 0;
+        this.airJuggleCount = 0;
+        this.stats.juggleChain = 0;
+        this.chaseUntil = Number.NEGATIVE_INFINITY;
+      }
     }
     if (this.diving && !p.grounded && this.stats.targetHp > 0 &&
         Math.abs(DUMMY_X - p.x) <= 108 && (DUMMY_X - p.x) * p.facing >= -5 &&
@@ -211,7 +235,8 @@ export class PracticeArena {
     const p = this.player;
     const airborne = !p.grounded;
     const dashAttack = this.now < this.dashUntil && !airborne;
-    const launcher = !airborne && this.controls.up === true &&
+    const launcher = !airborne && !(this.now <= this.chaseUntil && this.targetY < FLOOR - 10) &&
+      this.controls.up === true &&
       this.stats.combo > 0 && this.now - this.lastSuccessfulHit <= COMBO_WINDOW;
     const dive = airborne && this.controls.down === true;
     if (dive) {
@@ -233,6 +258,9 @@ export class PracticeArena {
     if (launcher && this.stats.lastDamage > 0) {
       this.targetVy = -535;
       this.targetY = Math.min(this.targetY, FLOOR - 5);
+      this.chaseUntil = this.now + CHASE_WINDOW;
+      this.airJuggleCount = 0;
+      this.stats.juggleChain = 0;
       this.stats.launchers++;
     }
     if (this.stats.lastDamage > 0) {
@@ -282,6 +310,21 @@ export class PracticeArena {
     this.lastImpactDamage = dealt;
     this.lastImpactDirection = p.facing;
     this.lastImpactKind = kind;
+    if (this.targetY < FLOOR - 18 && kind === 'air' &&
+        this.airJuggleCount < MAX_AIR_JUGGLE) {
+      // An aerial follow-up briefly lifts a launched opponent. It never
+      // creates another hit; only a confirmed overlap reaches this branch.
+      this.airJuggleCount++;
+      this.stats.juggles++;
+      this.stats.juggleChain = this.airJuggleCount;
+      this.stats.bestJuggle = Math.max(this.stats.bestJuggle, this.airJuggleCount);
+      this.targetVy = Math.min(this.targetVy, JUGGLE_LIFT);
+      this.targetY = Math.max(155, this.targetY - 6);
+    } else if (this.targetY < FLOOR - 18 && kind === 'dive') {
+      // Descending finisher slams the launched dummy back toward the floor.
+      this.targetVy = Math.max(this.targetVy, 540);
+      this.chaseUntil = Number.NEGATIVE_INFINITY;
+    }
     if (this.stats.targetHp <= 0) {
       this.stats.defeated++;
       p.score += 25;
@@ -310,10 +353,12 @@ export class PracticeArena {
       targetHp: DUMMY_HP, defeated: 0, strikes: 0, lastDamage: 0,
       combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
     launchers: 0, dives: 0,
+    chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
     this.targetY = FLOOR; this.targetVy = 0; this.diving = false;
+    this.chaseUntil = Number.NEGATIVE_INFINITY; this.airJuggleCount = 0;
     this.impactSequence = 0; this.lastImpactAt = Number.NEGATIVE_INFINITY;
     this.lastImpactDamage = 0; this.lastImpactDirection = 1; this.lastImpactKind = 'basic';
     this.lastSuccessfulHit = Number.NEGATIVE_INFINITY;
