@@ -14,7 +14,7 @@ export type Player = {
   facing: number; flash: number; color: number;
   // Optional offline training metadata; multiplayer snapshots stay compatible.
   comboStage?: number; airborne?: boolean; falling?: boolean;
-  dashing?: boolean; velocityX?: number;
+  dashing?: boolean; running?: boolean; velocityX?: number;
   rocket?: boolean; shadow?: boolean; skillLevel?: 1 | 2 | 3;
   combatAction?: 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive' | 'otto';
   actionElapsedMs?: number;
