@@ -4,10 +4,15 @@ import { LuciComboTracker, LUCI_FRAME_COUNTS, selectLuciAnimation } from './luci
 
 const base = { facing: 1, moving: false, airborne: false, falling: false, attacking: false,
   skill: false, comboStage: 1, attackElapsed: null, timeMs: 0 };
-test('Luci uses authentic East idle and run, west mirrored', () => {
+test('Luci uses authored idle/walk/run animations, west mirrored', () => {
   assert.deepEqual(selectLuciAnimation(base), { texture: 'luci_idle_east', frame: 0, flipX: false });
-  assert.equal(selectLuciAnimation({ ...base, facing: -1, moving: true }).texture, 'luci_run_east');
+  assert.equal(selectLuciAnimation({ ...base, facing: -1, moving: true }).texture, 'luci_walk_east');
   assert.equal(selectLuciAnimation({ ...base, facing: -1, moving: true }).flipX, true);
+  assert.equal(selectLuciAnimation({ ...base, moving: true, running: true }).texture, 'luci_run_east');
+  assert.equal(selectLuciAnimation({ ...base, moving: true, running: false }).texture, 'luci_walk_east');
+  assert.equal(selectLuciAnimation({ ...base, moving: true, running: true, dashing: true }).texture, 'luci_dash_east');
+  assert.equal(LUCI_FRAME_COUNTS.walk_east, 8);
+  assert.equal(LUCI_FRAME_COUNTS.run_east, 8);
 });
 test('Luci selects matching airborne and combo animation without fake frames', () => {
   assert.equal(selectLuciAnimation({ ...base, airborne: true, falling: false }).texture, 'luci_jump_air_east');
