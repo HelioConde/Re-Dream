@@ -1,13 +1,11 @@
 import { EMPTY_CONTROLS, type CharacterId, type PracticeInput, type Snapshot } from './protocol';
+import { advanceLocomotion, classifyLocomotion, type LocomotionState } from './locomotionFsm';
 
 const FLOOR = 596;
 const PLATFORMS = [{ x: 220, y: 466, w: 220 }, { x: 690, y: 414, w: 250 }];
 const DUMMY_X = 875;
 const DUMMY_HP = 260;
 const PRACTICE_ID = 'offline-practice';
-const WALK_SPEED = 310;
-const RUN_SPEED = 455; // Sustain acceleration only after a held second dash tap.
-const DASH_SPEED = 685;
 const DASH_DURATION = 0.24;
 // Brief chord priority allows ↓+Z Otto without making ↓ alone unresponsive.
 const PLATFORM_DROP_CHORD_WINDOW = 0.12;
@@ -21,7 +19,6 @@ const ATTACK_BUFFER_WINDOW = 0.17;
 const MP_PER_BAR = 100;
 const MAX_MP = 300;
 const CHARGE_SECONDS_PER_BAR = 0.65;
-const ROCKET_SPEED = 715;
 const ROCKET_DURATION = 0.52;
 
 type CombatAction = 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive' | 'otto';
@@ -40,6 +37,7 @@ export type TrainingStats = {
   chargeLevel: number; skillCasts: number; lastSkillLevel: number;
   rocketSteps: number; shadowSteps: number; dashCancels: number; ottoShots: number;
   runs: number; drops: number; onPlatform: boolean;
+  locomotion: LocomotionState;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -61,7 +59,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0, drops: 0, onPlatform: false,
+    runs: 0, drops: 0, onPlatform: false, locomotion: 'idle',
   };
 
   private now = 0;
@@ -228,24 +226,19 @@ export class PracticeArena {
         this.dropThroughPlatform();
       }
     }
-    const dashing = this.dashUntil > this.now;
-    // Only a sustained second press produces a run, starting after the dash.
-    // Releasing, reversing or leaving the ground returns to normal movement.
-    if (!dashing && this.runArmed) {
-      if (p.grounded && dir === this.runDirection) {
-        this.running = true;
-        this.stats.runs++;
-      }
-      this.runArmed = false;
-    }
-    if (this.running && (!p.grounded || dir !== this.runDirection)) this.running = false;
-    const rocket = !p.grounded && this.rocketUntil > this.now;
-    const shadow = !p.grounded && this.shadowUntil > this.now;
-    const velocityDirection = dashing ? this.dashDirection :
-      rocket || shadow ? (dir || this.rocketDirection) : dir;
-    const runSpeed = this.running && p.grounded ? RUN_SPEED : WALK_SPEED;
-    p.vx = velocityDirection * (dashing ? DASH_SPEED :
-      rocket ? ROCKET_SPEED : shadow ? WALK_SPEED * 1.15 : runSpeed);
+    // Pure locomotion FSM decides dash, run and airborne momentum for this tick.
+    // Collision, jump buffers and combat remain authoritative in this arena.
+    const locomotion = advanceLocomotion({
+      grounded: p.grounded, vy: p.vy, direction: dir, now: this.now,
+      dashUntil: this.dashUntil, dashDirection: this.dashDirection,
+      rocketUntil: this.rocketUntil, rocketDirection: this.rocketDirection,
+      shadowUntil: this.shadowUntil,
+      runArmed: this.runArmed, running: this.running, runDirection: this.runDirection,
+    });
+    this.runArmed = locomotion.runArmed;
+    this.running = locomotion.running;
+    if (locomotion.startedRun) this.stats.runs++;
+    p.vx = locomotion.vx;
     p.x = Math.max(22, Math.min(1258, p.x + p.vx * dt));
 
     // ↑ + attack during a grounded combo is a launcher, not a jump.
@@ -295,6 +288,7 @@ export class PracticeArena {
       if (p.y >= FLOOR) { p.y = FLOOR; p.vy = 0; p.grounded = true; }
     }
     this.stats.onPlatform = this.onOneWayPlatform();
+    this.stats.locomotion = this.currentLocomotion();
     if (p.grounded) {
       this.lastGroundedAt = this.now;
       this.diving = false;
@@ -476,6 +470,16 @@ export class PracticeArena {
     }
   }
 
+  private currentLocomotion(): LocomotionState {
+    const p = this.player;
+    return classifyLocomotion({
+      grounded: p.grounded, vy: p.vy, direction: Math.sign(p.vx),
+      now: this.now, dashUntil: this.dashUntil,
+      rocketUntil: this.rocketUntil, shadowUntil: this.shadowUntil,
+      running: this.running,
+    });
+  }
+
   suspend() {
     // Pausing must never cast a charged skill as a side effect of releasing keys.
     this.controls = { ...EMPTY_CONTROLS };
@@ -493,6 +497,8 @@ export class PracticeArena {
     this.running = false;
     this.runDirection = 0;
     this.player.vx = 0;
+    this.stats.locomotion = this.player.grounded ? 'idle' :
+      this.player.vy < 0 ? 'rise' : 'fall';
     this.diving = false;
   }
 
@@ -508,6 +514,7 @@ export class PracticeArena {
     this.dropUntil = 0;
     this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
     this.stats.onPlatform = true;
+    this.stats.locomotion = 'idle';
   }
 
   reset() {
@@ -522,7 +529,7 @@ export class PracticeArena {
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
     rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
-    runs: 0, drops: 0, onPlatform: false,
+    runs: 0, drops: 0, onPlatform: false, locomotion: 'idle',
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
@@ -573,6 +580,7 @@ export class PracticeArena {
         flash: p.flash, color: 0x86dcca, comboStage: p.comboStage,
         airborne: !p.grounded, falling: p.vy >= 0,
         dashing: this.now < this.dashUntil, running: this.running, velocityX: p.vx,
+        locomotion: this.currentLocomotion(),
         rocket: this.rocketUntil > this.now && !p.grounded,
         shadow: this.shadowUntil > this.now && !p.grounded,
         skillLevel: this.action === 'skill' ? this.currentSkillLevel : undefined,
