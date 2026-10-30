@@ -27,23 +27,23 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
   const skill = state.startsWith('skill_');
   const air = ['rise','fall','rocket','shadow','air_attack','dive','otto'].includes(state);
   const fast = ['run','dash','rocket','dash_attack'].includes(state);
-  let lean=0,bob=0,stride=0,arm=-7,scarf=0,knee=0,bodyY=0,forearm=0;
-  if(state==='idle'){bob=wave*1.5;scarf=wave*6;arm=wave*4;}
-  if(state==='walk'){bob=abs*2;stride=wave*28;arm=-wave*27;scarf=13+wave*8;}
-  if(state==='run'){lean=12;bob=abs*3;stride=wave*43;arm=-wave*41;scarf=32+wave*13;knee=13;}
-  if(state==='dash'){lean=24;bob=2;stride=20+wave*8;arm=-60;scarf=44+wave*9;knee=18;}
-  if(state==='rise'){bodyY=-8;lean=-4;stride=17;arm=-43;scarf=11;}
-  if(state==='fall'){bodyY=-4;stride=-12;arm=36;scarf=22;}
-  if(state==='rocket'){bodyY=-7;lean=29;stride=25;arm=-60;scarf=52;}
-  if(state==='shadow'){bodyY=-5;lean=-16;stride=-18;arm=57;scarf=28;}
-  if(state==='land'){bob=6*(1-phase);knee=30*(1-phase);lean=9*(1-phase);scarf=18;}
-  if(state==='hurt'){lean=-16*(1-phase);bob=-4;stride=-10;arm=38;scarf=20;}
-  if(attack){lean=(state==='launcher'?-7:17)+wave*4;bob=-2;stride=20;arm=-30+Math.sin(phase*Math.PI)*76;scarf=20+15*wave;}
+  let lean=0,bob=0,stride=0,arm=-7,scarfMotion=0,knee=0,bodyY=0,forearm=0;
+  if(state==='idle'){bob=wave*1.5;scarfMotion=wave*6;arm=wave*4;}
+  if(state==='walk'){bob=abs*2;stride=wave*28;arm=-wave*27;scarfMotion=13+wave*8;}
+  if(state==='run'){lean=12;bob=abs*3;stride=wave*43;arm=-wave*41;scarfMotion=32+wave*13;knee=13;}
+  if(state==='dash'){lean=24;bob=2;stride=20+wave*8;arm=-60;scarfMotion=44+wave*9;knee=18;}
+  if(state==='rise'){bodyY=-8;lean=-4;stride=17;arm=-43;scarfMotion=11;}
+  if(state==='fall'){bodyY=-4;stride=-12;arm=36;scarfMotion=22;}
+  if(state==='rocket'){bodyY=-7;lean=29;stride=25;arm=-60;scarfMotion=52;}
+  if(state==='shadow'){bodyY=-5;lean=-16;stride=-18;arm=57;scarfMotion=28;}
+  if(state==='land'){bob=6*(1-phase);knee=30*(1-phase);lean=9*(1-phase);scarfMotion=18;}
+  if(state==='hurt'){lean=-16*(1-phase);bob=-4;stride=-10;arm=38;scarfMotion=20;}
+  if(attack){lean=(state==='launcher'?-7:17)+wave*4;bob=-2;stride=20;arm=-30+Math.sin(phase*Math.PI)*76;scarfMotion=20+15*wave;}
   if(state==='air_attack'){bodyY=-8;lean=20;stride=25;}
   if(state==='dive'||state==='otto'){bodyY=-10;lean=35;stride=-17;arm=78;}
   if(state==='launcher'){arm=-95+phase*40;stride=-5;}
-  if(state==='charge'){arm=-62;scarf=14+wave*7;bob=wave;}
-  if(skill){arm=-55+wave*10;lean=4;bob=-2;scarf=36+wave*10;stride=7;}
+  if(state==='charge'){arm=-62;scarfMotion=14+wave*7;bob=wave;}
+  if(skill){arm=-55+wave*10;lean=4;bob=-2;scarfMotion=36+wave*10;stride=7;}
   const color = {outline:'#13283b',coat:'#e9e6d9',shadow:'#9fa8b2',cloth:'#203c4e',
     cape:'#226476',capeLight:'#64d2b9',metal:'#b9b7a2',skin:'#f2ccb0',skinShadow:'#d49d89',
     hair:'#233547',hairLight:'#4e6570',glow:'#9bfce0',boot:'#233647'};
@@ -66,7 +66,7 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     ].join('');
   };
   const backLeg=leg(-1,-stride),frontLeg=leg(1,stride);
-  const capeTipX=25-scarf*.55, capeTipY=110+wave*5-(fast?12:0);
+  const capeTipX=25-scarfMotion*.55, capeTipY=110+wave*5-(fast?12:0);
   const cape=path('M'+round(coreX-11)+' 64 Q'+round(coreX-39)+' 68 '+round(capeTipX)+' '+round(capeTipY-24)+
     'Q'+round(capeTipX-8)+' '+round(capeTipY)+' '+round(capeTipX+20)+' '+round(capeTipY+7)+
     'L'+round(coreX-4)+' 111Z',color.cape,
@@ -130,7 +130,7 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     path('M'+round(coreX-18)+' '+round(headY-5)+' q-8 -16 -2 -28 l8 12z',color.hair);
   const scarf=path('M'+round(coreX-19)+' 71 q20 8 35 0 l-2 13 q-24 12 -40 -4z',
     color.cape,'stroke="'+color.outline+'" stroke-width="3"')+
-    path('M'+round(coreX-14)+' 80q-28 8 -'+round(25+scarf)+' 27q9 5 15 -2l'+round(21+scarf)+' -11z',
+    path('M'+round(coreX-14)+' 80q-28 8 -'+round(25+scarfMotion)+' 27q9 5 15 -2l'+round(21+scarfMotion)+' -11z',
     '#62bfae','opacity=".88"')+
     line(coreX-9,78,coreX+9,80,'#d9f5ce',2);
   let effect='';
