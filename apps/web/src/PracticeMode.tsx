@@ -111,6 +111,10 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
           <span>HP {stats.targetHp}/260 · derrotados {stats.defeated}</span></div>
       </div>
       <GameCanvas snapshotRef={snapshotRef} playerId={arena.playerId} sendInput={sendInput} mobileRef={mobileRef} practiceMode/>
+      {stats.onPlatform && !paused && !stats.chaseReady && <div className="practice-platform-prompt" role="status">
+        <strong>↓ DESCER PLATAFORMA</strong>
+        <small>Você pousou na plataforma · toque ↓ uma vez</small>
+      </div>}
       {stats.chaseReady && !paused && <div className="practice-chase-prompt" role="status">
         <strong>↑ PERSEGUIR</strong>
         <small>Solte e pressione ↑ de novo para continuar o combo no ar</small>
