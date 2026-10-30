@@ -142,7 +142,7 @@ export class PracticeArena {
     // A new ↓ press while standing on a thin platform drops through it.
     // Allow a short chord window so pressing ↓ followed quickly by Z/J
     // still performs an Otto/ground attack instead of an unintended drop.
-    if (!next.down || next.jump || next.attack || next.charge) {
+    if (next.jump || next.attack || next.charge) {
       this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
     } else if (next.down && !this.controls.down && this.onOneWayPlatform()) {
       this.queuedPlatformDropAt = this.now + PLATFORM_DROP_CHORD_WINDOW;
@@ -223,8 +223,8 @@ export class PracticeArena {
     if (this.queuedPlatformDropAt !== Number.NEGATIVE_INFINITY &&
         this.now >= this.queuedPlatformDropAt) {
       this.queuedPlatformDropAt = Number.NEGATIVE_INFINITY;
-      if (this.controls.down && !this.controls.jump &&
-          !this.controls.attack && !this.controls.charge) {
+      // A quick tap of ↓ also works: release before the chord window is fine.
+      if (!this.controls.jump && !this.controls.attack && !this.controls.charge) {
         this.dropThroughPlatform();
       }
     }
