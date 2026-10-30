@@ -7,7 +7,7 @@ export type Control = { left: boolean; right: boolean; jump: boolean; attack: bo
 // Extra commands are offline-only until the multiplayer server gains matching rules.
 export type PracticeInput = Control & {
   up?: boolean; down?: boolean; charge?: boolean;
-  drop?: boolean; skillLevel?: 0 | 1 | 2 | 3;
+  drop?: boolean;
 };
 export type Player = {
   id: string; name: string; characterId: CharacterId; x: number; y: number; hp: number; score: number;
