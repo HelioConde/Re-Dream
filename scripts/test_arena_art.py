@@ -21,7 +21,7 @@ class ArenaArtworkTest(unittest.TestCase):
         self.assertEqual(self.root.get("height"), "720")
 
     def test_v3_transparent_layers_are_valid_local_svg_16_9(self):
-        for name in ("forest-atmosphere.svg", "forest-foreground.svg"):
+        for name in ("forest-atmosphere.svg", "forest-foreground.svg", "forest-detail.svg"):
             source = ART.with_name(name)
             root = ET.parse(source).getroot()
             self.assertEqual(root.tag, SVG + "svg", name)
@@ -32,6 +32,17 @@ class ArenaArtworkTest(unittest.TestCase):
             self.assertFalse(root.findall(f".//{SVG}script"), name)
             # No opaque full-screen rectangle may hide characters and platforms.
             self.assertFalse(root.findall(f".//{SVG}rect"), name)
+
+    def test_v6_organic_environment_contains_the_staged_detail_groups(self):
+        art = ART.with_name("forest-detail.svg")
+        root = ET.parse(art).getroot()
+        for group in (
+            "mountain-contours", "canopy-detail", "ancient-arch-detail",
+            "waterfall-detail", "platform-stone-ornament", "soil-detail"
+        ):
+            self.assertIsNotNone(root.find(f".//*[@id='{group}']"), group)
+        # The detail layer is decorative; no game geometry is inferred from it.
+        self.assertNotIn('data-collision=', art.read_text(encoding="utf-8"))
 
     def test_platforms_are_anchored_to_gameplay_collision_positions(self):
         for platform_id, x, y in [
