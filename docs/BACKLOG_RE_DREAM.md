@@ -40,7 +40,7 @@
 | RD-D05 | VFX implementado no treino; SFX pendente | Impactos diferenciados por ação e MP1/2/3; duas camadas novas de profundidade; hit do alvo confirmado | Testes de VFX e XML; movimento reduzido; captura visual e performance reais pendentes |
 | RD-D06 | Parcial: ateliê e escala V5 implementados | Galeria de 23 movimentos; sprite reduzido de 235 para 160px após screenshot real V4; pés no piso, HUD sem duplicação | Testes de código; falta screenshot real **da V5** em desktop e mobile |
 
-**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md), [Aren V2](AREN_V2_VISUAL_QA.md), [Visual V3](VISUAL_V3.md), [Aren Art V4](AREN_V4_VISUAL_QA.md) e [Aren V5 — QA de escala](AREN_V5_SCALE_QA.md).
+**Direção visual e lacunas:** [docs/ART_DIRECTION_RE_DREAM.md](ART_DIRECTION_RE_DREAM.md), [reboot de Aren](AREN_REBOOT.md), [Aren V2](AREN_V2_VISUAL_QA.md), [Visual V3](VISUAL_V3.md), [Aren Art V4](AREN_V4_VISUAL_QA.md) e [Aren V5 — QA de escala](AREN_V5_SCALE_QA.md) e [Bosque V6 — direção de arte](FOREST_V6_ART_REVIEW.md).
 
 ## Definição de pronto
 - Critérios observáveis implementados com cobertura automatizada da lógica.
