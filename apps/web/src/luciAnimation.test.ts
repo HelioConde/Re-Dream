@@ -47,3 +47,21 @@ test('Luci launcher uses authentic uppercut sprites and diving uses aerial sprit
   assert.equal(selectLuciAnimation({...base, diving:true, airborne:true, attacking:true, attackElapsed:100}).texture, 'luci_attack_air_east');
   assert.equal(LUCI_FRAME_COUNTS.uppercut_east, 17);
 });
+
+test('snapshot FSM state chooses correct original sprite, even with stale boolean hints', () => {
+  assert.equal(selectLuciAnimation({...base, locomotion:'walk', moving:false}).texture, 'luci_walk_east');
+  assert.equal(selectLuciAnimation({...base, locomotion:'dash', moving:false}).texture, 'luci_dash_east');
+  assert.equal(selectLuciAnimation({...base, locomotion:'run', running:false}).texture, 'luci_run_east');
+  assert.equal(selectLuciAnimation({...base, locomotion:'rocket', airborne:false}).texture, 'luci_jump_air_east');
+  assert.equal(selectLuciAnimation({...base, locomotion:'shadow', airborne:false}).texture, 'luci_jump_fall_east');
+  assert.equal(selectLuciAnimation({...base, locomotion:'fall', airborne:false}).texture, 'luci_jump_fall_east');
+  assert.equal(selectLuciAnimation({...base, locomotion:'idle', moving:true}).texture, 'luci_idle_east');
+});
+test('charged skill/combo animation keeps priority over locomotion state', () => {
+  assert.equal(selectLuciAnimation({
+    ...base, locomotion:'run', skill:true,
+  }).texture, 'luci_skill_2_east');
+  assert.equal(selectLuciAnimation({
+    ...base, locomotion:'rocket', attacking:true, attackElapsed:90, airborne:true,
+  }).texture, 'luci_attack_air_east');
+});
