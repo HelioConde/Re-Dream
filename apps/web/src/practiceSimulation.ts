@@ -15,7 +15,11 @@ const JUGGLE_LIFT = -185;
 const MAX_AIR_JUGGLE = 4;
 // Accept fast button presses shortly before a strike becomes available.
 const ATTACK_BUFFER_WINDOW = 0.17;
-const MP_SKILL_COST = 35;
+const MP_PER_BAR = 100;
+const MAX_MP = 300;
+const CHARGE_SECONDS_PER_BAR = 0.65;
+const ROCKET_SPEED = 715;
+const ROCKET_DURATION = 0.52;
 
 type CombatAction = 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive';
 type ImpactKind = 'basic' | 'air' | 'dash' | 'skill' | 'launcher' | 'dive';
@@ -30,6 +34,8 @@ export type TrainingStats = {
   dashes: number; aerialHits: number; launchers: number; dives: number;
   chaseJumps: number; juggles: number; juggleChain: number; bestJuggle: number;
   chaseReady: boolean;
+  chargeLevel: number; skillCasts: number; lastSkillLevel: number;
+  rocketSteps: number; shadowSteps: number; dashCancels: number; ottoShots: number;
 };
 
 /** A self-contained, deterministic arcade prototype. Multiplayer rules remain unchanged.
@@ -46,10 +52,11 @@ export class PracticeArena {
   };
   readonly stats: TrainingStats = {
     targetHp: DUMMY_HP, defeated: 0, strikes: 0, lastDamage: 0,
-    combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
+    combo: 0, bestCombo: 0, mp: 100, chargePercent: 0, chargeLevel: 0, skillCasts: 0, lastSkillLevel: 0, dashes: 0, aerialHits: 0,
     launchers: 0, dives: 0,
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
+    rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
   };
 
   private now = 0;
@@ -64,6 +71,12 @@ export class PracticeArena {
   private targetY = FLOOR;
   private targetVy = 0;
   private diving = false;
+  private rocketUntil = 0;
+  private rocketDirection = 1;
+  private shadowUntil = 0;
+  private pendingSkillLevel: 0 | 1 | 2 | 3 = 0;
+  private currentSkillLevel: 1 | 2 | 3 = 1;
+  private ottoPending = false;
   private chaseUntil = Number.NEGATIVE_INFINITY;
   private airJuggleCount = 0;
   private lastSuccessfulHit = Number.NEGATIVE_INFINITY;
@@ -92,22 +105,42 @@ export class PracticeArena {
       jump: input.jump === true, attack: input.attack === true,
       skill: input.skill === true, up: input.up === true,
       down: input.down === true, charge: input.charge === true,
+      drop: input.drop === true, skillLevel: input.skillLevel ?? 0,
     };
     if (next.left && !this.controls.left) this.tapDirection(-1);
     if (next.right && !this.controls.right) this.tapDirection(1);
+    if (next.skill && !this.controls.skill) this.pendingSkillLevel = 1;
+    if (next.skillLevel && next.skillLevel !== (this.controls.skillLevel ?? 0)) {
+      this.pendingSkillLevel = next.skillLevel;
+    }
+    if (next.down && !this.controls.down && this.rocketUntil > this.now && !this.player.grounded) {
+      this.shadowUntil = this.now + 0.35;
+      this.rocketUntil = 0;
+      this.player.vy = Math.max(670, this.player.vy);
+      this.stats.shadowSteps++;
+    }
     if (next.jump && !this.controls.jump) this.jumpQueuedUntil = this.now + 0.12;
     // An initial Z press produces an immediate basic attack. Holding Z still
     // charges the special; releasing it no longer repeats the initial punch.
     if ((next.attack && !this.controls.attack) || (next.charge && !this.controls.charge)) {
       this.attackBufferUntil = this.now + ATTACK_BUFFER_WINDOW;
     }
-    if (next.down && !this.controls.down && this.player.grounded && this.player.y < FLOOR - 5) {
+    // Drop requires ↓+Space, leaving ↓ free for aerial Shadow Step and ↓+Z.
+    if (next.down && next.drop && !this.controls.drop &&
+        this.player.grounded && this.player.y < FLOOR - 5) {
       // Pass through one-way platforms, never the solid ground.
       this.dropUntil = this.now + 0.26;
       this.player.y += 9;
       this.player.vy = 70;
       this.player.grounded = false;
       this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
+    }
+    if (next.down && this.player.grounded && this.player.y < FLOOR - 5 &&
+        ((next.attack && !this.controls.attack) || (next.charge && !this.controls.charge))) {
+      // Otto-style platform attack at the last 64px of either platform edge.
+      this.ottoPending = PLATFORMS.some(platform => Math.abs(this.player.y - platform.y) < 3 &&
+        (Math.abs(this.player.x - platform.x) <= 64 ||
+         Math.abs(this.player.x - (platform.x + platform.w)) <= 64));
     }
     if (next.charge && !this.controls.charge) this.chargeStartedAt = this.now;
     if (!next.charge && this.controls.charge) {
@@ -119,6 +152,14 @@ export class PracticeArena {
 
   private tapDirection(dir: -1 | 1) {
     const last = dir === -1 ? this.lastLeftTap : this.lastRightTap;
+    if (this.dashUntil > this.now && this.dashDirection === -dir) {
+      // Opposite input breaks a dash early. Never triggers a reverse dash for free.
+      this.dashUntil = 0;
+      this.stats.dashCancels++;
+      this.lastLeftTap = Number.NEGATIVE_INFINITY;
+      this.lastRightTap = Number.NEGATIVE_INFINITY;
+      return;
+    }
     if (this.now - last <= DOUBLE_TAP_WINDOW) {
       this.dashUntil = this.now + DASH_DURATION;
       this.dashDirection = dir;
@@ -137,8 +178,12 @@ export class PracticeArena {
     const dir = Number(this.controls.right) - Number(this.controls.left);
     if (dir !== 0) p.facing = Math.sign(dir);
     const dashing = this.dashUntil > this.now;
-    const velocityDirection = dashing ? this.dashDirection : dir;
-    p.vx = velocityDirection * (dashing ? DASH_SPEED : WALK_SPEED);
+    const rocket = !p.grounded && this.rocketUntil > this.now;
+    const shadow = !p.grounded && this.shadowUntil > this.now;
+    const velocityDirection = dashing ? this.dashDirection :
+      rocket || shadow ? (dir || this.rocketDirection) : dir;
+    p.vx = velocityDirection * (dashing ? DASH_SPEED :
+      rocket ? ROCKET_SPEED : shadow ? WALK_SPEED * 1.15 : WALK_SPEED);
     p.x = Math.max(22, Math.min(1258, p.x + p.vx * dt));
 
     // ↑ + attack during a grounded combo is a launcher, not a jump.
@@ -150,7 +195,14 @@ export class PracticeArena {
         (p.grounded || this.now - this.lastGroundedAt <= 0.09)) {
       // A fresh jump after the launcher cancels its recovery into an air chase.
       const chaseJump = launchFollowUp && p.grounded;
-      p.vy = chaseJump ? -760 : -650;
+      const rocketJump = !chaseJump && p.grounded && this.dashUntil > this.now;
+      p.vy = chaseJump ? -760 : rocketJump ? -690 : -650;
+      if (rocketJump) {
+        this.rocketUntil = this.now + ROCKET_DURATION;
+        this.rocketDirection = this.dashDirection;
+        this.dashUntil = 0;
+        this.stats.rocketSteps++;
+      }
       p.grounded = false;
       if (chaseJump) {
         this.stats.chaseJumps++;
@@ -183,6 +235,8 @@ export class PracticeArena {
     if (p.grounded) {
       this.lastGroundedAt = this.now;
       this.diving = false;
+      this.rocketUntil = 0;
+      this.shadowUntil = 0;
     }
     if (this.stats.targetHp > 0 && this.targetY < FLOOR) {
       this.targetVy = Math.min(this.targetVy + 1200 * dt, 950);
@@ -220,14 +274,23 @@ export class PracticeArena {
       this.targetY < FLOOR - 10;
 
     if (this.controls.charge) {
-      this.stats.chargePercent = Math.min(100, Math.floor((this.now - this.chargeStartedAt) / 0.65 * 100));
+      const secondsHeld = Math.max(0, this.now - this.chargeStartedAt);
+      this.stats.chargeLevel = Math.min(3, Math.floor((secondsHeld + 0.000001) / CHARGE_SECONDS_PER_BAR));
+      this.stats.chargePercent = Math.min(100, Math.floor(secondsHeld /
+        (CHARGE_SECONDS_PER_BAR * 3) * 100));
     }
     if (this.pendingChargeRelease !== null) {
       const held = this.pendingChargeRelease;
       this.pendingChargeRelease = null;
-      if (held >= 0.65 && this.stats.mp >= MP_SKILL_COST) this.useSkill();
+      const level = Math.min(3, Math.floor((held + 0.000001) / CHARGE_SECONDS_PER_BAR));
+      if (level > 0) this.useSkill(level as 1 | 2 | 3);
+      this.stats.chargeLevel = 0;
     }
-    if (this.controls.skill) this.useSkill();
+    if (this.pendingSkillLevel > 0) {
+      const level = this.pendingSkillLevel;
+      this.pendingSkillLevel = 0;
+      this.useSkill(level);
+    }
     // J can be held to repeat for accessibility; a fast tap is buffered.
     // Holding Z charges without auto-repeating basic strikes.
     if ((this.controls.attack || this.now <= this.attackBufferUntil) &&
@@ -239,6 +302,19 @@ export class PracticeArena {
     const p = this.player;
     const airborne = !p.grounded;
     const dashAttack = this.now < this.dashUntil && !airborne;
+    const otto = p.grounded && this.ottoPending && this.controls.down === true;
+    this.ottoPending = false;
+    if (otto) {
+      this.dropUntil = this.now + 0.26;
+      p.y += 9; p.vy = 125; p.grounded = false;
+      this.hit(34, 155, 215, false, 'otto');
+      if (this.stats.lastDamage > 0) this.recordCombo(p.comboStage);
+      this.stats.ottoShots++;
+      this.action = 'otto';
+      this.actionStartedAt = this.now;
+      this.nextAttack = this.now + 0.2;
+      return true;
+    }
     const launcher = !airborne && !(this.now <= this.chaseUntil && this.targetY < FLOOR - 10) &&
       this.controls.up === true &&
       this.stats.combo > 0 && this.now - this.lastSuccessfulHit <= COMBO_WINDOW;
@@ -285,14 +361,20 @@ export class PracticeArena {
     this.lastSuccessfulHit = this.now;
   }
 
-  private useSkill() {
-    if (this.now < this.nextSkill || this.stats.mp < MP_SKILL_COST) return;
-    this.stats.mp -= MP_SKILL_COST;
-    this.hit(65, 174, 145, true, 'skill');
-    this.nextSkill = this.now + 1.45;
-    this.player.flash = 0.35;
+  private useSkill(level: 1 | 2 | 3 = 1) {
+    const cost = MP_PER_BAR * level;
+    if (this.now < this.nextSkill || this.stats.mp < cost) return false;
+    this.stats.mp -= cost;
+    this.hit([0, 65, 115, 180][level], [0, 174, 208, 252][level],
+      [0, 145, 190, 250][level], true, 'skill');
+    this.nextSkill = this.now + 1.2 + level * 0.25;
+    this.player.flash = 0.35 + (level - 1) * 0.12;
     this.action = 'skill';
     this.actionStartedAt = this.now;
+    this.currentSkillLevel = level;
+    this.stats.lastSkillLevel = level;
+    this.stats.skillCasts++;
+    return true;
   }
 
   private hit(damage: number, range: number, verticalRange: number, area: boolean,
@@ -307,7 +389,7 @@ export class PracticeArena {
     const dealt = Math.min(this.stats.targetHp, damage);
     this.stats.targetHp -= dealt;
     this.stats.lastDamage = dealt;
-    this.stats.mp = Math.min(100, this.stats.mp + Math.max(6, Math.round(dealt * 0.25)));
+    this.stats.mp = Math.min(MAX_MP, this.stats.mp + Math.max(6, Math.round(dealt * 0.25)));
     this.targetFlash = 0.18;
     this.impactSequence++;
     this.lastImpactAt = this.now;
@@ -341,6 +423,11 @@ export class PracticeArena {
     this.controls = { ...EMPTY_CONTROLS };
     this.pendingChargeRelease = null;
     this.stats.chargePercent = 0;
+    this.stats.chargeLevel = 0;
+    this.pendingSkillLevel = 0;
+    this.ottoPending = false;
+    this.rocketUntil = 0;
+    this.shadowUntil = 0;
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
     this.attackBufferUntil = Number.NEGATIVE_INFINITY;
     this.dashUntil = 0;
@@ -355,10 +442,11 @@ export class PracticeArena {
     });
     Object.assign(this.stats, {
       targetHp: DUMMY_HP, defeated: 0, strikes: 0, lastDamage: 0,
-      combo: 0, bestCombo: 0, mp: 40, chargePercent: 0, dashes: 0, aerialHits: 0,
+      combo: 0, bestCombo: 0, mp: 100, chargePercent: 0, chargeLevel: 0, skillCasts: 0, lastSkillLevel: 0, dashes: 0, aerialHits: 0,
     launchers: 0, dives: 0,
     chaseJumps: 0, juggles: 0, juggleChain: 0, bestJuggle: 0,
     chaseReady: false,
+    rocketSteps: 0, shadowSteps: 0, dashCancels: 0, ottoShots: 0,
     });
     this.controls = { ...EMPTY_CONTROLS };
     this.now = 0; this.nextAttack = 0; this.nextSkill = 0;
@@ -374,6 +462,9 @@ export class PracticeArena {
     this.jumpQueuedUntil = Number.NEGATIVE_INFINITY;
     this.dropUntil = 0; this.dashUntil = 0; this.dashDirection = 0;
     this.chargeStartedAt = 0; this.pendingChargeRelease = null;
+    this.pendingSkillLevel = 0; this.currentSkillLevel = 1;
+    this.rocketUntil = 0; this.rocketDirection = 1;
+    this.shadowUntil = 0; this.ottoPending = false;
     this.resetDummyAt = 0; this.targetFlash = 0;
     this.action = null; this.actionStartedAt = Number.NEGATIVE_INFINITY;
   }
@@ -404,6 +495,9 @@ export class PracticeArena {
         flash: p.flash, color: 0x86dcca, comboStage: p.comboStage,
         airborne: !p.grounded, falling: p.vy >= 0,
         dashing: this.now < this.dashUntil, velocityX: p.vx,
+        rocket: this.rocketUntil > this.now && !p.grounded,
+        shadow: this.shadowUntil > this.now && !p.grounded,
+        skillLevel: this.action === 'skill' ? this.currentSkillLevel : undefined,
         combatAction: animating ? this.action! : undefined,
         actionElapsedMs: animating ? elapsed : undefined,
       }],
