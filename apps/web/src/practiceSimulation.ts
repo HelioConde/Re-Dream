@@ -21,8 +21,8 @@ const CHARGE_SECONDS_PER_BAR = 0.65;
 const ROCKET_SPEED = 715;
 const ROCKET_DURATION = 0.52;
 
-type CombatAction = 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive';
-type ImpactKind = 'basic' | 'air' | 'dash' | 'skill' | 'launcher' | 'dive';
+type CombatAction = 'attack' | 'air_attack' | 'dash_attack' | 'skill' | 'launcher' | 'dive' | 'otto';
+type ImpactKind = 'basic' | 'air' | 'dash' | 'skill' | 'launcher' | 'dive' | 'otto';
 type TrainingPlayer = {
   x: number; y: number; vy: number; vx: number; grounded: boolean;
   facing: number; hp: number; flash: number; score: number;
@@ -289,7 +289,7 @@ export class PracticeArena {
     if (this.pendingSkillLevel > 0) {
       const level = this.pendingSkillLevel;
       this.pendingSkillLevel = 0;
-      this.useSkill(level);
+      this.useSkill(level as 1 | 2 | 3);
     }
     // J can be held to repeat for accessibility; a fast tap is buffered.
     // Holding Z charges without auto-repeating basic strikes.
