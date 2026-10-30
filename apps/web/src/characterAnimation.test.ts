@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { AREN_ACTIONS, AREN_FRAME_COUNTS, selectArenAnimation, ArenLandingTracker, ArenActionPhaseTracker, chooseArenAction } from './arenAnimation';
+import { AREN_ACTIONS, AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, AREN_FRAME_SIZE, AREN_FOOT_ANCHOR_Y, AREN_HEALTHBAR_OFFSET_Y, AREN_NAME_OFFSET_Y, selectArenAnimation, ArenLandingTracker, ArenActionPhaseTracker, chooseArenAction } from './arenAnimation';
 import { CHARACTER_IDS, DEFAULT_CHARACTER, isCharacterId } from './protocol';
 import { CHARACTERS } from './characters';
 
@@ -180,4 +180,18 @@ test('V4: key poses remain distinct across anticipation, impact, recovery', () =
     assert.notEqual(first,mid,action+' anticipation must differ from contact');
     assert.notEqual(mid,last,action+' contact must differ from recovery');
   }
+});
+
+test('V5: Aren stays proportional to the 720px platform stage and guardian', () => {
+  // Prevent returning to the old oversized 235px rendering seen in the playtest.
+  assert.ok(AREN_DISPLAY_SIZE >= 144 && AREN_DISPLAY_SIZE <= 176);
+  assert.ok(AREN_DISPLAY_SIZE < AREN_FRAME_SIZE);
+  assert.equal(AREN_FRAME_SIZE,192);
+  // The authored SVG sole sits on the 192px bottom edge, not at 180.
+  assert.equal(AREN_FOOT_ANCHOR_Y,AREN_FRAME_SIZE);
+  const artYOffset=AREN_DISPLAY_SIZE*(AREN_FRAME_SIZE-AREN_FOOT_ANCHOR_Y)/AREN_FRAME_SIZE;
+  assert.equal(artYOffset,0);
+  // Online names/HP must remain above the scaled hero, not across the face.
+  assert.ok(AREN_HEALTHBAR_OFFSET_Y>=AREN_DISPLAY_SIZE);
+  assert.ok(AREN_NAME_OFFSET_Y>AREN_HEALTHBAR_OFFSET_Y);
 });
