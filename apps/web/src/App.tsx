@@ -59,7 +59,7 @@ export default function App() {
     clearLocalProfile();
     setLocalProfile({ ...EMPTY_PROFILE });
     setName('');
-    setSelectedCharacter('luci');
+    setSelectedCharacter('aren');
     setRoomInput('');
   };
 
@@ -229,7 +229,7 @@ export default function App() {
       </header>}
 
       {practiceActive ? (
-        <PracticeMode characterId={selectedCharacter} nickname={name.trim() || 'Luci'} onExit={exitPractice}/>
+        <PracticeMode characterId={selectedCharacter} nickname={name.trim() || 'Aren'} onExit={exitPractice}/>
       ) : isLobby ? (
         <main className="lobby-page" id="jogar">
           <div className="lobby-ambient" aria-hidden="true">✧</div>
@@ -247,7 +247,7 @@ export default function App() {
               {Array.from({ length: 4 }, (_, i) => {
                 const adventurer = snapshot?.players[i];
                 return <div className={'lobby-slot ' + (adventurer ? 'occupied' : '')} key={i} role="listitem">
-                  <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'rose') : '')}
+                  <div className={'lobby-avatar ' + (adventurer ? 'sprite-' + (adventurer.characterId || 'aren') : '')}
                     style={adventurer ? {
                       backgroundImage: `url(${import.meta.env.BASE_URL}${getCharacter(adventurer.characterId).preview})`,
                       backgroundSize: getCharacter(adventurer.characterId).artSize,
