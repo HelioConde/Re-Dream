@@ -1,5 +1,6 @@
 import { BASIC_ATTACK_ANIM_MS } from './attackPlayback';
 import type { SpriteChoice } from './characterAnimation';
+import type { LocomotionState } from './locomotionFsm';
 
 // A single transparent cell size for every authentic Luci animation.
 // The importer never shrinks a larger PixelLab canvas to 128x128.
@@ -39,6 +40,7 @@ export type LuciVisualState = {
   skill: boolean;
   dashing?: boolean;
   running?: boolean;
+  locomotion?: LocomotionState;
   dashAttacking?: boolean;
   launching?: boolean;
   diving?: boolean;
@@ -65,7 +67,15 @@ export function selectLuciAnimation(s: LuciVisualState): SpriteChoice {
     frame = Math.max(0, Math.min(count - 1,
       Math.floor(s.attackElapsed / BASIC_ATTACK_ANIM_MS * count)));
   } else {
-    if (s.airborne) action = s.falling ? 'jump_fall_east' : 'jump_air_east';
+    if (s.locomotion) {
+      // The simulation's FSM is the source of truth in offline practice.
+      // No additional character sprites are invented for Rocket/Shadow.
+      if (s.locomotion === 'rise' || s.locomotion === 'rocket') action = 'jump_air_east';
+      else if (s.locomotion === 'fall' || s.locomotion === 'shadow') action = 'jump_fall_east';
+      else if (s.locomotion === 'dash') action = 'dash_east';
+      else if (s.locomotion === 'run') action = 'run_east';
+      else if (s.locomotion === 'walk') action = 'walk_east';
+    } else if (s.airborne) action = s.falling ? 'jump_fall_east' : 'jump_air_east';
     else if (s.dashing) action = 'dash_east';
     else if (s.moving) action = s.running ? 'run_east' : 'walk_east';
     const fps = action === 'run_east' ? 15 : action === 'walk_east' ? 9 : action === 'idle_east' ? 9 : 12;

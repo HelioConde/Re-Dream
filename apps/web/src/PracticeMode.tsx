@@ -3,6 +3,12 @@ import GameCanvas from './GameCanvas';
 import { PracticeArena, type TrainingStats } from './practiceSimulation';
 import { EMPTY_CONTROLS, type CharacterId, type Control, type PracticeInput, type Snapshot } from './protocol';
 import { characterName } from './characters';
+import type { LocomotionState } from './locomotionFsm';
+
+const locomotionLabels: Record<LocomotionState, string> = {
+  idle: 'Parado', walk: 'Andando', dash: 'Dash', run: 'Correndo',
+  rise: 'Subindo', fall: 'Caindo', rocket: 'Rocket Step', shadow: 'Shadow Step',
+};
 
 type Props = { characterId: CharacterId; nickname: string; onExit: () => void };
 const touchLabels: Record<'left'|'right'|'jump'|'down'|'drop'|'attack'|'charge', string> = {
@@ -138,7 +144,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       </div>}
     </section>
     <div className="game-bottom practice-stats">
-      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>🏃 CORRIDAS <strong>{stats.runs}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span><span>🚀 ROCKET <strong>{stats.rocketSteps}</strong></span><span>↓ SHADOW <strong>{stats.shadowSteps}</strong></span><span>↓ DESCIDAS <strong>{stats.drops}</strong></span><span>↔ CANCEL <strong>{stats.dashCancels}</strong></span><span>✦ OTTO <strong>{stats.ottoShots}</strong></span></div>
+      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>🏃 CORRIDAS <strong>{stats.runs}</strong></span><span>◈ ESTADO <strong>{locomotionLabels[stats.locomotion]}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span><span>🚀 ROCKET <strong>{stats.rocketSteps}</strong></span><span>↓ SHADOW <strong>{stats.shadowSteps}</strong></span><span>↓ DESCIDAS <strong>{stats.drops}</strong></span><span>↔ CANCEL <strong>{stats.dashCancels}</strong></span><span>✦ OTTO <strong>{stats.ottoShots}</strong></span></div>
       <div className="practice-combat-meters" aria-label="Indicadores de combate">
         <div className="practice-meter">
           <div className="practice-meter-label"><span>✦ MP · 3 níveis</span><strong>{stats.mp}/300</strong></div>

@@ -218,6 +218,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
                 skill: isYou && practiceMode ? player.combatAction === 'skill' : isYou && input.skill,
                 dashing: isYou && practiceMode && Boolean(player.dashing),
                 running: isYou && practiceMode && Boolean(player.running),
+                locomotion: isYou && practiceMode ? player.locomotion : undefined,
                 dashAttacking: isYou && practiceMode && player.combatAction === 'dash_attack',
                 launching: isYou && practiceMode && player.combatAction === 'launcher',
                 diving: isYou && practiceMode && (player.combatAction === 'dive' || player.combatAction === 'otto'),
