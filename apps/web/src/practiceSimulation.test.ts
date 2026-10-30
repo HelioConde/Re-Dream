@@ -916,9 +916,12 @@ test('pausing with Z held never emits a skill or reset event', () => {
   a.player.x=800;
   a.setInput({...noInput,charge:true});
   for(let i=0;i<32;i++)a.step(1/30);
-  const count=events.length;
+  const confirmedBefore=events.filter(e=>e.type==='impactConfirmed').length;
   a.suspend();
+  // In the real UI, suspend also stops the RAF-driven simulation. Directly
+  // stepping a paused arena may still expire an old combo, but cannot cast Z.
   for(let i=0;i<10;i++)a.step(1/30);
-  assert.equal(events.length,count);
+  assert.equal(events.filter(e=>e.type==='impactConfirmed').length,confirmedBefore);
   assert.equal(events.some(e=>e.type==='mpChanged' && e.reason==='skill'),false);
+  assert.equal(events.some(e=>e.type==='reset'),false);
 });
