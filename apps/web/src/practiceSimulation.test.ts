@@ -406,6 +406,9 @@ test('Shadow Step cancels an active Rocket and accelerates descent', () => {
   a.setInput(noInput);a.step(1/30);
   a.setInput({ ...noInput, right:true });a.step(1/30);
   a.setInput({ ...noInput, right:true, jump:true, up:true });a.step(1/30);
+  // Build some height before testing the fast descent, otherwise it lands
+  // on the first shadow frame and the short-lived visual state is gone.
+  for (let i=0;i<5;i++) a.step(1/30);
   a.setInput({ ...noInput, down:true });a.step(1/30);
   assert.equal(a.stats.shadowSteps, 1);
   assert.equal(a.snapshot().players[0].shadow, true);
