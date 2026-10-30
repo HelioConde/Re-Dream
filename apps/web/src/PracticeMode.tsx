@@ -5,10 +5,11 @@ import { EMPTY_CONTROLS, type CharacterId, type Control, type PracticeInput, typ
 import { characterName } from './characters';
 
 type Props = { characterId: CharacterId; nickname: string; onExit: () => void };
-const touchLabels: Record<'left'|'right'|'jump'|'down'|'attack'|'skill', string> = {
+const touchLabels: Record<'left'|'right'|'jump'|'down'|'drop'|'attack'|'charge'|'skill', string> = {
   left: 'Mover para a esquerda', right: 'Mover para a direita',
   jump: 'Pular', down: 'Descer da plataforma',
-  attack: 'Atacar', skill: 'Usar habilidade',
+  drop: 'Descer segurando para baixo', attack: 'Atacar com J',
+  charge: 'Atacar com Z ou segurar para carregar MP', skill: 'Usar habilidade nível 1',
 };
 export default function PracticeMode({ characterId, nickname, onExit }: Props) {
   const arenaRef = useRef<PracticeArena | null>(null);
@@ -77,9 +78,13 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
     };
   }, [arena, pauseTraining]);
 
-  const touch = (key: keyof PracticeInput, active: boolean) => {
+  const touch = (key: Exclude<keyof PracticeInput, 'skillLevel'>, active: boolean) => {
     if (pausedRef.current) return;
     mobileRef.current = { ...mobileRef.current, [key]: active };
+  };
+  const touchSkill = (level: 0 | 1 | 2 | 3) => {
+    if (pausedRef.current) return;
+    mobileRef.current = { ...mobileRef.current, skillLevel: level };
   };
   const reset = () => {
     mobileRef.current = { ...EMPTY_CONTROLS };
@@ -122,19 +127,23 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
       </div>}
     </section>
     <div className="game-bottom practice-stats">
-      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span></div>
+      <div className="stats"><span>✊ GOLPES <strong>{stats.strikes}</strong></span><span>⚔ ÚLTIMO DANO <strong>{stats.lastDamage}</strong></span><span>✧ ALVOS <strong>{stats.defeated}</strong></span><span>⚡ DASHES <strong>{stats.dashes}</strong></span><span>↗ AÉREOS <strong>{stats.aerialHits}</strong></span><span>↑ LANÇAMENTOS <strong>{stats.launchers}</strong></span><span>↓ ESTOCADAS <strong>{stats.dives}</strong></span><span>↗ PERSEGUIÇÕES <strong>{stats.chaseJumps}</strong></span><span>✦ JUGGLES <strong>{stats.juggles}</strong></span><span>🚀 ROCKET <strong>{stats.rocketSteps}</strong></span><span>↓ SHADOW <strong>{stats.shadowSteps}</strong></span><span>↔ CANCEL <strong>{stats.dashCancels}</strong></span><span>✦ OTTO <strong>{stats.ottoShots}</strong></span></div>
       <div className="practice-combat-meters" aria-label="Indicadores de combate">
         <div className="practice-meter">
-          <div className="practice-meter-label"><span>✦ MP</span><strong>{stats.mp}/100</strong></div>
-          <div className="practice-meter-track"><span style={{width: stats.mp+'%'}}/></div>
+          <div className="practice-meter-label"><span>✦ MP · 3 níveis</span><strong>{stats.mp}/300</strong></div>
+          <div className="practice-mp-segments" aria-label="Três barras de MP">
+            {([0, 1, 2] as const).map(bar => <span key={bar} className="practice-mp-segment">
+              <i style={{width: Math.max(0, Math.min(100, stats.mp - bar * 100)) + '%'}}/>
+            </span>)}
+          </div>
         </div>
         <div className="practice-meter">
-          <div className="practice-meter-label"><span>⚡ Carga Z</span><strong>{stats.chargePercent}%</strong></div>
+          <div className="practice-meter-label"><span>⚡ Carga Z</span><strong>{stats.chargeLevel > 0 ? 'Nível ' + stats.chargeLevel : stats.chargePercent + '%'}</strong></div>
           <div className="practice-meter-track charge"><span style={{width: stats.chargePercent+'%'}}/></div>
         </div>
         <strong className="practice-combo-label" aria-live="off">{stats.juggleChain > 0 ? stats.juggleChain+' AIR JUGGLE · '+stats.combo+' HIT' : stats.combo > 1 ? stats.combo+' HIT COMBO' : 'COMBO · '+stats.bestCombo+' recorde'}</strong>
       </div>
-      <div className="controls-legend"><span>← → / A D mover · toque duplo: dash</span><span>↑ / W pular</span><span>↓ / S descer plataforma</span><span>J: combo · ↑+J no combo: lançar</span><span>Após lançar: solte ↑, pule ↑, ataque J no ar</span><span>Durante o pulo ↓+J: estocada</span><span>Z: ataque imediato / segure para carregar</span><span>K / X: habilidade</span></div>
+      <div className="controls-legend"><span>← → mover · duplo toque: dash</span><span>Dash + ↑: Rocket Step · ↓ no ar: Shadow Step</span><span>Dash + direção oposta: cancelar</span><span>↓ + Espaço: descer plataforma</span><span>Z: combo · segure e solte: MP nível 1/2/3</span><span>A / S / D: especiais nível 1 / 2 / 3</span><span>↑+Z no combo: lançar · ↑ novamente: perseguir</span><span>↓+Z no ar: estocada · ↓+Z na borda: Otto</span><span>J e W: alternativas para ataque e salto</span></div>
     </div>
     <div className="touch-controls" aria-label="Controles de treino para dispositivos móveis">
       <div className="touch-group">
@@ -145,17 +154,24 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
             onLostPointerCapture={()=>touch(key,false)}>{label}</button>)}
       </div>
       <div className="touch-group">
-        {([['attack','✊'],['skill','✧']] as const).map(([key,label]) =>
+        {([['attack','J'],['charge','Z'],['drop','↓+Espaço']] as const).map(([key,label]) =>
           <button key={key} type="button" className="touch-key touch-attack" aria-label={touchLabels[key]} disabled={paused}
             onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);touch(key,true);}}
             onPointerUp={()=>touch(key,false)} onPointerCancel={()=>touch(key,false)}
             onLostPointerCapture={()=>touch(key,false)}>{label}</button>)}
+        {([1,2,3] as const).map(level =>
+          <button key={level} type="button" className="touch-key touch-skill" aria-label={'Habilidade MP nível ' + level}
+            disabled={paused} onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);touchSkill(level);}}
+            onPointerUp={()=>touchSkill(0)} onPointerCancel={()=>touchSkill(0)}
+            onLostPointerCapture={()=>touchSkill(0)}>{'MP '+level}</button>)}
       </div>
     </div>
-    <aside className="practice-hint"><strong>Treino estilo Grand Chase, identidade Re:Dream:</strong> durante o combo, pressione ↑ + J (ou ↑ + Z) para lançar o alvo para cima.
-      Solte ↑ e pressione novamente logo após lançar para cancelar a recuperação, alcançar o alvo e acertá-lo com J no ar. Acertos aéreos renovam brevemente a altura do alvo; ↓ + J ou Z é a estocada final que o derruba.
-      Durante um salto normal, ↓ + J (ou ↓ + Z) também faz uma estocada. J ou Z sozinho no ar executa o ataque aéreo normal.
-      No celular, use ↑ ou ↓ junto com o botão de ataque. Segurar Z carrega uma habilidade quando houver MP; K ou X ativa uma habilidade direta.
-      Duplo toque em ←/→ dá dash; ↓ sozinho, sobre uma plataforma, atravessa a plataforma. O boneco reaparece após ser derrotado. Sem servidor ou recompensas online.</aside>
+    <aside className="practice-hint"><strong>Movimentos avançados do Luci:</strong> setas ←/→ para andar, duas vezes a mesma seta para dash e ↑ durante o dash para Rocket Step.
+      Toque ↓ durante o Rocket para Shadow Step (descida rápida); pressione a direção oposta durante o dash para cancelar o avanço.
+      Na borda de uma plataforma, ↓+Z executa ataque de descida (Otto); para atravessar plataformas sem atacar, use ↓+Espaço.
+      Z é o ataque principal: toques sucessivos fazem combo e segurar por cerca de 0,65 / 1,30 / 1,95 s carrega os níveis de MP 1, 2 e 3; solte para executar o nível carregado quando houver MP.
+      A, S e D executam os especiais correspondentes imediatamente. Cada barra custa 100 MP; ataques recuperam MP.
+      ↑+Z durante um combo lança o inimigo, ↑ novamente persegue e ↓+Z no ar finaliza com estocada.
+      J permanece como alternativa de ataque; W pode pular. O modo Praticar é offline e não modifica o combate multiplayer.</aside>
   </main>;
 }

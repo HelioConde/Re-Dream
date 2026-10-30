@@ -69,7 +69,7 @@ test('double tap activates directional dash with a finite speed burst', () => {
 test('down drops through one-way platforms, but not through the floor', () => {
   const arena = new PracticeArena();
   Object.assign(arena.player, { x: 300, y: 466, vy: 0, grounded: true });
-  arena.setInput({ ...noInput, down: true });
+  arena.setInput({ ...noInput, down: true, drop: true });
   arena.step(1 / 30);
   assert.ok(arena.player.y > 466);
   arena.setInput(noInput);
@@ -113,7 +113,8 @@ test('short Z taps attack; holding Z spends MP to perform a charged skill', () =
   long.player.x = 800;
   long.setInput({ ...noInput, charge: true });
   for (let i = 0; i < 25; i++) long.step(1 / 30);
-  assert.equal(long.stats.chargePercent, 100);
+  assert.equal(long.stats.chargeLevel, 1);
+  assert.ok(long.stats.chargePercent > 40 && long.stats.chargePercent < 50);
   long.setInput(noInput);
   long.step(1 / 30);
   // Z makes one immediate punch and then a charged special on release.
@@ -382,4 +383,134 @@ test('juggle chain clears when the opponent lands and reset clears all progress'
   assert.equal(arena.stats.bestJuggle, 0);
   assert.equal(arena.stats.chaseJumps, 0);
   assert.equal(arena.stats.chaseReady, false);
+});
+
+
+test('Rocket Step converts a grounded dash into fast airborne momentum', () => {
+  const a = new PracticeArena();
+  a.setInput({ ...noInput, right: true }); a.step(1/30);
+  a.setInput(noInput); a.step(1/30);
+  a.setInput({ ...noInput, right: true }); a.step(1/30);
+  a.setInput({ ...noInput, right: true, jump: true, up: true }); a.step(1/30);
+  assert.equal(a.stats.rocketSteps, 1);
+  assert.equal(a.snapshot().players[0].rocket, true);
+  assert.ok(a.player.vy < -620);
+  a.setInput(noInput);
+  a.step(1/30);
+  assert.ok(a.player.vx >= 700, 'rocket momentum persists after releasing direction');
+});
+
+test('Shadow Step cancels an active Rocket and accelerates descent', () => {
+  const a = new PracticeArena();
+  a.setInput({ ...noInput, right:true });a.step(1/30);
+  a.setInput(noInput);a.step(1/30);
+  a.setInput({ ...noInput, right:true });a.step(1/30);
+  a.setInput({ ...noInput, right:true, jump:true, up:true });a.step(1/30);
+  // Build some height before testing the fast descent, otherwise it lands
+  // on the first shadow frame and the short-lived visual state is gone.
+  for (let i=0;i<5;i++) a.step(1/30);
+  a.setInput({ ...noInput, down:true });a.step(1/30);
+  assert.equal(a.stats.shadowSteps, 1);
+  assert.equal(a.snapshot().players[0].shadow, true);
+  assert.equal(a.snapshot().players[0].rocket, false);
+  assert.ok(a.player.vy >= 670);
+});
+
+test('opposite direction interrupts dash immediately rather than giving another dash', () => {
+  const a = new PracticeArena();
+  a.setInput({ ...noInput, right: true }); a.step(1/30);
+  a.setInput(noInput); a.step(1/30);
+  a.setInput({ ...noInput, right: true }); a.step(1/30);
+  assert.ok(a.player.vx > 600);
+  a.setInput({ ...noInput, left: true }); a.step(1/30);
+  assert.equal(a.stats.dashCancels, 1);
+  assert.equal(a.stats.dashes, 1);
+  assert.ok(a.player.vx < 0);
+});
+
+test('down alone stays on an elevated platform, down+space drops through it', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player, {x:300,y:466,grounded:true,vy:0});
+  a.setInput({ ...noInput, down:true });
+  a.step(1/30);
+  assert.equal(a.player.y,466);
+  a.setInput({...noInput,down:true,drop:true});
+  a.step(1/30);
+  assert.ok(a.player.y >466);
+});
+
+test('Otto at platform edge is a downward strike, not a teleport or floor clip', () => {
+  const a = new PracticeArena();
+  Object.assign(a.player,{x:900,y:414,vy:0,grounded:true,facing:-1});
+  a.setInput({...noInput, down:true, charge:true});
+  a.step(1/30);
+  assert.equal(a.stats.ottoShots,1);
+  assert.equal(a.snapshot().players[0].combatAction,'otto');
+  assert.equal(a.snapshot().impact?.kind,'otto');
+  assert.equal(a.stats.targetHp,226);
+  a.setInput(noInput);
+  for(let i=0;i<60;i++) a.step(1/30);
+  assert.equal(a.player.y,596);
+});
+
+test('three MP stocks charge to level 1/2/3 and consume correct costs', () => {
+  const damage = [0,65,115,180];
+  for (const level of [1,2,3] as const) {
+    const a = new PracticeArena();
+    a.player.x=800;
+    a.stats.mp=300;
+    a.setInput({...noInput,charge:true});
+    const ticks=Math.ceil((level*0.65+0.05)*30);
+    for(let i=0;i<ticks;i++)a.step(1/30);
+    assert.equal(a.stats.chargeLevel,level);
+    a.setInput(noInput);
+    a.step(1/30);
+    assert.equal(a.stats.skillCasts,1);
+    assert.equal(a.stats.lastSkillLevel,level);
+    assert.equal(a.stats.targetHp,260-24-damage[level]);
+    assert.ok(a.stats.mp<=300-level*100+50);
+  }
+});
+
+test('A/S/D level shortcuts consume MP only once per press', () => {
+  const damage=[0,65,115,180];
+  for (const level of [1,2,3] as const) {
+    const a=new PracticeArena();
+    a.player.x=800;
+    a.stats.mp=300;
+    a.setInput({...noInput, skillLevel:level});
+    a.step(1/30);
+    for(let i=0;i<20;i++)a.step(1/30);
+    assert.equal(a.stats.targetHp,260-damage[level]);
+    assert.equal(a.stats.skillCasts,1);
+    assert.equal(a.stats.lastSkillLevel,level);
+  }
+});
+
+test('skill shortcuts cannot use higher level without enough MP', () => {
+  const a=new PracticeArena();
+  a.player.x=800;
+  assert.equal(a.stats.mp,100);
+  a.setInput({...noInput,skillLevel:3});
+  a.step(1/30);
+  assert.equal(a.stats.skillCasts,0);
+  assert.equal(a.stats.targetHp,260);
+  assert.equal(a.stats.mp,100);
+});
+
+test('pause and reset clear Rocket, Shadow and charged MP input', () => {
+  const a = new PracticeArena();
+  a.setInput({...noInput,right:true});a.step(1/30);
+  a.setInput(noInput);a.step(1/30);
+  a.setInput({...noInput,right:true});a.step(1/30);
+  a.setInput({...noInput,right:true,jump:true,up:true,charge:true});a.step(1/30);
+  assert.equal(a.stats.rocketSteps,1);
+  a.suspend();a.step(1/30);
+  assert.equal(a.snapshot().players[0].rocket,false);
+  assert.equal(a.stats.chargeLevel,0);
+  a.reset();
+  assert.equal(a.stats.mp,100);
+  assert.equal(a.stats.rocketSteps,0);
+  assert.equal(a.stats.ottoShots,0);
+  assert.equal(a.stats.dashCancels,0);
 });

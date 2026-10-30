@@ -156,3 +156,14 @@
 .practice-chase-prompt strong{font:900 clamp(13px,2vw,21px)/1.2 Outfit,system-ui,sans-serif;letter-spacing:.08em}
 .practice-chase-prompt small{font-size:clamp(10px,1.2vw,13px);line-height:1.35;color:#f4dfb5}
 @media(max-width:620px){.practice-chase-prompt{bottom:5%;width:85%;padding:6px 9px;border-radius:7px}.practice-chase-prompt small{font-size:10px}}
+
+/* Three independently filled MP stocks keep the cost of each charged spell clear. */
+.practice-mp-segments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.practice-mp-segment{display:block;height:11px;overflow:hidden;border-radius:5px;border:1px solid #699bce70;background:#0c1633}
+.practice-mp-segment i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#6c9ded,#b9daff);transition:width .12s linear}
+.practice-mp-segment:nth-child(2) i{background:linear-gradient(90deg,#847bfa,#cdb7ff)}
+.practice-mp-segment:nth-child(3) i{background:linear-gradient(90deg,#bd72f1,#ffc2fd)}
+.practice-page .touch-skill{font-size:11px;font-weight:900;min-width:53px;background:#2d315a;border-color:#897dd5}
+.practice-page .touch-attack{font-weight:900}
+@media(max-width:600px){.practice-mp-segments{gap:3px}.practice-page .touch-skill{min-width:48px}}
+@media(prefers-reduced-motion:reduce){.practice-mp-segment i{transition:none}}

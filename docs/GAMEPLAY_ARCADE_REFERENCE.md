@@ -26,6 +26,38 @@ O objetivo é reproduzir **a sensação de jogo** de action-platformers 2D clás
 - O alvo tem 260 HP e retorna após a derrota.
 - Resultados e indicadores são locais; não há progressão permanente nem recompensas reais.
 
+## Controles clássicos adaptados (V5 — modo Praticar)
+
+A configuração principal é baseada em **setas + Z**; no treino, A, S e D não movem o personagem, pois são atalhos MP1/2/3. O modo cooperativo mantém os comandos antigos até migrarmos suas regras.
+
+| Ação | Teclado |
+| --- | --- |
+| Andar | ← ou → |
+| Dash | ←← ou →→ |
+| Rocket Step | Dash + ↑ (mantém impulso horizontal no ar por janela limitada) |
+| Shadow Step | Rocket Step + ↓ durante o voo (encurta o salto) |
+| Dash Cancel | Direção oposta ao dash |
+| Pular | ↑; W como alternativa |
+| Descer plataforma vazada | ↓ + Espaço (↓ sozinho não faz mais descer) |
+| Otto adaptado | ↓ + Z na borda de plataforma vazada; golpe descendente com colisão |
+| Ataque básico e carregamento | Z; J é alternativa para ataque sem carga |
+| MP1, MP2, MP3 | Segurar Z por 0,65 s / 1,30 s / 1,95 s, soltar e consumir 1/2/3 barras |
+| Atalhos MP | A = MP1, S = MP2, D = MP3 |
+| Launcher e perseguição | ↑+Z no combo, soltar ↑ e pressionar de novo |
+| Estocada aérea | ↓+Z durante o salto |
+
+**MP:** são três reservas visíveis de 100 pontos cada (300 total); ataques recuperam MP. Carga em Z não executa habilidades sem MP suficiente; pressionar Z faz o primeiro ataque imediatamente e não repete automaticamente enquanto se mantém pressionado. Habilidades usam a spritesheet autoral disponível com efeitos ajustados ao nível; não há três animações totalmente distintas ainda.
+
+**Escopo não implementado:** inventário/itens no X/Espaço, provocações, AP, troca de arma, agarrão, contra-ataque e passos avançados específicos de classe. Otto é uma adaptação jogável inicial, não uma reprodução exata de cadências ou glitches históricos.
+
+### QA manual adicional
+- Dash → ↑: contar Rocket; soltar direção e verificar que conserva brevemente o impulso no ar.
+- Durante Rocket, ↓: acelerar a queda, contar Shadow; aterrissar no chão sólido sem atravessá-lo.
+- Dash → direção oposta: interromper dash, contador CANCEL aumenta.
+- Subir na borda de plataforma vazada, ↓+Z: Otto descendente; ↓ sozinho não atravessa, ↓+Espaço atravessa.
+- Z curto acerta; Z segurado permite escolher nível 1, 2 ou 3; com MP suficiente, soltar consome 100/200/300. A/S/D ativam diretamente e não drenam repetidamente ao segurar.
+- Modo multiplayer mantém atalhos originais e não recebe as novas regras até termos paridade no servidor.
+
 ## Limites atuais
 
 Esta etapa é **prototipagem offline**, não um clone concluído. As novas regras ainda não foram migradas ao servidor cooperativo, que mantém seus comandos e física atuais para não quebrar partidas. As animações de Luci aproveitam os quadros originais do PixelLab; não são quadros inventados. Outros personagens ainda usam pacotes temporários.
