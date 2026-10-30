@@ -27,6 +27,8 @@ export type ArenVisualState = {
   skillLevel?: 1|2|3;
   attackElapsedMs?: number|null;
   timeMs: number;
+  /** Local elapsed time since this visual state began; reset for each new action. */
+  actionAgeMs?: number;
   hurt?: boolean;
   landing?: boolean;
 };
@@ -69,7 +71,7 @@ export function selectArenAnimation(s: ArenVisualState): SpriteChoice {
     action === 'launcher' ? 420 : ['dive','otto'].includes(action) ? 650 : 330;
   const frame = attackOrSkill ?
     Math.min(count-1,Math.floor(elapsed / duration * count)) :
-    Math.floor(Math.max(0,s.timeMs) * (ACTION_FPS[action] ?? 12) / 1000) % count;
+    Math.floor(Math.max(0,s.actionAgeMs ?? s.timeMs) * (ACTION_FPS[action] ?? 12) / 1000) % count;
   return {texture:'aren-'+action+'-'+frame,frame:0,flipX:s.facing<0};
 }
 
@@ -104,4 +106,22 @@ export class ArenComboTracker {
     return old.combo || 1;
   }
   remove(id:string){this.state.delete(id);}
+}
+
+/** Visual timelines are restarted when the action changes, unlike the old
+ * global-timer selector. Purely cosmetic: never feeds physics or network.
+ */
+export class ArenActionPhaseTracker {
+  private actions = new Map<string,{action:ArenAction,startedAt:number,lastTime:number}>();
+  elapsed(id:string,action:ArenAction,timeMs:number):number {
+    const previous = this.actions.get(id);
+    const t = Number.isFinite(timeMs) ? Math.max(0,timeMs) : 0;
+    if(!previous || previous.action!==action || t < previous.lastTime) {
+      this.actions.set(id,{action,startedAt:t,lastTime:t});
+      return 0;
+    }
+    previous.lastTime=t;
+    return Math.max(0,t-previous.startedAt);
+  }
+  remove(id:string){this.actions.delete(id);}
 }

@@ -111,6 +111,48 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     path('M'+round(coreX-9)+' 65l17 4 -6 17 -17 -12z','#7ddcc5','opacity=".55"')+
     circle(coreX+15,72,5,'#dfd2a4')+
     circle(coreX+15,72,2.8,'#9affdb');
+
+  // V2: consistent layered costume details. All are authored vector paths
+  // attached to Aren's torso, so every movement frame keeps the same identity.
+  const costumeDetails = [
+    // A sweeping asymmetric shoulder pauldron, rather than an undetailed shirt.
+    path('M'+round(coreX+8)+' 71 q19 -13 31 6 l-8 20 -19 -9z',
+      '#cfdbd1','stroke="'+color.outline+'" stroke-width="3"'),
+    path('M'+round(coreX+12)+' 75 q13 -7 20 3 l-9 5z',
+      '#fcf5d9','opacity=".85"'),
+    path('M'+round(coreX+16)+' 83 l9 6 -11 5z',
+      '#5dc8b1'),
+    // Deep navy front vest with fine moonlit seams.
+    path('M'+round(coreX-15)+' 85 l18 9 17 -11 -3 28 -30 2z',
+      '#294457','stroke="#193447" stroke-width="2"'),
+    path('M'+round(coreX-8)+' 88 l11 8 -8 8z','#a6e0c8'),
+    line(coreX+1,98,coreX+5,111,'#b3d1c1',2.2),
+    // Three small original constellation clasps keep the costume recognisable.
+    circle(coreX+5,97,2.6,'#f8e6b7'),
+    circle(coreX+7,103,2.3,'#74edcb'),
+    circle(coreX+9,109,2.0,'#f8e6b7'),
+    // Braided hip sash + the crescent crest at the belt.
+    path('M'+round(coreX-20)+' 113 Q'+round(coreX)+' 119 '+round(coreX+22)+
+      ' 113 l3 8 q-22 10 -49 -1z',
+      '#436d72','stroke="'+color.outline+'" stroke-width="2"'),
+    line(coreX-15,119,coreX+16,119,'#d7c99c',2.8),
+    circle(coreX+5,119,7.1,'#e8dec8','stroke="#1e4656" stroke-width="2"'),
+    path('M'+round(coreX+4)+' 114 q-7 4 -2 10 q6 4 10 -2 q-7 2 -8 -8z',
+      '#54baaa'),
+    // Split coat tails animate with the direction of the lower body.
+    path('M'+round(coreX-23)+' 120 q-8 19 -5 29 q14 4 26 -7 l4 -17z',
+      '#d7ded2','stroke="#233a4e" stroke-width="3"'),
+    path('M'+round(coreX+16)+' 120 q8 13 10 27 q-10 6 -25 -6 l2 -18z',
+      '#c9d7cf','stroke="#233a4e" stroke-width="3"'),
+    path('M'+round(coreX-26)+' 145 q12 0 22 -7',
+      'none','stroke="#61c5ac" stroke-width="3"'),
+    path('M'+round(coreX+8)+' 138 l15 6',
+      'none','stroke="#61c5ac" stroke-width="3"'),
+    // Belt pouch, tiny and in front of the far hip.
+    path('M'+round(coreX-24)+' 117 q-11 6 -9 17 l14 4 8 -13z',
+      '#3d4a59','stroke="#142d40" stroke-width="3"'),
+    line(coreX-26,127,coreX-18,129,'#d0c09a',2.5),
+  ].join('');
   const neck=circle(coreX+2,70,10,color.skin);
   const face='<ellipse cx="'+round(coreX+4)+'" cy="'+round(headY)+'" rx="21" ry="26" fill="'+color.skin+
     '" stroke="'+color.outline+'" stroke-width="3.3"/>'+
@@ -128,6 +170,16 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
     path('M'+round(coreX-13)+' '+round(headY-30)+
     'q15 -18 30 -10 l-6 8 -10 -3 -7 16z',color.hairLight,'opacity=".75"')+
     path('M'+round(coreX-18)+' '+round(headY-5)+' q-8 -16 -2 -28 l8 12z',color.hair);
+  // The thin moon circlet, side ear crystal and expressive facial linework
+  // stay attached to the head instead of the old plain oval silhouette.
+  const faceAccessories =
+    path('M'+round(coreX-16)+' '+round(headY-19)+' Q'+round(coreX+4)+' '+round(headY-26)+
+      ' '+round(coreX+22)+' '+round(headY-18),'none',
+      'stroke="#e8e8d5" stroke-width="3.3"')+
+    circle(coreX+5,headY-24,4.1,'#7fead5','stroke="#f8efda" stroke-width="1.6"')+
+    path('M'+round(coreX-17)+' '+round(headY+4)+' l-7 7 7 7 5 -8z',
+      '#8fe3d2','stroke="#244358" stroke-width="2"')+
+    line(coreX+17,headY+11,coreX+23,headY+9,'#b78474',1.5);
   const scarf=path('M'+round(coreX-19)+' 71 q20 8 35 0 l-2 13 q-24 12 -40 -4z',
     color.cape,'stroke="'+color.outline+'" stroke-width="3"')+
     path('M'+round(coreX-14)+' 80q-28 8 -'+round(25+scarfMotion)+' 27q9 5 15 -2l'+round(21+scarfMotion)+' -11z',
@@ -161,6 +213,29 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
       'q-'+round(spread*.5)+' '+round(spread*.65)+' -'+round(spread*1.4)+' '+
       round(spread*.3),'none','stroke="#a2ffe0" stroke-width="'+(skill?5:2)+'" opacity=".65"')+
       circle(mainHandX+spread,mainHandY-12,2+level,'#f9fff1');
+    if (skill) {
+      // MP tiers have progressively more star-like shards. Their centers and
+      // movement are mathematical, never random; reduced-motion remains a
+      // responsibility of the Phaser overlay (these are authored still frames).
+      const cx=mainHandX+13,cy=mainHandY-15;
+      const shardCount=level*4+3;
+      for(let shard=0;shard<shardCount;shard++){
+        const angle=Math.PI*2*(shard/shardCount)+phase*Math.PI*.35;
+        const radius=23+level*9+8*Math.sin(phase*Math.PI);
+        const sx=cx+Math.cos(angle)*radius,sy=cy+Math.sin(angle)*radius*.72;
+        const crystal=path('M'+round(sx)+' '+round(sy-7)+
+          ' l4 7 -4 7 -4 -7z',
+          level===3?'#efd2ff':level===2?'#b6e8ff':'#c5ffe4',
+          'stroke="#fcfff8" stroke-width="1" opacity=".82"');
+        effect+=crystal;
+      }
+      const haloRadius=26+level*14+phase*29;
+      effect+='<ellipse cx="'+round(cx)+'" cy="'+round(cy)+
+        '" rx="'+round(haloRadius)+'" ry="'+round(haloRadius*.78)+
+        '" fill="none" stroke="'+(level===3?'#da9eff':level===2?'#8cd9ff':'#8ff4cc')+
+        '" stroke-width="'+(1+level)+
+        '" opacity="'+round(.68*(1-phase*.7))+'"/>';
+    }
   }
   if(fast)effect+='<path d="M12 151 h'+round(32+Math.abs(stride))+
     '" stroke="#9cfde2" stroke-width="2.8" opacity=".57"/>';
@@ -170,7 +245,7 @@ export function drawArenFrame(state, index, frames=AREN_FRAMES[state]) {
   // is oriented East. West uses Phaser's actual texture flip, not fake frames.
   return '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">'+
     '<g stroke-linejoin="round" transform="translate(0 '+round(bodyY)+')">'+
-    cape+backLeg+backArm+frontLeg+torso+neck+face+hair+scarf+frontArm+effect+
+    cape+backLeg+backArm+frontLeg+torso+costumeDetails+neck+face+hair+faceAccessories+scarf+frontArm+effect+
     '</g></svg>\n';
 }
 

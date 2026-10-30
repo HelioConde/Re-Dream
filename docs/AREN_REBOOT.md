@@ -1,5 +1,7 @@
 # Re:Dream — Aren, reboot do protagonista (2026-10-30)
 
+> Atualização V2: traje detalhado com lua/cristal, transições de animação reiniciadas por ação, VFX de carga/dash e ateliê para inspecionar os 23 movimentos. Ver [Aren V2 — QA visual](AREN_V2_VISUAL_QA.md).
+
 ## Resultado implementado
 Aren, **Buscador de Sonhos**, é o novo e único personagem selecionável no cliente e no servidor desta versão. O elenco anterior foi retirado de `characters.ts`, `protocol.ts`, `apps/server/src/sim.ts`, `GameCanvas.tsx` e dos recursos rastreados de `apps/web/public/sprites/`. Git preserva o histórico para eventual recuperação, mas o jogo não usa mais os sprites antigos. Perfis locais com ID antigo são convertidos para `aren`.
 

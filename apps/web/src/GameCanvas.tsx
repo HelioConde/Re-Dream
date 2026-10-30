@@ -5,7 +5,7 @@ import type { Control, PracticeImpact, PracticeInput, Snapshot } from './protoco
 import { readGameInput } from './inputMapping';
 import { LocalPredictor } from './prediction';
 import { AttackPlayback, BASIC_ATTACK_ANIM_MS } from './attackPlayback';
-import { AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, selectArenAnimation, ArenLandingTracker, ArenComboTracker } from './arenAnimation';
+import { AREN_FRAME_COUNTS, AREN_DISPLAY_SIZE, selectArenAnimation, chooseArenAction, ArenActionPhaseTracker, ArenLandingTracker, ArenComboTracker, type ArenVisualState } from './arenAnimation';
 
 type Props = {
   snapshotRef: RefObject<Snapshot | null>;
@@ -35,6 +35,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
       private predictor = new LocalPredictor();
       private attackPlayback = new AttackPlayback();
       private arenCombos = new ArenComboTracker();
+      private arenPhases = new ArenActionPhaseTracker();
       private landings = new ArenLandingTracker();
       private lastServerSnapshot: Snapshot | null = null;
       private labels = new Map<string, Phaser.GameObjects.Text>();
@@ -177,7 +178,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             : isYou ? !this.predictor.grounded :
               (player.y < 592 && Math.abs(player.y - 466) > 5 && Math.abs(player.y - 414) > 5);
           const landing = this.landings.update(key, airborne, time);
-          const animation = selectArenAnimation({
+          const animationState = {
             facing: immediateFacing,
             moving,
             airborne,
@@ -195,7 +196,42 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             comboStage,
             attackElapsedMs: attackElapsed ?? player.actionElapsedMs,
             timeMs: time,
+          } satisfies ArenVisualState;
+          const animAction = chooseArenAction(animationState);
+          const animation = selectArenAnimation({
+            ...animationState, actionAgeMs: this.arenPhases.elapsed(key, animAction, time),
           });
+          // A charge builds in distinct visible tiers but remains a Z-only
+          // action: particles are cosmetic and never alter MP or collisions.
+          if (isYou && practiceMode && Boolean(player.charging) && !this.reducedMotion) {
+            const tier = Math.max(0, Math.min(3, player.chargeLevel ?? 0));
+            const pulse = (Math.sin(time * 0.009) + 1) * .5;
+            const orbitRadius = 29 + tier * 10 + pulse * 6;
+            const accent = tier === 3 ? 0xdca7ff : tier === 2 ? 0x93d9ff : 0x8ff7d5;
+            this.hitLayer.lineStyle(1.6 + tier, accent, .24 + .12 * pulse);
+            this.hitLayer.strokeEllipse(p.x, p.y - 72, orbitRadius * 1.7, orbitRadius * 2.05);
+            for (let i = 0; i < 4 + tier * 3; i++) {
+              const angle = time * .0013 + i * Math.PI * 2 / (4 + tier * 3);
+              const px = p.x + Math.cos(angle) * orbitRadius;
+              const py = p.y - 72 + Math.sin(angle) * orbitRadius * .75;
+              this.hitLayer.fillStyle(accent, .52 + pulse * .25);
+              this.hitLayer.fillCircle(px, py, 1.6 + (i % 3) * .85);
+            }
+          }
+          // Clean ground contact speed streaks reinforce the difference
+          // between a walking step and the dash→continuous-run transition.
+          if (isYou && practiceMode && !this.reducedMotion && !airborne &&
+              (player.dashing || player.running)) {
+            const dash = Boolean(player.dashing);
+            const strength = dash ? 1 : .6;
+            for (let i = 0; i < (dash ? 4 : 2); i++) {
+              const shift = ((time * .12 + i * 17) % 57);
+              const x = p.x - player.facing * (23 + shift);
+              const y = p.y - 5 - (i % 3) * 8;
+              this.hitLayer.lineStyle(dash ? 3 : 2, 0xb6e9d1, (.44 - i * .065) * strength);
+              this.hitLayer.lineBetween(x, y, x - player.facing * (21 + 11 * strength), y);
+            }
+          }
           if (isYou && practiceMode && !this.reducedMotion &&
               player.combatAction === 'skill' && (player.skillLevel ?? 1) > 1) {
             // The authored skill sprite is reused; each level gets a distinct
@@ -271,6 +307,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             this.remoteMotion.delete(key);
             this.attackPlayback.remove(key);
             this.arenCombos.remove(key);
+            this.arenPhases.remove(key);
             this.landings.remove(key);
           }
         }
