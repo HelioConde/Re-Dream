@@ -56,7 +56,7 @@ test('practice must face its target to deal damage', () => {
   assert.equal(arena.stats.targetHp, 260);
 });
 
-test('double tap activates directional dash with a finite speed burst', () => {
+test('double tap starts dash and holding the second tap transitions to a sustained run', () => {
   const arena = new PracticeArena();
   arena.setInput({ ...noInput, right: true });
   arena.step(1 / 30);
@@ -66,8 +66,15 @@ test('double tap activates directional dash with a finite speed burst', () => {
   assert.equal(arena.stats.dashes, 1);
   arena.step(1 / 30);
   assert.ok(arena.player.vx > 600);
+  assert.equal(arena.snapshot().players[0].dashing, true);
   for (let i = 0; i < 15; i++) arena.step(1 / 30);
-  assert.ok(arena.player.vx <= 310);
+  assert.equal(arena.player.vx, 455);
+  assert.equal(arena.snapshot().players[0].dashing, false);
+  assert.equal(arena.snapshot().players[0].running, true);
+  assert.equal(arena.stats.runs, 1);
+  for (let i = 0; i < 20; i++) arena.step(1 / 30);
+  assert.equal(arena.player.vx, 455);
+  assert.equal(arena.stats.runs, 1, 'holding direction never retriggers the run');
 });
 
 test('down drops through one-way platforms, but not through the floor', () => {
@@ -536,4 +543,87 @@ test('pause and reset clear Rocket, Shadow and charged MP input', () => {
   assert.equal(a.stats.rocketSteps,0);
   assert.equal(a.stats.ottoShots,0);
   assert.equal(a.stats.dashCancels,0);
+});
+
+
+test('single tap walks, not runs', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, right: true });
+  for (let i = 0; i < 25; i++) arena.step(1 / 30);
+  assert.equal(arena.player.vx, 310);
+  assert.equal(arena.stats.dashes, 0);
+  assert.equal(arena.stats.runs, 0);
+  assert.equal(arena.snapshot().players[0].running, false);
+});
+
+test('releasing the second press after dash starts prevents an accidental run', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
+  arena.setInput(noInput); arena.step(1 / 30);
+  arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
+  assert.equal(arena.stats.dashes, 1);
+  arena.setInput(noInput);
+  for (let i = 0; i < 14; i++) arena.step(1 / 30);
+  assert.equal(arena.player.vx, 0);
+  assert.equal(arena.stats.runs, 0);
+  assert.equal(arena.snapshot().players[0].running, false);
+});
+
+test('releasing a running direction ends the run immediately', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, left: true }); arena.step(1 / 30);
+  arena.setInput(noInput); arena.step(1 / 30);
+  arena.setInput({ ...noInput, left: true });
+  for (let i = 0; i < 12; i++) arena.step(1 / 30);
+  assert.equal(arena.player.vx, -455);
+  assert.equal(arena.stats.runs, 1);
+  arena.setInput(noInput);
+  arena.step(1 / 30);
+  assert.equal(arena.player.vx, 0);
+  assert.equal(arena.snapshot().players[0].running, false);
+});
+
+test('opposite direction cancels the sustained run without creating a second dash', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
+  arena.setInput(noInput); arena.step(1 / 30);
+  arena.setInput({ ...noInput, right: true });
+  for (let i = 0; i < 12; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.runs, 1);
+  arena.setInput({ ...noInput, left: true });
+  arena.step(1 / 30);
+  assert.equal(arena.stats.dashCancels, 1);
+  assert.equal(arena.stats.dashes, 1);
+  assert.equal(arena.snapshot().players[0].running, false);
+  assert.equal(arena.player.vx, -310);
+});
+
+test('Rocket Step from a dash takes priority and never auto-starts running in the air', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
+  arena.setInput(noInput); arena.step(1 / 30);
+  arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
+  arena.setInput({ ...noInput, right: true, jump: true, up: true });
+  arena.step(1 / 30);
+  assert.equal(arena.stats.rocketSteps, 1);
+  for (let i = 0; i < 15; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.runs, 0);
+  assert.equal(arena.snapshot().players[0].running, false);
+});
+
+test('pause and reset clear run state so the next direction is a normal walk', () => {
+  const arena = new PracticeArena();
+  arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
+  arena.setInput(noInput); arena.step(1 / 30);
+  arena.setInput({ ...noInput, right: true });
+  for (let i = 0; i < 12; i++) arena.step(1 / 30);
+  assert.equal(arena.stats.runs, 1);
+  arena.suspend();
+  arena.step(1 / 30);
+  assert.equal(arena.snapshot().players[0].running, false);
+  arena.reset();
+  assert.equal(arena.stats.runs, 0);
+  arena.setInput({ ...noInput, right: true }); arena.step(1 / 30);
+  assert.equal(arena.player.vx, 310);
+  assert.equal(arena.stats.dashes, 0);
 });
