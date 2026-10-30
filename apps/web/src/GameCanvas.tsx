@@ -240,7 +240,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             if (avatar.texture.key !== texture && this.textures.exists(texture)) avatar.setTexture(texture);
             avatar.setFlipX(animation.flipX);
             avatar.setDisplaySize(AREN_DISPLAY_SIZE, AREN_DISPLAY_SIZE);
-            avatar.setPosition(p.x, p.y + 6);
+            // Art feet are at y≈180 on a 192px canvas; +15 aligns them with the collision plane.
+            avatar.setPosition(p.x, p.y + 15);
           } else {
             // Clear loading failure rather than silently rendering an old cast.
             g.fillStyle(0x64b9b0);
