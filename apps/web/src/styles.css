@@ -163,7 +163,6 @@
 .practice-mp-segment i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#6c9ded,#b9daff);transition:width .12s linear}
 .practice-mp-segment:nth-child(2) i{background:linear-gradient(90deg,#847bfa,#cdb7ff)}
 .practice-mp-segment:nth-child(3) i{background:linear-gradient(90deg,#bd72f1,#ffc2fd)}
-.practice-page .touch-skill{font-size:11px;font-weight:900;min-width:53px;background:#2d315a;border-color:#897dd5}
 .practice-page .touch-attack{font-weight:900}
-@media(max-width:600px){.practice-mp-segments{gap:3px}.practice-page .touch-skill{min-width:48px}}
+@media(max-width:600px){.practice-mp-segments{gap:3px}}
 @media(prefers-reduced-motion:reduce){.practice-mp-segment i{transition:none}}
