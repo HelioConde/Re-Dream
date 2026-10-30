@@ -5,7 +5,7 @@ import PracticeMode from './PracticeMode';
 import { resolveStandaloneRoute } from './routeState';
 import AdventureHub from './AdventureHub';
 import CharacterSelect from './CharacterSelect';
-import { CHARACTERS, characterName, getCharacter } from './characters';
+import { characterName, getCharacter } from './characters';
 import type { CharacterId, Control, ServerMessage, Snapshot } from './protocol';
 import { clearLocalProfile, EMPTY_PROFILE, readLocalProfile, saveLocalProfile } from './localProfile';
 
@@ -198,12 +198,6 @@ export default function App() {
     saveLocalProfile(updated);
     setLocalProfile(updated);
   };
-  const changeLobbyCharacter = (characterId: CharacterId) => {
-    if (socketRef.current?.readyState !== WebSocket.OPEN || snapshot?.status !== 'lobby') return;
-    chooseCharacter(characterId);
-    socketRef.current.send(JSON.stringify({ type: 'select', characterId }));
-  };
-
   const startPractice = () => {
     if (connection === 'connecting' || room) return;
     setPracticeActive(true);
@@ -269,14 +263,9 @@ export default function App() {
               })}
             </div>
             <div className="lobby-pick">
-              <span className="eyebrow">MEU PERSONAGEM · TROQUE ANTES DA PARTIDA</span>
-              <div className="lobby-pick-options" role="group" aria-label="Trocar personagem no lobby">
-                {CHARACTERS.map(character => <button
-                  type="button" key={character.id}
-                  className={'lobby-pick-choice '+(me?.characterId === character.id ? 'active' : '')}
-                  aria-pressed={me?.characterId === character.id}
-                  onClick={() => changeLobbyCharacter(character.id)}
-                >{character.name}</button>)}
+              <span className="eyebrow">PROTAGONISTA DO REBOOT</span>
+              <div className="lobby-pick-options" role="status">
+                <span className="lobby-pick-choice active">✦ Aren · Buscador de Sonhos</span>
               </div>
             </div>
             <div className="lobby-quest">
