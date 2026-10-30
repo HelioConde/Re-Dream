@@ -100,6 +100,7 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
           jump: keys.W.isDown || keys.UP.isDown || keys.SPACE.isDown || mobile.jump,
           attack: keys.J.isDown || keys.Z.isDown || mobile.attack,
           skill: keys.K.isDown || keys.X.isDown || mobile.skill,
+          down,
         };
         const inputKey = Object.values(input).map(value => Number(value)).join('');
         if (inputKey !== this.lastInput || time - this.lastSent >= 50) {
