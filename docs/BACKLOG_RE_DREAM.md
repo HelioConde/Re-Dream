@@ -33,7 +33,7 @@
 
 | ID | Estado | Entrega | Aceite |
 | --- | --- | --- | --- |
-| RD-D01 | Implementado em branch; QA visual pendente | Cenário vetorial original Bosque das Constelações com ruínas, vegetação, profundidade e plataformas nas coordenadas físicas atuais | XML e build aprovados; screenshots desktop/mobile ainda necessários |
+| RD-D01 | V6 implementado; QA visual V6 pendente | Montanhas e copa orgânicas, relevo estático, juntas do portal, cachoeira e solo detalhados; mesmas plataformas físicas | XML e build; captura real **V5** usada como diagnóstico, captura V6 ainda pendente |
 | RD-D02 | Implementado; QA visual pendente | Sentinela de Cristal e retrato do Aren no HUD substituem placeholders | Gameplay e hitboxes inalterados, nenhuma arte de terceiros |
 | RD-D03 | Aren Art V4 implementado; pintura final pendente | Nove ataques com poses próprias, Combo IV com finalização lunar e MP3 Dream Crescent, preservando 23 estados | Testes de SVG, poses e seleção; falta QA visual e ilustração final |
 | RD-D04 | Planejado | Animações da Sentinela: idle/hurt/stun/defeat | Estado da animação acompanha dano real sem hitbox visual enganador |
