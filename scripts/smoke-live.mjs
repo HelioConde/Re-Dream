@@ -54,20 +54,20 @@ try {
   }
   if (!healthy) throw Error('Render health unavailable: ' + String(lastError));
   console.log('Health OK. Connecting WebSocket...');
-  a = await join('SmokeTestOne', undefined, 'bunny');
+  a = await join('SmokeTestOne', undefined, 'aren');
   const together = waitMessage(a.ws, m => m.type === 'snapshot' && m.players?.length === 2);
-  b = await join('SmokeTestTwo', a.room, 'mana_bob');
+  b = await join('SmokeTestTwo', a.room, 'aren');
   const lobbyState = await together;
   if (lobbyState.status !== 'lobby') throw Error('Expected staging lobby before combat');
   const roster = new Map(lobbyState.players.map(p => [p.id, p.characterId]));
-  if (roster.get(a.id) !== 'bunny' || roster.get(b.id) !== 'mana_bob') {
+  if (roster.get(a.id) !== 'aren' || roster.get(b.id) !== 'aren') {
     throw Error('Render did not synchronize selected characters: ' + JSON.stringify([...roster]));
   }
   if (a.room !== b.room) throw Error('Joined different rooms');
   const started = waitMessage(b.ws, msg => msg.type === 'snapshot' && msg.status === 'playing');
   a.ws.send(JSON.stringify({ type: 'start' }));
   await started;
-  console.log('PASS: Bunny and Mana Seed selected, synchronized, and started in room', a.room);
+  console.log('PASS: Aren synchronized for both players, room started', a.room);
 } finally {
   clearTimeout(abortTimer);
   a?.ws.terminate();
