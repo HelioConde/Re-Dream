@@ -24,6 +24,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Test
         run: npm test
+      - name: Validate every Aren animation as transparent SVG
+        run: python -m unittest discover -s scripts -p 'test_aren_art.py' -v
       - name: Validate original forest stage SVG and physical platform alignment
         run: python -m unittest discover -s scripts -p 'test_arena_art.py' -v
       - name: Build
