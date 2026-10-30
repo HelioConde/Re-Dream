@@ -9,6 +9,11 @@
 | RD-A03 | 3 | Extrair FSM de combate e regras de cancelamento | A01/A02 | Z breve=golpe; Z segurado+solto=magia; A/S/D não conjuram |
 | RD-A04 | 4 | Portar regras aprovadas ao multiplayer autoritativo (se solicitado) | A02/A03 | Testes de rede validam latência, anti-cheat e reconciliação |
 
+## Melhoria aplicada — interação com plataformas
+| ID | Estado | Entrega | Evidência |
+| --- | --- | --- | --- |
+| RD-A05 | Implementado no treino, QA visual ainda pendente | ↓ sozinho (toque curto) atravessa plataformas vazadas, atraso de 120 ms preserva Otto, chão sólido protegido e botão mobile ↓; prioridade Shadow no ar | Testes de simulação + `npm test`/`npm run build`; validar sensação jogando no navegador |
+
 ## Épico B — Eventos e apresentação
 | ID | Ordem | Tarefa verificável | Dependências | Aceite |
 | --- | --- | --- | --- | --- |
