@@ -105,6 +105,24 @@ class PixelLabPipelineTests(unittest.TestCase):
                     self.assertEqual(frame.size, (96, 96))
                     self.assertEqual(frame.getchannel("A").getextrema()[0], 0)
 
+    def test_approved_character_jump_matches_manifest_and_candidate(self):
+        jump = ROOT / "vanguard/jump"
+        if not jump.exists():
+            self.skipTest("Managed Character jump not integrated yet")
+        approved = json.loads((ROOT / "vanguard/manifest.json").read_text(encoding="utf-8"))
+        candidate = json.loads((ROOT / "vanguard_character_candidate/character.json").read_text(encoding="utf-8"))
+        self.assertEqual(approved["jobs"]["jump"]["character_id"], candidate["character_id"])
+        self.assertEqual(approved["frames"]["jump"], candidate["exports"]["jump"]["sha256"])
+        frames = sorted(jump.glob("*.png"))
+        self.assertEqual(len(frames), 9)
+        for i, (path, digest) in enumerate(zip(frames, approved["frames"]["jump"])):
+            self.assertEqual(path.name, f"{i:03d}.png")
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), digest)
+            with Image.open(path) as frame:
+                self.assertEqual(frame.mode, "RGBA")
+                self.assertEqual(frame.size, (188, 188))
+                self.assertEqual(frame.getchannel("A").getextrema()[0], 0)
+
     def test_base64_png_can_be_decoded_to_rgba(self):
         source = Image.new("RGB", (96, 96), (23, 45, 67))
         stream = io.BytesIO()

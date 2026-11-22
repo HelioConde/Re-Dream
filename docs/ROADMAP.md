@@ -25,7 +25,8 @@
 - [x] Criar sprite-mestre original PixelLab V2 do Aren e suas animações básicas idle/run/attack (PR #35).
 - [ ] Completar animações PixelLab de salto, dash, dano, launcher, ataques aéreos e magias com o mesmo personagem.
 - [x] Criar pipeline PixelLab **Character persistente** com referência Aren V2, checkpoint, export ZIP e testes sem cobrança automática.
-- [ ] Revisar candidatos do Character e integrar animações específicas de salto, dash e dano após QA visual.
+- [x] Revisar e integrar animação de **salto** do Character PixelLab (9 frames, hashes e teste Godot).
+- [ ] Refinar e validar visualmente **dash** e **dano** do Character; manter candidatos fora do jogo enquanto não aprovados.
 - [ ] Produzir conjuntos de cenários originais e 3 biomas.
 - [x] Adicionar inimigo mágico original Crystal Imp com visual procedural e catálogo PixelLab opcional.
 - [x] Validar e integrar pacote V2 do Aren: 19 PNGs, hashes SHA-256, Godot smoke e export Web (PR #35).

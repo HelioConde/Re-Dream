@@ -26,3 +26,7 @@ Comparar `idle` aprovado com o novo `rotations/east` no mesmo tamanho. Conferir 
 Para integrar um movimento aprovado, copiar frames candidatos para `assets/pixellab/vanguard/<movimento>/`, com hashes e manifestos correspondentes. O `AnimatedSprite2D` do Godot precisa ser validado contra o canvas de cada animação, que pode exceder 128 px para movimentos largos.
 
 Referência: [PixelLab API oficial](https://api.pixellab.ai/v2/docs).
+
+## Primeira integração seletiva
+
+O Character persistente criado no [run #45032951179](https://github.com/HelioConde/Re-Dream/actions/runs/45032951179) gerou 27 quadros (jump, dash, hit) associados ao ID salvo em `assets/pixellab/vanguard_character_candidate/character.json`. Após inspeção de amostras e verificação automática de hashes, **jump (9 quadros, canvas 188×188)** foi selecionado para o `AnimatedSprite2D` do Godot. Dash ainda parece quase estático e hit inclui arcos vermelhos pouco apropriados, portanto permanecem candidatos até refinamento. Os PNGs de idle/run/attack aprovados não foram substituídos. O jogo ainda requer QA manual do ritmo do salto no navegador.
