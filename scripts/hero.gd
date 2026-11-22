@@ -8,6 +8,9 @@ const GRAVITY := 1350.0
 const DASH_SPEED := 820.0
 const CHARGE_BAR_SECONDS := 0.65
 const MAX_CHARGE_SECONDS := CHARGE_BAR_SECONDS * 3.0
+const ROCKET_DURATION := 0.52
+const ROCKET_SPEED := 475.0
+const CHASE_JUMP_VELOCITY := -760.0
 const PIXEL_SPRITE = preload("res://scripts/pixel_sprite.gd")
 
 var max_health := 100
@@ -28,6 +31,11 @@ var dash_cooldown := 0.0
 var last_tap_direction := 0
 var double_tap_window := 0.0
 var sprint_after_dash := false
+# Etapa 3: Rocket/Shadow Step e janela para perseguir um inimigo lançado.
+var rocket_time := 0.0
+var rocket_direction := 1
+var shadow_time := 0.0
+var chase_window := 0.0
 var jump_buffer := 0.0
 var coyote_time := 0.0
 var drop_timer := 0.0
@@ -81,6 +89,12 @@ func _physics_process(delta: float) -> void:
 	skill_flash = maxf(0.0, skill_flash - delta)
 	combo_window = maxf(0.0, combo_window - delta)
 	double_tap_window = maxf(0.0, double_tap_window - delta)
+	rocket_time = maxf(0.0, rocket_time - delta)
+	shadow_time = maxf(0.0, shadow_time - delta)
+	chase_window = maxf(0.0, chase_window - delta)
+	if is_on_floor():
+		rocket_time = 0.0
+		shadow_time = 0.0
 	jump_buffer = maxf(0.0, jump_buffer - delta)
 	if is_on_floor() and drop_timer <= 0.0:
 		coyote_time = 0.12
@@ -110,6 +124,8 @@ func _physics_process(delta: float) -> void:
 			var hit_threshold := 0.13
 			if attack_kind == "heavy":
 				hit_threshold = 0.21
+			elif attack_kind == "light" and combo_step == 4:
+				hit_threshold = 0.18
 			elif attack_kind == "launcher":
 				hit_threshold = 0.19
 			if attack_time <= hit_threshold:
@@ -143,7 +159,9 @@ func _physics_process(delta: float) -> void:
 		var launcher_requested := is_on_floor() and Input.is_action_pressed("launcher_modifier") and (light_pressed or charge_pressed)
 		if launcher_requested:
 			jump_buffer = 0.0
-		var dropped := Input.is_action_just_pressed("drop_platform") and _try_drop_platform()
+		var down_pressed := Input.is_action_just_pressed("drop_platform")
+		var shadowed := down_pressed and rocket_time > 0.0 and not is_on_floor() and _start_shadow_step()
+		var dropped := down_pressed and not shadowed and _try_drop_platform()
 		if not dropped and not launcher_requested:
 			_try_buffered_jump()
 		if light_pressed:
@@ -165,6 +183,11 @@ func _physics_process(delta: float) -> void:
 		var speed_multiplier := 1.40 if sprint_after_dash else 1.0
 		var move_speed := RUN_SPEED * speed_multiplier * (0.46 if attack_time > 0.0 else 1.0)
 		velocity.x = move_toward(velocity.x, axis * move_speed, 2250.0 * delta)
+	# Rocket ganha breve deslocamento horizontal; Shadow converte o voo em mergulho.
+	if rocket_time > 0.0:
+		velocity.x = float(rocket_direction) * ROCKET_SPEED
+	elif shadow_time > 0.0:
+		velocity.x = move_toward(velocity.x, 0.0, 2400.0 * delta)
 
 	move_and_slide()
 	position.x = clampf(position.x, 30.0, 3170.0)
@@ -194,9 +217,32 @@ func _start_dash(keep_running: bool) -> void:
 func _try_buffered_jump() -> bool:
 	if not alive or stagger > 0.0 or jump_buffer <= 0.0 or coyote_time <= 0.0:
 		return false
-	velocity.y = JUMP_VELOCITY
+	if chase_window > 0.0:
+		# O launcher confirmado habilita uma perseguição vertical mais forte.
+		velocity.y = CHASE_JUMP_VELOCITY
+		velocity.x = float(facing) * ROCKET_SPEED
+		chase_window = 0.0
+	elif dash_time > 0.0:
+		# Pulo no dash é Rocket Step; não duplica a duração do dash.
+		velocity.y = -690.0
+		rocket_time = ROCKET_DURATION
+		rocket_direction = facing
+		dash_time = 0.0
+		sprint_after_dash = false
+	else:
+		velocity.y = JUMP_VELOCITY
 	coyote_time = 0.0
 	jump_buffer = 0.0
+	return true
+
+
+func _start_shadow_step() -> bool:
+	if not alive or rocket_time <= 0.0:
+		return false
+	rocket_time = 0.0
+	shadow_time = 0.32
+	velocity.y = maxf(velocity.y, 650.0)
+	velocity.x = float(rocket_direction) * 185.0
 	return true
 
 
@@ -241,9 +287,9 @@ func _begin_attack(kind: String) -> void:
 	attack_kind = kind
 	attack_hit = false
 	if kind == "light":
-		combo_step = (combo_step % 3) + 1 if combo_window > 0.0 else 1
+		combo_step = (combo_step % 4) + 1 if combo_window > 0.0 else 1
 		combo_window = 0.83
-		attack_time = 0.31
+		attack_time = 0.39 if combo_step == 4 else 0.31
 	else:
 		combo_step = 0
 		combo_window = 0.0
@@ -263,6 +309,8 @@ func _resolve_melee() -> void:
 	var reach := 112.0
 	var vertical_range := 69.0
 	var vertical_impulse := -165.0
+	if attack_kind == "light" and combo_step == 4:
+		vertical_impulse = -265.0
 	match attack_kind:
 		"heavy":
 			damage = 34 + level * 4
@@ -291,6 +339,8 @@ func _resolve_melee() -> void:
 			hits += 1
 	if hits > 0:
 		mana = minf(max_mana, mana + 5.0 * float(hits))
+		if attack_kind == "launcher":
+			chase_window = 0.75
 
 
 func _begin_charge() -> void:
@@ -343,6 +393,9 @@ func take_damage(amount: int, impulse: Vector2) -> void:
 	sprint_after_dash = false
 	charge_active = false
 	charge_time = 0.0
+	rocket_time = 0.0
+	shadow_time = 0.0
+	chase_window = 0.0
 	velocity = impulse
 	if health == 0:
 		alive = false
@@ -378,6 +431,10 @@ func _update_pixel_sprite() -> void:
 			state = attack_kind if attack_kind in ["launcher", "dash_attack"] else "attack"
 	elif dash_time > 0.0:
 		state = "dash"
+	elif shadow_time > 0.0:
+		state = "shadow"
+	elif rocket_time > 0.0:
+		state = "rocket"
 	elif not is_on_floor():
 		state = "jump"
 	elif absf(velocity.x) > 18.0:
@@ -401,6 +458,10 @@ func _draw() -> void:
 			draw_arc(Vector2(0, -7), (125.0 + float(last_skill_level) * 35.0) * (1.0 - skill_flash * 0.5), 0.0, TAU, 50, Color(0.38, 0.84, 1.0, minf(1.0, skill_flash * 1.5)), 8.0, true)
 		if dash_time > 0.0:
 			draw_line(Vector2(-50 * facing, -5), Vector2(-16 * facing, -5), Color("#7fd8ff"), 9.0)
+		if rocket_time > 0.0:
+			draw_line(Vector2(-68 * rocket_direction, -23), Vector2(-24 * rocket_direction, -23), Color("#9bf6eb"), 7.0)
+		if shadow_time > 0.0:
+			draw_arc(Vector2(0, -26), 52.0, 0.0, TAU, 38, Color("#bc8de9"), 4.0, true)
 		return
 
 	var cape := Color("#713ec5")
@@ -433,6 +494,10 @@ func _draw() -> void:
 		draw_arc(Vector2(0, -7), 160.0 * (1.0 - skill_flash * 0.7), 0.0, TAU, 50, Color(0.38, 0.84, 1.0, skill_flash * 1.8), 8.0, true)
 	if dash_time > 0.0:
 		draw_line(Vector2(-50 * facing, -5), Vector2(-16 * facing, -5), glow, 9.0)
+	if rocket_time > 0.0:
+		draw_line(Vector2(-68 * rocket_direction, -23), Vector2(-24 * rocket_direction, -23), Color("#9bf6eb"), 7.0)
+	if shadow_time > 0.0:
+		draw_arc(Vector2(0, -26), 52.0, 0.0, TAU, 38, Color("#bc8de9"), 4.0, true)
 
 func draw_ellipse_shadow() -> void:
 	draw_colored_polygon(PackedVector2Array([Vector2(-26, 30), Vector2(-16, 34), Vector2(16, 34), Vector2(26, 30), Vector2(16, 27), Vector2(-16, 27)]), Color(0.04, 0.08, 0.13, 0.35))

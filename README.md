@@ -23,9 +23,9 @@ O jogo original **Re:Dream** em Phaser/React/TypeScript/WebSocket está arquivad
 | Tecla | Ação |
 | --- | --- |
 | A / D ou ← / → | Mover; duplo toque faz dash, segurar mantém corrida |
-| W / ↑ / Espaço | Saltar (com tolerância à borda e buffer) |
-| S / ↓ | Descer de plataforma vazada |
-| J | Combo de espada; ↑+J faz launcher, J no ar dá ataque aéreo e J durante dash golpe rápido |
+| W / ↑ / Espaço | Saltar, com tolerância à borda e buffer; durante dash ativa Rocket Step |
+| S / ↓ | Descer de plataforma vazada; durante Rocket no ar ativa Shadow Step |
+| J | Combo de 4 golpes; ↑+J faz launcher, J no ar dá ataque aéreo e J durante dash golpe rápido |
 | K | Ataque forte |
 | Shift | Dash |
 | L | Especial MP1 direto (35 de energia) |
