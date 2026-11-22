@@ -28,3 +28,7 @@ Ler `docs/ART_DIRECTION_VANGUARD_V2.md`. O herói precisa ter aparência de aven
 ## Controles Re:Dream (obrigatório)
 
 Confira `docs/REDREAM_CONTROLS_GODOT.md` antes de mudar o InputMap. O padrão é **← → ↑ ↓, J e Z** (Z golpe + carga, J alternativa), com botões móveis ◀ ▶ ↑ ↓ J Z; Shift/H/K/X/L são extras. O ataque pesado antigo em K foi movido para H para que K e X correspondam ao skill do multiplayer clássico. **Espaço com ↓** é atalho de descida; ↑/W é pulo padrão. Não misturar tecla de carga com skill direto nem bloquear combos simultâneos no touch.
+
+## Prioridade de arte — PixelLab Character persistente
+
+O Aren V2 aprovado da PR #35 é a **referência visual única**. O pipeline em `tools/pixellab_managed_character.py` usa o Character gerenciado do PixelLab, preserva um `character_id`, e gera as animações a partir do PNG mestre existente. Ler `docs/PIXELLAB_CHARACTER_WORKFLOW.md` antes de criar novos movimentos. **Não** recriar a identidade por prompt nem sobrescrever idle/run/attack aprovados. Produzir e revisar candidates de jump/dash/hit, depois launcher, heavy e skill, mantendo consistência de cabelo, cachecol, espada e amuleto. Toda nova produção em branch de arte com hashes, testes Godot e QA de proporções; sem merge automático de frames.
