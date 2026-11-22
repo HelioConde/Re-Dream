@@ -49,7 +49,7 @@ Para uso local de testes PixelLab, instale `Pillow>=11,<13`. As Actions executam
 
 ## PixelLab
 
-Os 19 sprites de `assets/pixellab/hero/` foram produzidos pela API PixelLab no mesmo projeto autoral, antes desta conversão. Os arquivos e seu `manifest.json` foram transferidos do commit `9988400dcd45ed49ad1cbf2047879879a2ca5530` de `GameTeste`, com bytes preservados. Não consome créditos para reutilizar sprites.
+Os 19 sprites antigos de `assets/pixellab/hero/` foram produzidos pela API PixelLab no mesmo projeto autoral, antes desta conversão. Os arquivos e seu `manifest.json` foram transferidos do commit `9988400dcd45ed49ad1cbf2047879879a2ca5530` de `GameTeste`, com bytes preservados. Não consome créditos para reutilizar sprites.
 
 Para criar mais sprites, o projeto possui a Action **PixelLab — gerar sprites e criar PR**, com geração **desabilitada por padrão**. Geração real só ocorre após configurar `PIXELLAB_API_KEY` como segredo e escolher `generate=true` manualmente (consome créditos). Veja [guia de sprites](assets/pixellab/README.md).
 
@@ -63,7 +63,7 @@ Esta é uma **conversão inicial jogável**, não uma migração completa e já 
 
 ## Redesign da direção de arte
 
-A estética anterior de guerreiro sombrio foi considerada inadequada para o mundo mágico de aventura. O protagonista **Aren, Explorador da Lua**, ganhará uma versão PixelLab original mais expressiva, colorida e com elementos mágicos, acompanhada de cenário mais vibrante. A Action manual já tem alvo `vanguard` com sprite-mestre 128×128 e animações derivadas dele. **O novo PNG ainda precisa ser gerado e revisado antes de substituir o personagem atual.** Confira a [Bíblia visual V2](docs/ART_DIRECTION_VANGUARD_V2.md).
+A estética anterior de guerreiro sombrio foi substituída no protagonista por **Aren, Explorador da Lua**, gerado com PixelLab e integrado na [PR #35](https://github.com/HelioConde/Re-Dream/pull/35). O conjunto V2 de **19 PNGs originais** (idle, run, attack) tem resolução de **128×128**, manifesto SHA-256 e é carregado automaticamente pelo Godot. O antigo `hero` permanece como fallback. **Jump, dash, hit, launcher e magia ainda reutilizam animações aproximadas**; completar esses estados é prioridade de arte. Confira a [Bíblia visual V2](docs/ART_DIRECTION_VANGUARD_V2.md).
 
 ## Combate aéreo (Godot)
 

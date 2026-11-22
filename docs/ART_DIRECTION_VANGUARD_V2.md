@@ -21,9 +21,9 @@
 5. Apenas integrar PR de sprites ao `main` quando houver **idle + run + attack** coerentes. O Godot busca `vanguard` e só ativa quando esse núcleo estiver completo; até lá preserva `hero`, o PixelLab anterior.
 6. **Não gerar automaticamente**: a Action manual inicia com `generate=false`. `generate=true` usa créditos PixelLab e segredo `PIXELLAB_API_KEY` do repositório Re-Dream.
 
-## Escopo que muda hoje
+## Marco entregue — 22/11/2026
 
-A direção visual e o pipeline V2 ficam configurados. O novo personagem só aparece ao gerar e integrar **PNGs novos**. O cenário Godot ganha cores e elementos mágicos originais, sem trocar hitboxes, plataforma física ou regras de combate. Testes CI não substituem a revisão visual humana.
+O [PixelLab run #45029569284](https://github.com/HelioConde/Re-Dream/actions/runs/45029569284) gerou um mestre 128×128 e 9 quadros de corrida mais 9 de ataque, com manifesto e hashes. O conjunto foi inspecionado em amostras (rosto, paleta, silhueta e espada preservados) e integrado à `main` pela [PR #35](https://github.com/HelioConde/Re-Dream/pull/35), após testes Python/Godot e export Web. O antigo `hero` continua como fallback. A corrida ainda merece avaliação de passada e fluidez em velocidade real; os estados avançados não têm PNG próprio. Uma Action aprovada não substitui QA manual de navegador e ritmo das animações.
 
 ## Inimigo mágico da Floresta de Cristal (implementado como fallback)
 
