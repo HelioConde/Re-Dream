@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { eclipseHeroPreviewUrl } from './eclipsePixellab';
 import type { FormEvent } from 'react';
 import { CHARACTERS } from './characters';
 import type { CharacterId } from './protocol';
@@ -28,8 +29,8 @@ export default function CharacterSelect({
 
   return <main className="character-select" id="personagens">
     <div className="select-heading">
-      <span className="eyebrow">✧ RE:DREAM · NOVO PROTAGONISTA</span>
-      <h1>Aren, o Buscador de Sonhos</h1>
+      <span className="eyebrow">✧ ECLIPSE VANGUARD · NOVO PROTAGONISTA</span>
+      <h1>Aren, Espadachim da Vanguarda</h1>
       <p>Elenco reconstruído do zero: <strong>um único herói original</strong>, com animações de movimento e combate completas. Entre no treino para conhecer Aren ou crie uma sala para jogar em equipe.</p>
     </div>
     <div className="select-layout">
@@ -41,7 +42,7 @@ export default function CharacterSelect({
           aria-pressed={selected === character.id}
           onClick={() => onSelect(character.id)}
         >
-          <span className={'character-thumbnail sprite-' + character.id} style={{ backgroundImage: `url(${import.meta.env.BASE_URL}${character.preview})`, backgroundSize: character.artSize, backgroundPosition: character.previewPosition || '0 0' }} role="img" aria-label={'Sprite de ' + character.name}/>
+          <span className={'character-thumbnail sprite-' + character.id} style={{ backgroundImage: `url(${eclipseHeroPreviewUrl || import.meta.env.BASE_URL + character.preview})`, backgroundSize: eclipseHeroPreviewUrl ? 'contain' : character.artSize, backgroundPosition: character.previewPosition || '0 0' }} role="img" aria-label={'Sprite de ' + character.name}/>
           <span className="character-card-copy">
             <strong>{character.name}</strong>
             <small>{character.subtitle}</small>
@@ -51,13 +52,13 @@ export default function CharacterSelect({
         <div className="future-characters">
           <span aria-hidden="true">✧</span>
           <strong>Aren · 23 estados animados</strong>
-          <p>Idle, caminhada, corrida, dash, saltos, Rocket/Shadow, quatro ataques, Otto, lançador, queda, carga e MP1/2/3. Todos os quadros são gerados de arte vetorial original.</p>
+          <p>Idle, caminhada, corrida, dash, saltos, Rocket/Shadow, quatro ataques, Otto, lançador, queda, carga e MP1/2/3. Os estados ainda sem PixelLab preservam a arte vetorial original como fallback.</p>
         </div>
       </section>
       <section className="character-stage" aria-label="Prévia do personagem selecionado">
         <div className="character-stage-art">
           <span className="character-stage-moon" aria-hidden="true">✧</span>
-          <div key={chosen.id} className={'character-large sprite-' + chosen.id} style={{ backgroundImage: `url(${import.meta.env.BASE_URL}${chosen.preview})`, backgroundSize: chosen.artSize, backgroundPosition: chosen.previewPosition || '0 0' }} role="img" aria-label={'Prévia de ' + chosen.name}/>
+          <div key={chosen.id} className={'character-large sprite-' + chosen.id} style={{ backgroundImage: `url(${eclipseHeroPreviewUrl || import.meta.env.BASE_URL + chosen.preview})`, backgroundSize: eclipseHeroPreviewUrl ? 'contain' : chosen.artSize, backgroundPosition: chosen.previewPosition || '0 0' }} role="img" aria-label={'Prévia de ' + chosen.name}/>
           <span className="character-stage-ground"/>
         </div>
         <div className="character-stage-details">
@@ -89,6 +90,6 @@ export default function CharacterSelect({
         </div>
       </div>
     </form>
-    <p className="character-disclaimer">Reboot gráfico em desenvolvimento: os quadros animados de Aren são originais e funcionais, mas ainda são vetoriais — não a pintura final da ficha conceitual. O treino é offline e a escolha é salva localmente.</p>
+    <p className="character-disclaimer">Identidade Eclipse Vanguard em desenvolvimento: animações PixelLab de repouso, corrida e ataque são usadas quando presentes; o restante preserva a arte original como fallback. O treino é offline e a escolha é salva localmente.</p>
   </main>;
 }

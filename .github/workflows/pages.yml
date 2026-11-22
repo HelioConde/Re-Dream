@@ -1,4 +1,4 @@
-name: ReDream CI and Pages
+name: Eclipse Vanguard CI and Pages
 on:
   push:
     branches: [main]
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: redream-ci-${{ github.ref }}
+  group: eclipse-vanguard-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -22,6 +22,8 @@ jobs:
           node-version: '22'
       - name: Install
         run: npm install --no-audit --no-fund
+      - name: Importar sprites originais PixelLab (SHA-256)
+        run: python scripts/import_eclipse_pixellab.py --apply
       - name: Test
         run: npm test
       - name: Validate every Aren animation as transparent SVG

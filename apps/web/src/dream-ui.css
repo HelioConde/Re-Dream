@@ -287,3 +287,12 @@ body{background:#071326;color:#eef5ff}
 .app-reboot .aren-inspector-thumb.is-current{border:2px solid #d0ffe0;background:#366f72}
 .app-reboot .aren-inspector-thumb:focus-visible{outline:2px solid #ffffff;outline-offset:3px}
 @media(max-width:680px){.app-reboot .aren-inspector-layout{grid-template-columns:minmax(0,1fr)}.app-reboot .aren-inspector-stage{min-height:238px}.app-reboot .aren-inspector-stage img{width:196px;height:196px}.app-reboot .aren-inspector-heading{flex-direction:column}.app-reboot .aren-inspector-thumb{flex-basis:61px;width:61px;height:69px}}
+
+/* Eclipse Vanguard: cenário celestial noturno para o portal, sem mudar colisões. */
+.rd-sky{background:radial-gradient(circle at 52% 7%,#d7c6ff 0%,#64529b 10%,#27244d 27%,transparent 46%),linear-gradient(180deg,#0b1029 0%,#161d41 38%,#26365b 72%,#10182f 100%)}
+.rd-sky:after{background:linear-gradient(180deg,#05081765,transparent 35%,#080d29ba 100%),radial-gradient(ellipse at 50% 76%,#7a6ed333,transparent 64%)}
+.rd-sky-orb{border-color:#d3b5ff7a;box-shadow:0 0 0 46px #9b7ad512,0 0 0 106px #c59dff0c,inset 0 0 90px #f0dcff40}
+.rd-welcome-center h1{font-size:clamp(3.2rem,7.8vw,7.4rem);line-height:.94;letter-spacing:-.07em;text-shadow:0 12px 50px #05061ec9}
+.rd-welcome-center h1 span,.rd-client-brand strong span{color:#eac485}
+.rd-welcome-tagline{letter-spacing:.09em;text-transform:uppercase}
+@media(max-width:550px){.rd-welcome-center h1{font-size:clamp(3rem,11vw,5rem)}.rd-client-brand strong{font-size:17px}}

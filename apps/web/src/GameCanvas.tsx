@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import Phaser from 'phaser';
+import { eclipseHeroTextures, selectEclipseHeroTexture } from './eclipsePixellab';
 import type { Control, PracticeImpact, PracticeInput, Snapshot } from './protocol';
 import { readGameInput } from './inputMapping';
 import { buildCombatVfx, impactColor } from './combatVfx';
@@ -54,6 +55,8 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
         this.load.svg('forest-detail', import.meta.env.BASE_URL + 'art/forest-detail.svg');
         this.load.svg('forest-atmosphere', import.meta.env.BASE_URL + 'art/forest-atmosphere.svg');
         this.load.svg('forest-foreground', import.meta.env.BASE_URL + 'art/forest-foreground.svg');
+        // PixelLab originals are loaded alongside the 23 SVG fallback states.
+        for (const [key, url] of Object.entries(eclipseHeroTextures)) this.load.image(key, url);
         // Every animation contains distinct transparent original Aren poses.
         for (const [action, count] of Object.entries(AREN_FRAME_COUNTS)) {
           for (let index = 0; index < count; index++) {
@@ -224,9 +227,11 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             timeMs: time,
           } satisfies ArenVisualState;
           const animAction = chooseArenAction(animationState);
-          const animation = selectArenAnimation({
-            ...animationState, actionAgeMs: this.arenPhases.elapsed(key, animAction, time),
-          });
+          const actionAgeMs = this.arenPhases.elapsed(key, animAction, time);
+          const animation = selectArenAnimation({ ...animationState, actionAgeMs });
+          const pixelTexture = selectEclipseHeroTexture(animAction, actionAgeMs, attackElapsed);
+          const texture = pixelTexture && this.textures.exists(pixelTexture)
+            ? pixelTexture : animation.texture;
           // A charge builds in distinct visible tiers but remains a Z-only
           // action: particles are cosmetic and never alter MP or collisions.
           if (isYou && practiceMode && Boolean(player.charging) && !this.reducedMotion) {
@@ -289,7 +294,6 @@ export default function GameCanvas({ snapshotRef, playerId, sendInput, mobileRef
             g.fillStyle(0x102a35, 0.36);
             g.fillEllipse(p.x, p.y + 1, 55, 10);
           }
-          const {texture} = animation;
           let avatar = this.avatars.get(key);
           if (!avatar && this.textures.exists(texture)) {
             avatar = this.add.image(p.x, p.y, texture)
