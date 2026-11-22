@@ -1,0 +1,30 @@
+name: Testes Godot
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+      - name: Instalar Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.2
+          use-dotnet: false
+      - name: Instalar Python e Pillow para testar PixelLab
+        run: python3 -m pip install --break-system-packages "Pillow>=11,<13"
+      - name: Testar integração PixelLab (sem gastar créditos)
+        run: python3 -m unittest discover -s tests -p 'test_pixellab*.py' -v
+      - name: Importar recursos e verificar scripts
+        run: godot --headless --editor --path . --quit --verbose
+      - name: Executar teste de combate
+        run: godot --headless --path . --script res://tests/smoke_test.gd
