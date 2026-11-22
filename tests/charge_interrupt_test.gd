@@ -31,7 +31,9 @@ func _run() -> void:
 	if not is_equal_approx(float(hero.get("mana")), starting_mana):
 		_fail("Interrupted charge spent mana")
 		return
+	# Clear the previous hit immunity so the next hit really tests fatal damage.
 	hero.set("stagger", 0.0)
+	hero.set("invulnerability", 0.0)
 	hero.call("_begin_charge")
 	if not bool(hero.get("charge_active")):
 		_fail("Charging must recover after stagger ends")
