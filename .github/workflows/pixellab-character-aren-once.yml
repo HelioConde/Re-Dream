@@ -1,0 +1,56 @@
+name: PixelLab Character — Aren V2 (gerar candidato uma vez)
+
+on:
+  push:
+    branches:
+      - feat/pixellab-managed-character-aren-20261122
+    paths:
+      - .github/workflows/pixellab-character-aren-once.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pixellab-character-aren-v2-once
+  cancel-in-progress: false
+
+jobs:
+  managed-character:
+    if: ${{ github.repository == 'HelioConde/Re-Dream' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar Pillow
+        run: python -m pip install "Pillow>=11,<13"
+      - name: Validar Character sem consumir créditos
+        run: |
+          python -m unittest discover -s tests -p 'test_pixellab*.py' -v
+          python -m tools.pixellab_managed_character --actions jump,dash,hit --dry-run
+      - name: Gerar Character persistente e animar somente direção EAST
+        env:
+          PIXELLAB_API_KEY: ${{ secrets.PIXELLAB_API_KEY }}
+        run: python -m tools.pixellab_managed_character --actions jump,dash,hit
+      - name: Salvar checkpoint e PNGs mesmo se a geração falhar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aren-character-v2-checkpoint-${{ github.run_id }}
+          path: assets/pixellab/vanguard_character_candidate/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Commit de candidatos separado do jogo publicado
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git switch -c "assets/aren-managed-character-${RUN_ID}" origin/main
+          git add assets/pixellab/vanguard_character_candidate/
+          git commit -m "art: Character persistente Aren com animações EAST para revisão"
+          git push origin "assets/aren-managed-character-${RUN_ID}"
+          echo "::notice::Candidato disponível na branch assets/aren-managed-character-${RUN_ID}. Abrir PR de arte para revisão; nunca trocar sprites automaticamente."
