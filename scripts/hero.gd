@@ -156,12 +156,13 @@ func _physics_process(delta: float) -> void:
 
 	if stagger <= 0.0:
 		# ↑+J lança o alvo, sem transformar o modificador ↑ em um salto acidental.
-		var launcher_requested := is_on_floor() and Input.is_action_pressed("launcher_modifier") and (light_pressed or charge_pressed)
+		var launcher_requested := is_on_floor() and (Input.is_action_pressed("launcher_modifier") or Input.is_action_pressed("jump")) and (light_pressed or charge_pressed)
 		if launcher_requested:
 			jump_buffer = 0.0
 		var down_pressed := Input.is_action_just_pressed("drop_platform")
 		var shadowed := down_pressed and rocket_time > 0.0 and not is_on_floor() and _start_shadow_step()
-		var dropped := down_pressed and not shadowed and _try_drop_platform()
+		var drop_confirmed := Input.is_action_pressed("drop_platform") and Input.is_action_just_pressed("drop_confirm")
+		var dropped := (down_pressed or drop_confirmed) and not shadowed and _try_drop_platform()
 		if not dropped and not launcher_requested:
 			_try_buffered_jump()
 		if light_pressed:
@@ -265,7 +266,7 @@ func _try_drop_platform() -> bool:
 
 
 func _choose_light_attack() -> String:
-	if is_on_floor() and Input.is_action_pressed("launcher_modifier"):
+	if is_on_floor() and (Input.is_action_pressed("launcher_modifier") or Input.is_action_pressed("jump")):
 		return "launcher"
 	if dash_time > 0.0 and is_on_floor():
 		return "dash_attack"

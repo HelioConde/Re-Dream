@@ -23,13 +23,14 @@ O jogo original **Re:Dream** em Phaser/React/TypeScript/WebSocket está arquivad
 | Tecla | Ação |
 | --- | --- |
 | A / D ou ← / → | Mover; duplo toque faz dash, segurar mantém corrida |
-| W / ↑ / Espaço | Saltar, com tolerância à borda e buffer; durante dash ativa Rocket Step |
-| S / ↓ | Descer de plataforma vazada; durante Rocket no ar ativa Shadow Step |
-| J | Combo de 4 golpes; ↑+J faz launcher, J no ar dá ataque aéreo e J durante dash golpe rápido |
-| K | Ataque forte |
+| ↑ / W | Pular; durante dash ativa Rocket Step |
+| ↓ / S | Descer de plataforma vazada; durante Rocket no ar ativa Shadow Step |
+| ↓ + Espaço | Descida alternativa imediata de plataforma vazada |
+| J / Z | Ataque do Re:Dream; ↑+J/Z lança, J/Z no ar dá ataque aéreo e durante dash golpe rápido |
+| H | Ataque forte adicional do protótipo Godot |
 | Shift | Dash |
-| L | Especial MP1 direto (35 de energia) |
-| Z (segurar e soltar) | Golpe inicial; segurar 0,65s/1,30s/1,95s e soltar invoca MP1/MP2/MP3 (35/50/70 energia) |
+| K / X / L | Especial direto (teclas do modo online antigo e opção Godot) |
+| Z (toque ou segure e solte) | Golpe inicial; carregar por 0,65s/1,30s/1,95s e soltar invoca MP1/MP2/MP3 |
 | R / Enter | Reiniciar após derrota |
 
 ## Desenvolvimento

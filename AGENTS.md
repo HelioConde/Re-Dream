@@ -24,3 +24,7 @@ Portar controles avançados do Re:Dream → melhorar sprites e animações → f
 ## Direção de arte obrigatória
 
 Ler `docs/ART_DIRECTION_VANGUARD_V2.md`. O herói precisa ter aparência de aventureiro anime mágico, não cavaleiro militar. Gerar o novo `vanguard` via PixelLab a partir de sprite-mestre, preservar `hero` como fallback e **não** aprovar sem verificar idle, run, attack e continuidade visual. Não usar diretamente sprites ou traços idênticos de franquias externas.
+
+## Controles Re:Dream (obrigatório)
+
+Confira `docs/REDREAM_CONTROLS_GODOT.md` antes de mudar o InputMap. O padrão é **← → ↑ ↓, J e Z** (Z golpe + carga, J alternativa), com botões móveis ◀ ▶ ↑ ↓ J Z; Shift/H/K/X/L são extras. O ataque pesado antigo em K foi movido para H para que K e X correspondam ao skill do multiplayer clássico. **Espaço com ↓** é atalho de descida; ↑/W é pulo padrão. Não misturar tecla de carga com skill direto nem bloquear combos simultâneos no touch.
