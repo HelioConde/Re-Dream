@@ -174,25 +174,82 @@ func _add_bar(layer: CanvasLayer, pos: Vector2, fill_color: Color) -> ProgressBa
 	return bar
 
 func _draw() -> void:
-	draw_rect(Rect2(0, 0, WORLD_WIDTH, 720), Color("#172541"))
-	draw_rect(Rect2(0, 250, WORLD_WIDTH, 380), Color("#28365a"))
-	for i in range(14):
-		var cx := 90.0 + float(i) * 250.0
-		draw_circle(Vector2(cx, 110.0 + float(i % 3) * 24.0), 42.0, Color("#34466a"))
+	# Bosque de Cristal: camada visual independente da física das plataformas.
+	# Céu luminoso em faixas sutis, sem texturas externas ou referência a outros jogos.
+	for band in range(18):
+		var t := float(band) / 17.0
+		var shade := Color("#4261a1").lerp(Color("#a5cfdc"), t)
+		draw_rect(Rect2(0.0, float(band) * 37.0, WORLD_WIDTH, 38.0), shade)
+	# O sol de cristal e os arcos celestes lembram um mundo de exploração e magia.
+	draw_circle(Vector2(980, 119), 102.0, Color(1.0, 0.92, 0.77, 0.17))
+	draw_circle(Vector2(980, 119), 61.0, Color("#ffefce"))
+	draw_circle(Vector2(980, 119), 46.0, Color("#fff9e8"))
+	draw_arc(Vector2(980, 119), 124.0, -0.18, 4.95, 80, Color(0.92, 0.85, 1.0, 0.35), 3.0, true)
+	# Montanhas azul-lavanda em planos diferentes dão profundidade sem mover colisões.
+	for i in range(15):
+		var peak_x := float(i) * 245.0 - 100.0
+		var peak_y := 248.0 + float(i % 4) * 25.0
 		draw_colored_polygon(PackedVector2Array([
-			Vector2(cx - 245, 570), Vector2(cx, 245 + float(i % 3) * 24),
-			Vector2(cx + 240, 570)
-		]), Color("#243651"))
-	for i in range(23):
-		var px := float(i) * 150.0
-		draw_rect(Rect2(px, 420, 12, 200), Color("#304565"))
-		draw_rect(Rect2(px - 15, 420, 44, 13), Color("#415a7a"))
-	draw_rect(Rect2(0, FLOOR_HEIGHT, WORLD_WIDTH, 100), Color("#222f46"))
-	draw_rect(Rect2(0, FLOOR_HEIGHT, WORLD_WIDTH, 13), Color("#6d7180"))
+			Vector2(peak_x - 240.0, 548.0), Vector2(peak_x, peak_y),
+			Vector2(peak_x + 250.0, 548.0)
+		]), Color("#7187b1"))
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(peak_x - 62.0, peak_y + 77.0), Vector2(peak_x, peak_y),
+			Vector2(peak_x + 80.0, peak_y + 82.0), Vector2(peak_x + 17.0, peak_y + 57.0)
+		]), Color("#dce3eb"))
+	for i in range(12):
+		var hill_x := float(i) * 310.0 - 160.0
+		var hill_height := 438.0 + float(i % 3) * 22.0
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(hill_x - 275.0, 625.0), Vector2(hill_x, hill_height),
+			Vector2(hill_x + 300.0, 625.0)
+		]), Color("#5c9b97"))
+	# Floresta encantada: troncos, folhagens em tons esmeralda e flores coral.
+	for i in range(19):
+		var tree_x := 70.0 + float(i) * 182.0
+		var tree_y := 445.0 + float(i % 4) * 22.0
+		draw_line(Vector2(tree_x, 608.0), Vector2(tree_x + 6.0, tree_y),
+			Color("#685a70"), 15.0)
+		draw_circle(Vector2(tree_x - 25.0, tree_y - 22.0), 45.0, Color("#377c78"))
+		draw_circle(Vector2(tree_x + 20.0, tree_y - 25.0), 51.0, Color("#2d796e"))
+		draw_circle(Vector2(tree_x, tree_y - 58.0), 49.0, Color("#4da78e"))
+		draw_circle(Vector2(tree_x - 27.0, tree_y - 54.0), 20.0,
+			Color(0.73, 0.94, 0.72, 0.42))
+		if i % 3 == 0:
+			draw_circle(Vector2(tree_x + 24.0, tree_y - 61.0), 11.0, Color("#fca5b5"))
+			draw_circle(Vector2(tree_x + 8.0, tree_y - 78.0), 8.0, Color("#ffd0bf"))
+	# Chão com gramado e pedras de brilho mágico.
+	draw_rect(Rect2(0.0, FLOOR_HEIGHT, WORLD_WIDTH, 100.0), Color("#344f63"))
+	draw_rect(Rect2(0.0, FLOOR_HEIGHT, WORLD_WIDTH, 13.0), Color("#8bd7aa"))
+	draw_rect(Rect2(0.0, FLOOR_HEIGHT + 13.0, WORLD_WIDTH, 7.0), Color("#497d70"))
+	for i in range(45):
+		var grass_x := float(i) * 73.0 + 19.0
+		draw_circle(Vector2(grass_x, FLOOR_HEIGHT + 2.0), 4.0, Color("#b0efc0"))
+		if i % 4 == 0:
+			draw_circle(Vector2(grass_x + 12.0, FLOOR_HEIGHT - 9.0), 4.0, Color("#ff92b5"))
+	# Pedras antigas cobertas por grama: colididores permanecem exatamente onde estão.
 	for point in PLATFORMS:
-		draw_rect(Rect2(point.x - 120, point.y - 12, 240, 24), Color("#364965"))
-		draw_rect(Rect2(point.x - 120, point.y - 12, 240, 8), Color("#a2a0a6"))
-		draw_rect(Rect2(point.x - 110, point.y + 12, 20, 18), Color("#4c5870"))
-		draw_rect(Rect2(point.x + 90, point.y + 12, 20, 18), Color("#4c5870"))
-	for i in range(21):
-		draw_circle(Vector2(float(i) * 159.0 + 44.0, 607.0), 3.0, Color("#d5bb7e"))
+		draw_rect(Rect2(point.x - 120.0, point.y - 12.0, 240.0, 24.0), Color("#4b6277"))
+		draw_rect(Rect2(point.x - 120.0, point.y - 13.0, 240.0, 9.0), Color("#8ddca7"))
+		draw_rect(Rect2(point.x - 112.0, point.y + 12.0, 22.0, 18.0), Color("#647b82"))
+		draw_rect(Rect2(point.x + 91.0, point.y + 12.0, 22.0, 18.0), Color("#647b82"))
+		draw_line(Vector2(point.x - 50.0, point.y + 11.0),
+			Vector2(point.x - 43.0, point.y + 31.0), Color("#4ea98e"), 3.0)
+		draw_line(Vector2(point.x + 62.0, point.y + 11.0),
+			Vector2(point.x + 50.0, point.y + 25.0), Color("#4ea98e"), 3.0)
+		draw_circle(Vector2(point.x - 96.0, point.y - 16.0), 4.0, Color("#ffe0a3"))
+	# Cristais e pequenas luzes criam pontos de interesse para exploração.
+	for i in range(14):
+		var crystal_x := 150.0 + float(i) * 225.0
+		var cy := FLOOR_HEIGHT - 11.0
+		var crystal_tint := Color("#74e3e6") if i % 2 == 0 else Color("#f6b5ef")
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(crystal_x - 8.0, cy), Vector2(crystal_x, cy - 30.0),
+			Vector2(crystal_x + 11.0, cy - 4.0), Vector2(crystal_x + 2.0, cy + 4.0)
+		]), crystal_tint)
+		draw_circle(Vector2(crystal_x, cy - 32.0), 14.0,
+			Color(0.57, 0.98, 0.97, 0.14))
+	for i in range(31):
+		var wisp_x := 40.0 + float(i) * 102.0
+		var wisp_y := 220.0 + float((i * 17) % 245)
+		draw_circle(Vector2(wisp_x, wisp_y), 2.4, Color(0.96, 0.98, 0.76, 0.66))
