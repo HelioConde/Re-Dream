@@ -24,3 +24,9 @@
 ## Escopo que muda hoje
 
 A direção visual e o pipeline V2 ficam configurados. O novo personagem só aparece ao gerar e integrar **PNGs novos**. O cenário Godot ganha cores e elementos mágicos originais, sem trocar hitboxes, plataforma física ou regras de combate. Testes CI não substituem a revisão visual humana.
+
+## Inimigo mágico da Floresta de Cristal (implementado como fallback)
+
+**Crystal Imp — Guardião de Musgo**: criatura pequena e original, de raízes flexíveis, orelhas de folhas, olhos grandes expressivos, chifres de cristal turquesa, pedra da lua brilhante no peito e bastão mágico. Paleta esmeralda/ciano e versão elite violeta. O desenho procedural no Godot substitui o guerreiro de armadura enquanto o conjunto PixelLab V2 não estiver pronto. As colisões, dano e IA não são alterados.
+
+O gerador PixelLab já reconhece o alvo `crystal_imp` (idle/run/attack/hit) de 96×96. Depois de gerar, o Godot prefere `crystal_imp` apenas quando existem idle, run e attack; senão usa `enemy` e desenho procedural original. Mantenha a aparência do monstrinho idêntica em todos os quadros.

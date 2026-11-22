@@ -24,6 +24,8 @@
 ## Etapa 3 — Identidade e fases
 - [ ] Criar personagem original com sprite, animações e ficha de habilidades.
 - [ ] Produzir conjuntos de cenários originais e 3 biomas.
+- [x] Adicionar inimigo mágico original Crystal Imp com visual procedural e catálogo PixelLab opcional.
+- [ ] Revisar e integrar sprites PixelLab V2 de Aren e Crystal Imp quando houver chave API disponível.
 - [ ] Introduzir fases completas com objetivos e checkpoints.
 - [ ] Criar bosses com múltiplas fases de luta.
 - [ ] Inserir menu, configurações, áudio e controles configuráveis.
