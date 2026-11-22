@@ -22,6 +22,14 @@ var invulnerability := 0.0
 var stagger := 0.0
 var dash_time := 0.0
 var dash_cooldown := 0.0
+# Movimento importado da experiência Re:Dream: duplo toque, corrida e jump buffer.
+var last_tap_direction := 0
+var double_tap_window := 0.0
+var sprint_after_dash := false
+var jump_buffer := 0.0
+var coyote_time := 0.0
+var drop_timer := 0.0
+var dropped_platform: CollisionObject2D = null
 var skill_cooldown := 0.0
 var skill_flash := 0.0
 var attack_time := 0.0
@@ -64,6 +72,20 @@ func _physics_process(delta: float) -> void:
 	skill_cooldown = maxf(0.0, skill_cooldown - delta)
 	skill_flash = maxf(0.0, skill_flash - delta)
 	combo_window = maxf(0.0, combo_window - delta)
+	double_tap_window = maxf(0.0, double_tap_window - delta)
+	jump_buffer = maxf(0.0, jump_buffer - delta)
+	if is_on_floor() and drop_timer <= 0.0:
+		coyote_time = 0.12
+	else:
+		coyote_time = maxf(0.0, coyote_time - delta)
+	if drop_timer > 0.0:
+		drop_timer = maxf(0.0, drop_timer - delta)
+		if drop_timer == 0.0:
+			if is_instance_valid(dropped_platform):
+				remove_collision_exception_with(dropped_platform)
+			dropped_platform = null
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer = 0.14
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 
@@ -85,27 +107,35 @@ func _physics_process(delta: float) -> void:
 			attack_kind = ""
 
 	var axis := Input.get_axis("move_left", "move_right")
+	if Input.is_action_just_pressed("move_left"):
+		_register_direction_tap(-1)
+	if Input.is_action_just_pressed("move_right"):
+		_register_direction_tap(1)
+	# Corrida continua após dash duplo toque enquanto a segunda seta estiver segura.
+	if absf(axis) < 0.01 or (axis * float(facing) < 0.0):
+		sprint_after_dash = false
 	if absf(axis) > 0.01 and stagger <= 0.0 and dash_time <= 0.0:
 		facing = 1 if axis > 0.0 else -1
 
 	if stagger <= 0.0:
-		if Input.is_action_just_pressed("jump") and is_on_floor():
-			velocity.y = JUMP_VELOCITY
+		var dropped := Input.is_action_just_pressed("drop_platform") and _try_drop_platform()
+		if not dropped:
+			_try_buffered_jump()
 		if Input.is_action_just_pressed("attack_light"):
 			_begin_attack("light")
 		if Input.is_action_just_pressed("attack_heavy"):
 			_begin_attack("heavy")
 		if Input.is_action_just_pressed("skill"):
 			_cast_skill()
-		if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0 and attack_time <= 0.0:
-			dash_time = 0.16
-			dash_cooldown = 0.80
+		if Input.is_action_just_pressed("dash"):
+			_start_dash(false)
 
 	if dash_time > 0.0:
 		dash_time -= delta
 		velocity.x = float(facing) * DASH_SPEED
 	elif stagger <= 0.0:
-		var move_speed := RUN_SPEED * (0.46 if attack_time > 0.0 else 1.0)
+		var speed_multiplier := 1.40 if sprint_after_dash else 1.0
+		var move_speed := RUN_SPEED * speed_multiplier * (0.46 if attack_time > 0.0 else 1.0)
 		velocity.x = move_toward(velocity.x, axis * move_speed, 2250.0 * delta)
 
 	move_and_slide()
@@ -113,6 +143,52 @@ func _physics_process(delta: float) -> void:
 	run_clock += delta * absf(velocity.x) / RUN_SPEED
 	_update_pixel_sprite()
 	queue_redraw()
+
+func _register_direction_tap(direction: int) -> void:
+	if direction == last_tap_direction and double_tap_window > 0.0:
+		facing = direction
+		_start_dash(true)
+		last_tap_direction = 0
+		double_tap_window = 0.0
+	else:
+		last_tap_direction = direction
+		double_tap_window = 0.27
+
+
+func _start_dash(keep_running: bool) -> void:
+	if not alive or stagger > 0.0 or attack_time > 0.0 or dash_cooldown > 0.0:
+		return
+	dash_time = 0.16
+	dash_cooldown = 0.80
+	sprint_after_dash = keep_running
+
+
+func _try_buffered_jump() -> bool:
+	if not alive or stagger > 0.0 or jump_buffer <= 0.0 or coyote_time <= 0.0:
+		return false
+	velocity.y = JUMP_VELOCITY
+	coyote_time = 0.0
+	jump_buffer = 0.0
+	return true
+
+
+func _try_drop_platform() -> bool:
+	if not is_on_floor() or dropped_platform != null:
+		return false
+	# Exceção individual: não torna a plataforma atravessável para inimigos.
+	for index in range(get_slide_collision_count()):
+		var contact := get_slide_collision(index)
+		var collider := contact.get_collider()
+		if collider is CollisionObject2D and collider.is_in_group("one_way_platforms"):
+			dropped_platform = collider as CollisionObject2D
+			add_collision_exception_with(dropped_platform)
+			drop_timer = 0.36
+			velocity.y = 180.0
+			coyote_time = 0.0
+			jump_buffer = 0.0
+			return true
+	return false
+
 
 func _begin_attack(kind: String) -> void:
 	if attack_time > 0.0 or dash_time > 0.0:
@@ -161,6 +237,7 @@ func take_damage(amount: int, impulse: Vector2) -> void:
 	health = maxi(0, health - amount)
 	invulnerability = 0.85
 	stagger = 0.18
+	sprint_after_dash = false
 	velocity = impulse
 	if health == 0:
 		alive = false

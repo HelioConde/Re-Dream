@@ -22,8 +22,9 @@ O jogo original **Re:Dream** em Phaser/React/TypeScript/WebSocket está arquivad
 
 | Tecla | Ação |
 | --- | --- |
-| A / D ou ← / → | Mover |
-| W / ↑ / Espaço | Saltar |
+| A / D ou ← / → | Mover; duplo toque faz dash, segurar mantém corrida |
+| W / ↑ / Espaço | Saltar (com tolerância à borda e buffer) |
+| S / ↓ | Descer de plataforma vazada |
 | J | Combo de espada |
 | K | Ataque forte |
 | Shift | Dash |
