@@ -36,7 +36,7 @@ export default function ArenAnimationInspector() {
   return <section className="aren-inspector" aria-label="Oficina de animações originais do Aren">
     <div className="aren-inspector-heading">
       <div>
-        <span className="eyebrow">✦ ECLIPSE VANGUARD · AREN ART V7</span>
+        <span className="eyebrow">✦ RE:DREAM · AREN ART V7</span>
         <h2>Inspecionar as 23 animações do Aren</h2>
         <p>Os quadros exibidos aqui são os mesmos usados no jogo. Escolha uma ação,
           pause e compare poses, silhueta, roupa, efeitos e contato com o chão.
