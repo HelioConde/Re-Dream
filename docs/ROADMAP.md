@@ -22,10 +22,12 @@
 - [ ] Implementar câmera suave com regiões e arenas de combate.
 
 ## Etapa 3 — Identidade e fases
-- [ ] Criar personagem original com sprite, animações e ficha de habilidades.
+- [x] Criar sprite-mestre original PixelLab V2 do Aren e suas animações básicas idle/run/attack (PR #35).
+- [ ] Completar animações PixelLab de salto, dash, dano, launcher, ataques aéreos e magias com o mesmo personagem.
 - [ ] Produzir conjuntos de cenários originais e 3 biomas.
 - [x] Adicionar inimigo mágico original Crystal Imp com visual procedural e catálogo PixelLab opcional.
-- [ ] Revisar e integrar sprites PixelLab V2 de Aren e Crystal Imp quando houver chave API disponível.
+- [x] Validar e integrar pacote V2 do Aren: 19 PNGs, hashes SHA-256, Godot smoke e export Web (PR #35).
+- [ ] Gerar e revisar pacote PixelLab V2 do Crystal Imp, ainda com fallback procedural.
 - [ ] Introduzir fases completas com objetivos e checkpoints.
 - [ ] Criar bosses com múltiplas fases de luta.
 - [ ] Inserir menu, configurações, áudio e controles configuráveis.
