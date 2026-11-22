@@ -1,0 +1,71 @@
+{
+  "character_id": "2dd343c2-dcdb-4c90-8558-48223393f0aa",
+  "creation_job_id": "ab235e80-6954-4870-81e8-8bd064a5b1a4",
+  "reference_sha256": "076381976f5cc397294caa5cc2718bd1b259734f3c6aa987f1997e0d95446121",
+  "creation_engine": "create-character-pro/rotate_character",
+  "animations": {
+    "jump": {
+      "job_id": "56321a14-5263-4f2f-bc9a-98bd50903784",
+      "group_id": "106d3e27-1350-4a75-ad2b-315c14c5cfcf",
+      "prompt": "Side-view heroic jump upward with compact knee tuck, land and recover. Keep Aren's chestnut hair, ivory-blue coat, turquoise scarf, moonstone and enchanted saber identical.",
+      "stage": "done"
+    },
+    "dash": {
+      "job_id": "4c195df1-4443-4540-b6a0-51972aa548fa",
+      "group_id": "7b217a0c-b2bd-4edd-a6b2-5815f9a1b359",
+      "prompt": "Fast side-view dash to the right with a forward lean and fluttering turquoise scarf. Preserve the exact character design and crystal saber, no scene or camera.",
+      "stage": "done"
+    },
+    "hit": {
+      "job_id": "1ced95c7-ea00-4c9c-b688-f32c065e3e1b",
+      "group_id": "5bf61cca-d5c9-4858-88dd-9684ced0ae51",
+      "prompt": "Aren briefly flinches from impact, pulls the enchanted sword close, then recovers. Same face, ivory coat, golden crescent hair ornament, transparent background.",
+      "stage": "done"
+    }
+  },
+  "stage": "candidate_ready",
+  "exports": {
+    "jump": {
+      "frames": 9,
+      "sha256": [
+        "25f06c5323490ac61045c902ce79eb5596be463ac884ebf58a1b8f995e158d35",
+        "300b3d84043472bcff8777255e727809693e341f76bf4767ff4d886e3cb8669b",
+        "eac647860a814eaaa2f1f06e15e67cd6bc0e48013de31db6afce63bc9e4edc93",
+        "2c8262d850652b6e12b0d9a7b7160e5c6c40046e6c838914448dc6c19f46ac1c",
+        "cba7ab9f5b5e8763495a9bcb219928323d27ab7dd5efdb6cb1197f992714deaf",
+        "e144cdf381f36eb543d44865e684f18628e9a93aee839c514d330cc5f21e18a6",
+        "720eee10f696f32f3ea1e746f16c392d58b5a2f92b07556ed7d99537a4ada3a5",
+        "c0c1617ce34067f56efacd7dccca5a8b341e013cf7387bab7ee32b8c17c38c86",
+        "4ec9918aecd29bc178349e77999f0eb22284b25fdaeb37f009bf4507b810b3d1"
+      ]
+    },
+    "dash": {
+      "frames": 9,
+      "sha256": [
+        "0763ba72e1f26fb560179788de31cdbc3f70acae94aa310bf23145d20d111d1d",
+        "3382acd53eb867ffc35f14bf87201b12ef3b9a866a9b7cb7da7c6d2786f9a454",
+        "bdecb963f4c6f334080864ee7ba5c60f7043e4903b9df07c4af769788bcde2c9",
+        "b915fb52efbc52aadf8e7974836b12086b1810fa298aea435c41a6d8844a2488",
+        "f1115eb40baf2e0979027e5df3e055907eb5297d8440633f46c0a1c83a6cbec0",
+        "af0dbfc0d9c4259e7981f7d4b26fded8013bad262ea414ed243427862614c2ef",
+        "2d090bfe8d0dc9e2f37d38525337074d4d77db3ff860cd6f4b56470922e66a4d",
+        "1cab6437a67567e97cee80a3b939124270caa6a3f5fae5dfc1d499564f15e521",
+        "c6d05b0b17eaab5a820883badaf13659a909c4174695822fb12bebd5c5c352e6"
+      ]
+    },
+    "hit": {
+      "frames": 9,
+      "sha256": [
+        "9a6df05d9e6f14b3b871884dacc7e020d9d3d85cb4582cde0a7c8344f013c270",
+        "ed39600bebc2417d9ff1dc54bbbe97925a34057cd44c84742b44336c9e92edaf",
+        "88b6b738a0adf88f464f0f77f793415e8eef3eba68075a170c3ecaa00eb86365",
+        "fb207b7ca8208596596e692e071aeacfcc4f891320dcfdd36e547a914e6f178a",
+        "0fe43bfd86359abb6e2caa61b97a56f86e28797e7968729197e99209257e5545",
+        "b8951d5d23733414c7ce0a0d0db298406729115e298f602b69dad5ca7d1f2a62",
+        "0fc75fdcb65c634abeee4fc4d0b5d6cc958bc4ea5f6ea5574380839341dd7b08",
+        "56f2dc8a1652765aabd86a25c501f922d421b4042878b0efca300604c85a0ab7",
+        "9388312950a97edced3ffd14125b09e05e67677f50055b2276f37b539a3ce39b"
+      ]
+    }
+  }
+}
