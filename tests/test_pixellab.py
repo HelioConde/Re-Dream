@@ -10,6 +10,9 @@ from tools.generate_pixellab import CHARACTERS, MOTIONS, ROOT, PixelLabError, ge
 class PixelLabPipelineTests(unittest.TestCase):
     def test_supported_characters_have_animations(self):
         self.assertIn("hero", CHARACTERS)
+        self.assertIn("vanguard", CHARACTERS)
+        self.assertIn("moonblade", CHARACTERS["vanguard"].lower())
+        self.assertIn("transparent background", CHARACTERS["vanguard"].lower())
         self.assertIn("enemy", CHARACTERS)
         for name in CHARACTERS:
             self.assertIn("run", MOTIONS[name])
@@ -23,6 +26,23 @@ class PixelLabPipelineTests(unittest.TestCase):
         self.assertEqual(plan["mode"], "core")
         self.assertEqual(plan["base_needed"], not (ROOT / "hero/idle/000.png").exists())
         self.assertTrue(set(plan["motions_needed"]).issubset({"run", "attack"}))
+
+    def test_vanguard_preview_does_not_call_paid_api(self):
+        with mock.patch("tools.generate_pixellab.api_request", side_effect=AssertionError("API invoked")):
+            with mock.patch.dict("os.environ", {}, clear=True):
+                plan = generate("vanguard", "core", dry_run=True)
+        self.assertEqual(plan["target"], "vanguard")
+        self.assertEqual(plan["motions_needed"], ["run", "attack"])
+        self.assertTrue(plan["base_needed"])
+
+    def test_switch_requires_complete_vanguard_core(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[1]
+        content = (root / "scripts/hero.gd").read_text(encoding="utf-8")
+        self.assertIn('pixel_sprite.setup("vanguard")', content)
+        self.assertIn('pixel_sprite.has_core_animations()', content)
+        sprite = (root / "scripts/pixel_sprite.gd").read_text(encoding="utf-8")
+        self.assertIn('sprite_frames.has_animation("run") and sprite_frames.has_animation("attack")', sprite)
 
     def test_committed_frames_are_pngs_and_contain_transparency(self):
         idle = ROOT / "hero/idle/000.png"

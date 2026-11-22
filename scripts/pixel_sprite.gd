@@ -6,7 +6,9 @@ var loaded := false
 func setup(kind: String) -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	centered = true
-	position = Vector2(0.0, -12.0)
+	# A versão de fantasia usa 128px; ajustar a escala visual, não a hitbox.
+	scale = Vector2(0.88, 0.88) if kind == "vanguard" else Vector2.ONE
+	position = Vector2(0.0, -15.0) if kind == "vanguard" else Vector2(0.0, -12.0)
 	var created := SpriteFrames.new()
 	if created.has_animation("default"):
 		created.remove_animation("default")
@@ -35,13 +37,22 @@ func setup(kind: String) -> void:
 func has_frames() -> bool:
 	return loaded
 
+func has_core_animations() -> bool:
+	# Não ativar pacote parcial: idle sozinho congelaria o personagem em combate.
+	return loaded and sprite_frames.has_animation("run") and sprite_frames.has_animation("attack")
+
 func show_state(requested: String, facing: int) -> void:
 	if not loaded:
 		return
 	flip_h = facing < 0
 	var state := requested
 	if not sprite_frames.has_animation(state):
-		state = "attack" if requested == "heavy" and sprite_frames.has_animation("attack") else "idle"
+		if requested in ["heavy", "skill"] and sprite_frames.has_animation("attack"):
+			state = "attack"
+		elif requested in ["jump", "dash"] and sprite_frames.has_animation("run"):
+			state = "run"
+		else:
+			state = "idle"
 	if animation != state:
 		play(state)
 	elif not is_playing() and state in ["idle", "run"]:

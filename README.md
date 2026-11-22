@@ -58,3 +58,7 @@ Para criar mais sprites, o projeto possui a Action **PixelLab — gerar sprites 
 Esta é uma **conversão inicial jogável**, não uma migração completa e já validada de todas as mecânicas, modos e 23 estados gráficos anteriores. O multiplayer ainda não existe nesta versão Godot.
 
 **Identidade autoral:** sem copiar personagens, músicas, sprites, marcas ou código de outros jogos.
+
+## Redesign da direção de arte
+
+A estética anterior de guerreiro sombrio foi considerada inadequada para o mundo mágico de aventura. O protagonista **Aren, Explorador da Lua**, ganhará uma versão PixelLab original mais expressiva, colorida e com elementos mágicos, acompanhada de cenário mais vibrante. A Action manual já tem alvo `vanguard` com sprite-mestre 128×128 e animações derivadas dele. **O novo PNG ainda precisa ser gerado e revisado antes de substituir o personagem atual.** Confira a [Bíblia visual V2](docs/ART_DIRECTION_VANGUARD_V2.md).

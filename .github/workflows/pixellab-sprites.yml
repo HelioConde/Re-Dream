@@ -4,13 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       character:
-        description: "Personagem a desenhar"
+        description: "vanguard = herói anime de fantasia mágica (arte V2)"
         required: true
         type: choice
         options:
+          - vanguard
           - hero
           - enemy
-        default: hero
+        default: vanguard
       animation_set:
         description: "Conjunto de sprites: core=idle/run/attack, full=+combate"
         required: true
@@ -36,7 +37,7 @@ concurrency:
 jobs:
   sprites:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4

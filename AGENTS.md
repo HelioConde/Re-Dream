@@ -20,3 +20,7 @@ O jogo do repositório `Re-Dream` agora é **Eclipse Vanguard em Godot 4.7.2**. 
 
 ## Próximos marcos
 Portar controles avançados do Re:Dream → melhorar sprites e animações → finalizar cenários e chefes → avaliar cooperativo com arquitetura de Godot.
+
+## Direção de arte obrigatória
+
+Ler `docs/ART_DIRECTION_VANGUARD_V2.md`. O herói precisa ter aparência de aventureiro anime mágico, não cavaleiro militar. Gerar o novo `vanguard` via PixelLab a partir de sprite-mestre, preservar `hero` como fallback e **não** aprovar sem verificar idle, run, attack e continuidade visual. Não usar diretamente sprites ou traços idênticos de franquias externas.

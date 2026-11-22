@@ -22,6 +22,24 @@ API_BASE = "https://api.pixellab.ai/v2"
 ROOT = Path(__file__).resolve().parents[1] / "assets" / "pixellab"
 
 CHARACTERS = {
+    "vanguard": (
+        "ORIGINAL upbeat anime-fantasy adventurer for a colorful side-scrolling magic action RPG. "
+        "One young adult moonblade explorer, full body profile facing RIGHT, 4.5-head-high "
+        "stylized heroic proportions, expressive bright turquoise eyes, windswept chestnut "
+        "hair with a single golden crescent hair ornament. Wears an ivory adventurer coat "
+        "with azure and turquoise panels, short teal scarf fluttering, indigo shorts, "
+        "brown travel boots, golden trims and a visible small moonstone amulet; light "
+        "flexible clothing, NO bulky full plate armor. Holds one slim enchanted "
+        "saber with a glowing cyan crystal near the hilt; optimistic adventurous "
+        "confident expression, charming distinctive silhouette. Saturated jewel-tone "
+        "palette: cobalt blue, turquoise, ivory, coral-gold accents, luminous cyan magic, "
+        "delicate pink highlights. Polished hand-authored 2D anime-adventure pixel art "
+        "for a 128x128 sprite with clean clusters and readable face and hands. "
+        "Three-quarter side silhouette with head and feet fully visible and centered "
+        "consistent character design. One person only, isolated transparent background. "
+        "NO scenery, NO shadow on the ground, NO lettering, NO trademark character, "
+        "NO reference to existing game franchises."
+    ),
     "hero": (
         "Original heroic fantasy swordsman for an action platformer, side-view "
         "full-body pixel art, facing right, feet visible, ready stance, flowing "
@@ -39,6 +57,15 @@ CHARACTERS = {
     ),
 }
 MOTIONS = {
+    "vanguard": {
+        "run": (8, "Energetic heroic side-view sprint to the right, springy anime-adventurer motion, teal scarf and hair trailing, natural alternating boot steps, moonstone and costume identical, no scene or camera."),
+        "attack": (8, "Fast readable magical saber combo: wind-up, single sweeping turquoise arc toward the right, impact and controlled recovery, keep same ivory coat, teal scarf, chestnut hair, amulet and facial features, no background."),
+        "heavy": (8, "Strong two-handed enchanted saber strike with distinct anticipation, turquoise crystal energy and recovery, feet stay aligned, no other characters, consistent same heroic fantasy outfit."),
+        "jump": (6, "Side-scroller leap with tucked knees, flowing teal scarf, buoyant upward arc and poised descent, preserve exact character anatomy and outfit, no camera change."),
+        "dash": (4, "Quick anime-fantasy side-view dash toward the right, scarf and coat flutter, short cyan spark trail, same character identity and equipment."),
+        "skill": (8, "Hero charges moonstone and casts an original luminous turquoise crescent-shaped magical sword wave then recovers, expressive readable poses, same face, outfit and sword."),
+        "hit": (4, "Brief readable stumble reaction after taking damage, arms and scarf follow naturally, recover to original standing pose, no blood."),
+    },
     "hero": {
         "run": (8, "Side-view looping running cycle moving toward the right, sword and cape follow motion, feet clearly alternate, no camera changes, same character outfit."),
         "attack": (8, "Side-view action platform game attack, one readable rightward sword slash then return to ready stance, retain same helmet, cape and clothes, no camera motion."),
@@ -145,7 +172,7 @@ def generate(target: str, set_name: str, dry_run: bool = False) -> dict:
         print(f"Generating original {target} idle sprite with PixelLab Pixen")
         result = api_request(token, "POST", "/create-image-pixen", {
             "description": description,
-            "image_size": {"width": 96, "height": 96},
+            "image_size": {"width": 128, "height": 128} if target == "vanguard" else {"width": 96, "height": 96},
             "view": "side",
             "direction": "east",
             "no_background": True,
@@ -154,6 +181,9 @@ def generate(target: str, set_name: str, dry_run: bool = False) -> dict:
         png = parse_png(result["image"])
         manifest["frames"]["idle"] = [save_frame(base_path, png)]
         manifest["jobs"]["idle"] = {"endpoint": "create-image-pixen", "usage": result.get("usage")}
+        # Checkpoint: regenerating this master would break animation consistency.
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     for action in missing:
         frame_count, motion = MOTIONS[target][action]
         print(f"Generating {target}/{action} ({frame_count} frames) using PixelLab animation v3")

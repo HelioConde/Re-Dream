@@ -34,3 +34,9 @@ O jogo Godot detecta os PNGs e ativa animação automaticamente. Na ausência de
 - https://www.pixellab.ai/docs/ways-to-use-pixellab
 
 Não há geração no PixelLab sem o segredo e crédito; o modo de simulação apenas valida a integração.
+
+## Novo protagonista mágico (V2)
+
+O sprite anterior `hero/` continua íntegro como fallback, mas **não é a estética final**. O novo `vanguard/` usa um sprite-mestre original de 128×128, aparência anime de aventura, roupas claras, cachecol turquesa e magia lunar. Depois de revisar `vanguard/idle`, `vanguard/run` e `vanguard/attack` na PR, a Godot passa a preferir automaticamente esse conjunto.
+
+Na Action manual selecione **character=vanguard**, **animation_set=core** e **generate=true** somente se quiser consumir créditos PixelLab. A etapa de simulação **generate=false** é gratuita. Veja `docs/ART_DIRECTION_VANGUARD_V2.md`. Nunca substituir a antiga arte sem revisão e rollback.

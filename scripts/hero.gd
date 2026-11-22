@@ -62,7 +62,10 @@ func _ready() -> void:
 	add_child(camera)
 	camera.make_current()
 	pixel_sprite = PIXEL_SPRITE.new()
-	pixel_sprite.setup("hero")
+	# Preferir a nova arte anime-fantasia somente após um pacote PixelLab completo.
+	pixel_sprite.setup("vanguard")
+	if not pixel_sprite.has_core_animations():
+		pixel_sprite.setup("hero")
 	add_child(pixel_sprite)
 
 func _physics_process(delta: float) -> void:
@@ -277,6 +280,9 @@ func _update_pixel_sprite() -> void:
 
 func _draw() -> void:
 	if pixel_sprite != null and pixel_sprite.visible:
+		# Luz arcana discreta atrás do herói. O dano e a colisão não são alterados.
+		draw_circle(Vector2(0.0, -22.0), 44.0, Color(0.36, 0.91, 0.93, 0.10))
+		draw_arc(Vector2(0.0, -25.0), 42.0, -0.5, 4.8, 35, Color(0.78, 0.98, 0.95, 0.30), 2.0, true)
 		draw_ellipse_shadow()
 		if attack_time > 0.0:
 			var starting_angle := -1.45 if facing > 0 else 1.7
