@@ -7,6 +7,8 @@ const JUMP_VELOCITY := -560.0
 const GRAVITY := 1350.0
 const DASH_SPEED := 820.0
 const CHARGE_BAR_SECONDS := 0.65
+# Últimos 160 ms do golpe aceitam J antecipado para continuar o combo.
+const LIGHT_COMBO_BUFFER_SECONDS := 0.16
 const MAX_CHARGE_SECONDS := CHARGE_BAR_SECONDS * 3.0
 const ROCKET_DURATION := 0.52
 const ROCKET_SPEED := 475.0
@@ -57,6 +59,7 @@ var attack_kind := ""
 var attack_hit := false
 var combo_step := 0
 var combo_window := 0.0
+var buffered_light_time := 0.0
 var run_clock := 0.0
 var pixel_sprite: Node2D
 
@@ -95,6 +98,7 @@ func _physics_process(delta: float) -> void:
 	skill_cooldown = maxf(0.0, skill_cooldown - delta)
 	skill_flash = maxf(0.0, skill_flash - delta)
 	combo_window = maxf(0.0, combo_window - delta)
+	buffered_light_time = maxf(0.0, buffered_light_time - delta)
 	double_tap_window = maxf(0.0, double_tap_window - delta)
 	rocket_time = maxf(0.0, rocket_time - delta)
 	shadow_time = maxf(0.0, shadow_time - delta)
@@ -147,6 +151,9 @@ func _physics_process(delta: float) -> void:
 				_resolve_melee()
 		if attack_time <= 0.0:
 			attack_kind = ""
+			if buffered_light_time > 0.0 and combo_window > 0.0 and alive and stagger <= 0.0:
+				buffered_light_time = 0.0
+				_begin_attack("light")
 
 	# Igual ao treino original: Z inicia um golpe e carrega energia enquanto segurado.
 	# A soltura invoca MP1/MP2/MP3 uma única vez (sem repetição automática).
@@ -337,10 +344,17 @@ func _choose_light_attack() -> String:
 func _begin_attack(kind: String) -> void:
 	if kind not in ["light", "heavy", "launcher", "air", "dash_attack", "otto", "dive"]:
 		return
-	if not alive or stagger > 0.0 or attack_time > 0.0:
+	if not alive or stagger > 0.0:
+		return
+	if attack_time > 0.0:
+		# Não perde J pressionado pouco antes do fim dos golpes 1–3.
+		# Não antecipa heavy, launcher, magias ou o recovery do quarto golpe.
+		if kind == "light" and attack_kind == "light" and combo_step < 4 and attack_time <= LIGHT_COMBO_BUFFER_SECONDS:
+			buffered_light_time = LIGHT_COMBO_BUFFER_SECONDS
 		return
 	if dash_time > 0.0 and kind != "dash_attack":
 		return
+	buffered_light_time = 0.0
 	if kind == "otto":
 		# Edge-only Otto uses existing individual collision exception.
 		if not _at_one_way_edge() or not _try_drop_platform():
@@ -486,6 +500,7 @@ func take_damage(amount: int, impulse: Vector2) -> void:
 	sprint_after_dash = false
 	charge_active = false
 	charge_time = 0.0
+	buffered_light_time = 0.0
 	rocket_time = 0.0
 	shadow_time = 0.0
 	chase_window = 0.0
