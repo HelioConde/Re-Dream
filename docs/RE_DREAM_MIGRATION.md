@@ -23,3 +23,7 @@
 - Prioridade: gameplay Godot offline com testes > consistência visual > fases > multiplayer.
 - Não reproduzir arte/marca/código de Grand Chase ou outros jogos.
 - Testes GitHub Actions demonstram importação/execução/build, não a qualidade visual final.
+
+## Paridade de botões
+
+A interface Godot usa os comandos do modo Praticar original: **← → ↑ ↓ J Z** e botões touchscreen equivalentes. K/X também ativam especial como no multiplayer Phaser; H, L e Shift são extras. Detalhes e QA: `docs/REDREAM_CONTROLS_GODOT.md`.

@@ -20,9 +20,47 @@ func _check_game() -> void:
 	if foes.size() != 3:
 		_fail("Primeira onda precisa ter três inimigos.")
 		return
-	for action in ["move_left", "move_right", "jump", "drop_platform", "attack_light", "launcher_modifier", "charge_skill", "attack_heavy", "dash", "skill", "restart"]:
+	for action in ["move_left", "move_right", "jump", "drop_platform", "drop_confirm", "attack_light", "launcher_modifier", "charge_skill", "attack_heavy", "dash", "skill", "restart"]:
 		if not InputMap.has_action(action):
 			_fail("Ação de controle ausente: " + action)
+			return
+
+	# Contrato Re:Dream Praticar: ↑/W salta, setas movem, J e Z atacam;
+	# ↓+Espaço é descida adicional, K/X pertence ao modo online antigo.
+	var expected: Dictionary = {
+		"move_left": [KEY_LEFT, KEY_A],
+		"move_right": [KEY_RIGHT, KEY_D],
+		"jump": [KEY_UP, KEY_W],
+		"drop_platform": [KEY_DOWN, KEY_S],
+		"drop_confirm": [KEY_SPACE],
+		"attack_light": [KEY_J],
+		"charge_skill": [KEY_Z],
+		"skill": [KEY_K, KEY_X, KEY_L],
+	}
+	for action in expected:
+		var bound_keys: Array[int] = []
+		for event in InputMap.action_get_events(action):
+			if event is InputEventKey:
+				bound_keys.append(event.physical_keycode)
+		for keycode in expected[action]:
+			if not bound_keys.has(keycode):
+				_fail("Falta botão herdado do Re:Dream: %s (%s)" % [action, keycode])
+				return
+		if bound_keys.size() != expected[action].size():
+			_fail("Botões extras inesperados no comando: " + action)
+			return
+	# Toques usam ações Godot nativas, para permitir combinações e multitouch.
+	var touch_layer := arena.get_node_or_null("TouchControls")
+	if touch_layer == null:
+		_fail("Controles de toque do Re:Dream ausentes.")
+		return
+	var touch_actions: Array[String] = []
+	for node in touch_layer.get_children():
+		if node is TouchScreenButton:
+			touch_actions.append(str(node.action))
+	for action in ["move_left", "move_right", "jump", "drop_platform", "attack_light", "charge_skill"]:
+		if not touch_actions.has(action):
+			_fail("Botão móvel ausente: " + action)
 			return
 
 	if get_nodes_in_group("one_way_platforms").size() != 5:

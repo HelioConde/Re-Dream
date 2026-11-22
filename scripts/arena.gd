@@ -2,6 +2,7 @@ extends Node2D
 
 const HERO_SCRIPT = preload("res://scripts/hero.gd")
 const FOE_SCRIPT = preload("res://scripts/foe.gd")
+const TOUCH_CONTROLS = preload("res://scripts/touch_controls.gd")
 const WORLD_WIDTH := 3200.0
 const FLOOR_HEIGHT := 620.0
 
@@ -32,6 +33,9 @@ func _ready() -> void:
 	_setup_input()
 	_create_world()
 	_create_hud()
+	var touch_controls := TOUCH_CONTROLS.new()
+	touch_controls.name = "TouchControls"
+	add_child(touch_controls)
 	hero = HERO_SCRIPT.new()
 	hero.position = Vector2(180.0, 565.0)
 	add_child(hero)
@@ -41,23 +45,32 @@ func _ready() -> void:
 func _setup_input() -> void:
 	_map_keys("move_left", [KEY_A, KEY_LEFT])
 	_map_keys("move_right", [KEY_D, KEY_RIGHT])
-	_map_keys("jump", [KEY_W, KEY_UP, KEY_SPACE])
+	# Modo Praticar original: setas, W, J e Z são os comandos principais.
+	_map_keys("jump", [KEY_W, KEY_UP])
 	_map_keys("drop_platform", [KEY_S, KEY_DOWN])
+	_map_keys("drop_confirm", [KEY_SPACE])
 	_map_keys("attack_light", [KEY_J])
 	_map_keys("launcher_modifier", [KEY_W, KEY_UP])
 	_map_keys("charge_skill", [KEY_Z])
-	_map_keys("attack_heavy", [KEY_K])
+	# Atalhos adicionais da versão Godot e multiplayer antigo.
+	_map_keys("attack_heavy", [KEY_H])
 	_map_keys("dash", [KEY_SHIFT])
-	_map_keys("skill", [KEY_L])
+	_map_keys("skill", [KEY_K, KEY_X, KEY_L])
 	_map_keys("restart", [KEY_R, KEY_ENTER])
 
 func _map_keys(action: String, codes: Array) -> void:
 	if not InputMap.has_action(action):
 		InputMap.add_action(action)
 	for code in codes:
-		var key_event := InputEventKey.new()
-		key_event.physical_keycode = code
-		InputMap.action_add_event(action, key_event)
+		var already_bound := false
+		for event in InputMap.action_get_events(action):
+			if event is InputEventKey and event.physical_keycode == code:
+				already_bound = true
+				break
+		if not already_bound:
+			var key_event := InputEventKey.new()
+			key_event.physical_keycode = code
+			InputMap.action_add_event(action, key_event)
 
 func _create_world() -> void:
 	_add_solid(Vector2(1600.0, 670.0), Vector2(WORLD_WIDTH, 100.0), false)
@@ -120,7 +133,7 @@ func _process(delta: float) -> void:
 		"OK" if hero.dash_cooldown <= 0.0 else "%.1fs" % hero.dash_cooldown,
 		"OK" if hero.skill_cooldown <= 0.0 else "%.1fs" % hero.skill_cooldown
 	]
-	charge_label.text = ("Z CARGA MP%d/3 — SOLTE PARA LANÇAR" % hero._charge_level()) if hero.charge_active else "↑+J LANÇADOR  |  J NO AR AÉREO  |  DASH+PULO ROCKET  |  ↓ NO ROCKET SHADOW  |  Z MP"
+	charge_label.text = ("Z CARGA MP%d/3 — SOLTE PARA LANÇAR" % hero._charge_level()) if hero.charge_active else "↑+Z/J LANÇADOR  |  Z/J NO AR ATAQUE  |  DASH+↑ ROCKET  |  ↓ SHADOW  |  Z MP"
 	if game_over:
 		if Input.is_action_just_pressed("restart"):
 			get_tree().reload_current_scene()
@@ -149,7 +162,7 @@ func _create_hud() -> void:
 	alert_label = _add_label(layer, Vector2(270, 185), "", 25, Color("#ffe9c0"))
 	alert_label.size = Vector2(740, 50)
 	alert_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(layer, Vector2(18, 667), "A/D: MOVER/2x CORRER   ESPAÇO: PULAR   S: DESCER   J: COMBO   Z: MP1/2/3   L: ESPECIAL", 18, Color("#ffffff"))
+	_add_label(layer, Vector2(18, 667), "←/→: ANDAR/2x DASH   ↑/W: PULAR   ↓: DESCER   J: COMBO   Z: ATAQUE/CARGA MP   K/X: SKILL", 18, Color("#ffffff"))
 
 func _add_label(layer: CanvasLayer, pos: Vector2, value: String, font_size: int, color: Color) -> Label:
 	var result := Label.new()
