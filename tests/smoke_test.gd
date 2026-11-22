@@ -230,6 +230,33 @@ func _check_game() -> void:
 		_fail("Combo não reiniciou após janela encerrada.")
 		return
 
+	# J pressionado cedo não pode pular a animação atual nem antecipar o combo.
+	hero.set("attack_time", 0.24)
+	hero.call("_begin_attack", "light")
+	if float(hero.get("buffered_light_time")) > 0.0:
+		_fail("O combo aceitou J fora da janela final de buffer.")
+		return
+	# Nos últimos 160 ms, o comando é consumido ao término do golpe.
+	hero.set("attack_time", 0.09)
+	hero.call("_begin_attack", "light")
+	if int(hero.get("combo_step")) != 1 or float(hero.get("buffered_light_time")) <= 0.0:
+		_fail("J antecipado não foi armazenado ou pulou o golpe inicial.")
+		return
+	hero.call("_physics_process", 0.10)
+	if int(hero.get("combo_step")) != 2 or float(hero.get("attack_time")) <= 0.0 or float(hero.get("buffered_light_time")) > 0.0:
+		_fail("O próximo golpe do combo não consumiu o buffer no tempo correto.")
+		return
+	# O golpe final mantém recovery: J não começa automaticamente outro ciclo.
+	hero.set("attack_time", 0.0)
+	hero.set("combo_step", 3)
+	hero.set("combo_window", 0.50)
+	hero.call("_begin_attack", "light")
+	hero.set("attack_time", 0.09)
+	hero.call("_begin_attack", "light")
+	if int(hero.get("combo_step")) != 4 or float(hero.get("buffered_light_time")) > 0.0:
+		_fail("O quarto golpe permitiu cancelar seu tempo de recuperação.")
+		return
+
 	# Pulo no dash cria Rocket Step, preservando um único impulso horizontal.
 	hero.set("attack_time", 0.0)
 	hero.set("chase_window", 0.0)
