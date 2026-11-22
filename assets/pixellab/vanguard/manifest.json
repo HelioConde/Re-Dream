@@ -1,0 +1,55 @@
+{
+  "generator": "PixelLab API v2",
+  "description": "ORIGINAL upbeat anime-fantasy adventurer for a colorful side-scrolling magic action RPG. One young adult moonblade explorer, full body profile facing RIGHT, 4.5-head-high stylized heroic proportions, expressive bright turquoise eyes, windswept chestnut hair with a single golden crescent hair ornament. Wears an ivory adventurer coat with azure and turquoise panels, short teal scarf fluttering, indigo shorts, brown travel boots, golden trims and a visible small moonstone amulet; light flexible clothing, NO bulky full plate armor. Holds one slim enchanted saber with a glowing cyan crystal near the hilt; optimistic adventurous confident expression, charming distinctive silhouette. Saturated jewel-tone palette: cobalt blue, turquoise, ivory, coral-gold accents, luminous cyan magic, delicate pink highlights. Polished hand-authored 2D anime-adventure pixel art for a 128x128 sprite with clean clusters and readable face and hands. Three-quarter side silhouette with head and feet fully visible and centered consistent character design. One person only, isolated transparent background. NO scenery, NO shadow on the ground, NO lettering, NO trademark character, NO reference to existing game franchises.",
+  "target": "vanguard",
+  "frames": {
+    "idle": [
+      "076381976f5cc397294caa5cc2718bd1b259734f3c6aa987f1997e0d95446121"
+    ],
+    "run": [
+      "076381976f5cc397294caa5cc2718bd1b259734f3c6aa987f1997e0d95446121",
+      "dc2e17f8f4beaa90c8db9ac1b253b733243535c5d8c9a874db7c2d745e2a44d4",
+      "ab8b22a2c0770ffc5d5766c3a03369b55660e4aaa9bf106156b99cd4d33ece9c",
+      "609b3d2b06bb04660a6d4a9c2b266249330d86ec19b9405f9c289d5343f883dd",
+      "c7b0f4bf8bbedbaa3dbfdef32b2da22556054bbfebf71f5685426dd06b1fd579",
+      "3bd2dd9707072ac5047e548aeeed22cd8ea0d582909b615240f1b01ea8377e4f",
+      "05f98df28c05dd0f7ee51a5bc8bcce5d48999b619ee0098c78439cbc9b788974",
+      "55080acee570b00297d383a5b055e7b82a2c25641b9312118e9cb8d8d84b0a30",
+      "846973556869ce4c66873e0689a40d9ddfaa2a15f302d2b4752ef5afa1bf884e"
+    ],
+    "attack": [
+      "076381976f5cc397294caa5cc2718bd1b259734f3c6aa987f1997e0d95446121",
+      "847e905a95941a0a3b669269628ca67393ffadcd1aeb43769b1e03a8246fe1d8",
+      "825c7bff034e9d498f0a588903437f73be9769df72bc6b51251fbcf5ef5428de",
+      "b265e8294915d3615f76369c888ab3b2dc11b3bd98193e4a84c43378d1c22c4c",
+      "b2f18af2a194b0a4f3a599c7a517a82c80154b10847e363502562c781cce3a8e",
+      "8c88a8bb6141b816faab1cce8c270e6d432867c929eaf91338a1a878943aa8b0",
+      "c9ecfa25afcf7a0c03493b76baf9917e0b3157304d72938c3ad7b5228d4c6737",
+      "a1a90ca0ab197b8543a7ee00e6da8bb5e9fe3292d0bc174df84d4dfb6a57bbfa",
+      "fab601acc7d7ef75090e7014d80aad2b564b3104ee0014e96f7b5ac80bd8ef00"
+    ]
+  },
+  "jobs": {
+    "idle": {
+      "endpoint": "create-image-pixen",
+      "usage": {
+        "type": "generations",
+        "generations": 1.0
+      }
+    },
+    "run": {
+      "endpoint": "animate-with-text-v3",
+      "job_id": "bb9bae2b-c2cc-457f-ac33-87242fbeaba2",
+      "prompt": "Energetic heroic side-view sprint to the right, springy anime-adventurer motion, teal scarf and hair trailing, natural alternating boot steps, moonstone and costume identical, no scene or camera.",
+      "frames": 9,
+      "usage": null
+    },
+    "attack": {
+      "endpoint": "animate-with-text-v3",
+      "job_id": "272b12ab-712d-481b-a49a-45fa474acbc0",
+      "prompt": "Fast readable magical saber combo: wind-up, single sweeping turquoise arc toward the right, impact and controlled recovery, keep same ivory coat, teal scarf, chestnut hair, amulet and facial features, no background.",
+      "frames": 9,
+      "usage": null
+    }
+  }
+}

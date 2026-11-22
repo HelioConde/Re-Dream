@@ -1,5 +1,7 @@
 import base64
 import io
+import hashlib
+import json
 import unittest
 from unittest import mock
 
@@ -34,8 +36,12 @@ class PixelLabPipelineTests(unittest.TestCase):
             with mock.patch.dict("os.environ", {}, clear=True):
                 plan = generate("vanguard", "core", dry_run=True)
         self.assertEqual(plan["target"], "vanguard")
-        self.assertEqual(plan["motions_needed"], ["run", "attack"])
-        self.assertTrue(plan["base_needed"])
+        source = ROOT / "vanguard"
+        self.assertEqual(
+            plan["motions_needed"],
+            [name for name in ("run", "attack") if not (source / name / "000.png").exists()]
+        )
+        self.assertEqual(plan["base_needed"], not (source / "idle/000.png").exists())
 
     def test_switch_requires_complete_vanguard_core(self):
         from pathlib import Path
@@ -57,6 +63,33 @@ class PixelLabPipelineTests(unittest.TestCase):
         self.assertIn('pixel_sprite.setup("crystal_imp")', foe_code)
         self.assertIn('if not pixel_sprite.has_core_animations():', foe_code)
         self.assertIn('pixel_sprite.setup("enemy")', foe_code)
+
+    def test_vanguard_generated_frames_match_manifest_and_are_visible(self):
+        art = ROOT / "vanguard"
+        manifest_file = art / "manifest.json"
+        if not manifest_file.exists():
+            self.skipTest("Vanguard V2 assets not generated yet")
+        manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
+        self.assertEqual(manifest.get("target"), "vanguard")
+        for state in ("idle", "run", "attack"):
+            self.assertIn(state, manifest.get("frames", {}))
+            hashes = manifest["frames"][state]
+            frames = sorted((art / state).glob("*.png"))
+            self.assertEqual(len(frames), len(hashes))
+            self.assertGreaterEqual(len(frames), 1 if state == "idle" else 5)
+            for index, (frame, expected_hash) in enumerate(zip(frames, hashes)):
+                self.assertEqual(frame.name, f"{index:03d}.png")
+                self.assertEqual(hashlib.sha256(frame.read_bytes()).hexdigest(), expected_hash)
+                with Image.open(frame) as image:
+                    self.assertEqual(image.format, "PNG")
+                    self.assertEqual(image.size, (128, 128))
+                    self.assertEqual(image.mode, "RGBA")
+                    alpha = image.getchannel("A")
+                    self.assertEqual(alpha.getextrema()[0], 0)
+                    self.assertGreater(alpha.getextrema()[1], 0)
+                    self.assertIsNotNone(alpha.getbbox())
+            if state != "idle":
+                self.assertGreater(len(set(hashes)), 3, "Generated frames do not vary enough")
 
     def test_committed_frames_are_pngs_and_contain_transparency(self):
         idle = ROOT / "hero/idle/000.png"

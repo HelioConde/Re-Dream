@@ -71,6 +71,19 @@ func _check_game() -> void:
 		return
 
 	var hero: Node2D = heroes[0]
+	# Quando o núcleo V2 existe, o Godot deve realmente usar o sprite mágico.
+	if ResourceLoader.exists("res://assets/pixellab/vanguard/idle/000.png", "Texture2D"):
+		var hero_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
+		if hero_sprite == null or not bool(hero_sprite.call("has_core_animations")) or not hero_sprite.visible:
+			_fail("Vanguard V2 completo não foi ativado no protagonista.")
+			return
+		if not is_equal_approx(hero_sprite.scale.x, 0.88):
+			_fail("Escala do sprite mágico não foi aplicada corretamente.")
+			return
+		var frame_texture := hero_sprite.sprite_frames.get_frame_texture("idle", 0)
+		if frame_texture == null or frame_texture.get_width() != 128 or frame_texture.get_height() != 128:
+			_fail("Textura mestre do protagonista não tem 128x128.")
+			return
 	var enemy: Node2D = foes[0]
 	var initial_health := int(enemy.get("health"))
 	enemy.call("take_hit", 5, Vector2.ZERO)
