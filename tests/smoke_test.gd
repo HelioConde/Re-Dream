@@ -61,9 +61,14 @@ func _check_game() -> void:
 	for node in touch_layer.get_children():
 		if node is TouchScreenButton:
 			touch_actions.append(str(node.action))
+	# Cada botão clássico deve existir exatamente uma vez: duplicações causam
+	# sobreposição visual e podem mascarar um comando ausente no mobile.
+	if touch_actions.size() != 6:
+		_fail("Esperados exatamente seis botões móveis do Re:Dream.")
+		return
 	for action in ["move_left", "move_right", "jump", "drop_platform", "attack_light", "charge_skill"]:
-		if not touch_actions.has(action):
-			_fail("Botão móvel ausente: " + action)
+		if touch_actions.count(action) != 1:
+			_fail("Botão móvel ausente ou duplicado: " + action)
 			return
 
 	if get_nodes_in_group("one_way_platforms").size() != 5:
