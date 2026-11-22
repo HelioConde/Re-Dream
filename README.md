@@ -25,10 +25,11 @@ O jogo original **Re:Dream** em Phaser/React/TypeScript/WebSocket está arquivad
 | A / D ou ← / → | Mover; duplo toque faz dash, segurar mantém corrida |
 | W / ↑ / Espaço | Saltar (com tolerância à borda e buffer) |
 | S / ↓ | Descer de plataforma vazada |
-| J | Combo de espada |
+| J | Combo de espada; ↑+J faz launcher, J no ar dá ataque aéreo e J durante dash golpe rápido |
 | K | Ataque forte |
 | Shift | Dash |
-| L | Especial de área (35 energia) |
+| L | Especial MP1 direto (35 de energia) |
+| Z (segurar e soltar) | Golpe inicial; segurar 0,65s/1,30s/1,95s e soltar invoca MP1/MP2/MP3 (35/50/70 energia) |
 | R / Enter | Reiniciar após derrota |
 
 ## Desenvolvimento

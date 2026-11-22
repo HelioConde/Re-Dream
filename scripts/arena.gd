@@ -26,6 +26,7 @@ var experience_bar: ProgressBar
 var wave_label: Label
 var stats_label: Label
 var alert_label: Label
+var charge_label: Label
 
 func _ready() -> void:
 	_setup_input()
@@ -43,6 +44,8 @@ func _setup_input() -> void:
 	_map_keys("jump", [KEY_W, KEY_UP, KEY_SPACE])
 	_map_keys("drop_platform", [KEY_S, KEY_DOWN])
 	_map_keys("attack_light", [KEY_J])
+	_map_keys("launcher_modifier", [KEY_W, KEY_UP])
+	_map_keys("charge_skill", [KEY_Z])
 	_map_keys("attack_heavy", [KEY_K])
 	_map_keys("dash", [KEY_SHIFT])
 	_map_keys("skill", [KEY_L])
@@ -117,6 +120,7 @@ func _process(delta: float) -> void:
 		"OK" if hero.dash_cooldown <= 0.0 else "%.1fs" % hero.dash_cooldown,
 		"OK" if hero.skill_cooldown <= 0.0 else "%.1fs" % hero.skill_cooldown
 	]
+	charge_label.text = ("Z CARGA MP%d/3 — SOLTE PARA LANÇAR" % hero._charge_level()) if hero.charge_active else "↑+J: LANÇADOR  |  J NO AR: GOLPE AÉREO  |  DASH+J: GOLPE RÁPIDO  |  Z: CARGA"
 	if game_over:
 		if Input.is_action_just_pressed("restart"):
 			get_tree().reload_current_scene()
@@ -141,10 +145,11 @@ func _create_hud() -> void:
 	_add_label(layer, Vector2(20, 94), "EXP", 17, Color.WHITE)
 	wave_label = _add_label(layer, Vector2(805, 18), "", 22, Color("#ffe5a2"))
 	stats_label = _add_label(layer, Vector2(18, 125), "", 14, Color("#deedf7"))
+	charge_label = _add_label(layer, Vector2(18, 151), "", 14, Color("#ccf7e7"))
 	alert_label = _add_label(layer, Vector2(270, 185), "", 25, Color("#ffe9c0"))
 	alert_label.size = Vector2(740, 50)
 	alert_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(layer, Vector2(18, 667), "A/D: MOVER/2x DASH+CORRIDA   ESPAÇO: PULAR   S: DESCER   J: COMBO   K: FORTE   SHIFT: DASH   L: ESPECIAL", 18, Color("#ffffff"))
+	_add_label(layer, Vector2(18, 667), "A/D: MOVER/2x CORRER   ESPAÇO: PULAR   S: DESCER   J: COMBO   Z: MP1/2/3   L: ESPECIAL", 18, Color("#ffffff"))
 
 func _add_label(layer: CanvasLayer, pos: Vector2, value: String, font_size: int, color: Color) -> Label:
 	var result := Label.new()
