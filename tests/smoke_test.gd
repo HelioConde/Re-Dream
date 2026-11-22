@@ -74,7 +74,7 @@ func _check_game() -> void:
 	# Quando o núcleo V2 existe, o Godot deve realmente usar o sprite mágico.
 	if ResourceLoader.exists("res://assets/pixellab/vanguard/idle/000.png", "Texture2D"):
 		var hero_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
-		if hero_sprite == null or not hero_sprite.has_core_animations() or not hero_sprite.visible:
+		if hero_sprite == null or not bool(hero_sprite.call("has_core_animations")) or not hero_sprite.visible:
 			_fail("Vanguard V2 completo não foi ativado no protagonista.")
 			return
 		if not is_equal_approx(hero_sprite.scale.x, 0.88):
