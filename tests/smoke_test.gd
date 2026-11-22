@@ -119,6 +119,13 @@ func _check_game() -> void:
 		_fail("O herói não recebeu dano corretamente.")
 		return
 
+	# Dano repetido durante a janela de invulnerabilidade não pode drenar vida.
+	var health_after_hit := int(hero.get("health"))
+	hero.call("take_damage", 30, Vector2(200.0, -200.0))
+	if int(hero.get("health")) != health_after_hit:
+		_fail("Invulnerabilidade não bloqueou o segundo golpe consecutivo.")
+		return
+
 	# Testa a transição duplo toque -> dash, sem depender da velocidade do runner.
 	hero.set("stagger", 0.0)
 	hero.set("attack_time", 0.0)
