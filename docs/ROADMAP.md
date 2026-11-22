@@ -14,7 +14,8 @@
 - [x] Adicionar ataques aéreos, launcher e ataque durante dash (cancelamento de dash para golpear).
 - [x] Carga Z e magias MP1/MP2/MP3 por tempo segurado e energia disponível.
 - [x] Portar combo de quatro golpes, Rocket Step, Shadow Step e salto de perseguição após launcher.
-- [ ] Portar Otto, juggling avançado e cancels adicionais.
+- [x] Portar Otto na borda, estocada aérea descendente e limite de 3 levantamentos de air-juggle por inimigo.
+- [ ] Refinar juggles avançados, cancels e janela de prioridade de ↓ antes do ataque.
 - [ ] Ampliar IA: alcance, prioridade, flanqueamento e antecipação de movimentos.
 - [ ] Acrescentar efeitos sonoros, animações, partículas e feedback de impacto.
 - [ ] Escrever testes de dano, colisão e recargas em Godot.

@@ -12,7 +12,7 @@ func setup(kind: String) -> void:
 	var created := SpriteFrames.new()
 	if created.has_animation("default"):
 		created.remove_animation("default")
-	for action in ["idle", "run", "attack", "heavy", "dash", "skill", "skill_1", "skill_2", "skill_3", "jump", "air_attack", "launcher", "dash_attack", "rocket", "shadow", "hit"]:
+	for action in ["idle", "run", "attack", "heavy", "dash", "skill", "skill_1", "skill_2", "skill_3", "jump", "air_attack", "launcher", "dash_attack", "rocket", "shadow", "otto", "dive", "hit"]:
 		var textures: Array[Texture2D] = []
 		for frame_index in range(16):
 			var path := "res://assets/pixellab/%s/%s/%03d.png" % [kind, action, frame_index]
@@ -49,7 +49,7 @@ func show_state(requested: String, facing: int) -> void:
 	if not sprite_frames.has_animation(state):
 		if requested.begins_with("skill_") and sprite_frames.has_animation("skill"):
 			state = "skill"
-		elif requested in ["heavy", "skill", "air_attack", "launcher", "dash_attack"] or requested.begins_with("skill_"):
+		elif requested in ["heavy", "skill", "air_attack", "launcher", "dash_attack", "otto", "dive"] or requested.begins_with("skill_"):
 			state = "attack" if sprite_frames.has_animation("attack") else "idle"
 		elif requested in ["jump", "dash", "rocket", "shadow"] and sprite_frames.has_animation("run"):
 			state = "run"

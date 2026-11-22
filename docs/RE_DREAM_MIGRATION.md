@@ -8,7 +8,7 @@
 | Dash duplo toque → corrida | Portado (0,27s entre toques, corrida após dash enquanto segura) | Testar sensibilidade em dispositivos |
 | J/Z golpes e 4 combos | J tem combo de 4 golpes; Z inicia golpe e carrega magia | Buffer/cancel refinados e artes específicas dos 4 golpes |
 | Heavy, especial | Golpe pesado, L habilidade simples e Z carregado MP1/MP2/MP3 | Ajustar balanceamento e VFX PixelLab próprios |
-| Rocket, Shadow, Otto, launcher, juggle | Launcher, aéreo, dash strike, Rocket (pulo no dash), Shadow (↓ no Rocket) e salto de chase | Otto, juggling avançado, cancels e QA de hitbox pendentes |
+| Rocket, Shadow, Otto, launcher, juggle | Launcher, aéreo, dash strike, Rocket/Shadow, salto de chase, Otto de borda, dive e 3 lifts de juggle | Refinar frame data, timing dos controles, combo aéreo avançado e hitstop |
 | ↓ atravessar plataforma | Portado: S/↓ atravessa plataforma one-way com exceção de colisão individual | QA de física real em plataformas empilhadas |
 | Cenários desenhados e animações SVG | Não importados para o motor novo | Novos sprites e backgrounds PixelLab |
 | 19 PNGs PixelLab do GameTeste | Importados e consumidos pelo Godot | Mais estados e inimigos |
