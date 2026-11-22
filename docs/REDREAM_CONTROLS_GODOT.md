@@ -26,3 +26,5 @@ Na experiência multiplayer anterior, `K/X` eram botões de skill. Na versão Go
 A camada `scripts/touch_controls.gd` desenha os **seis botões originais do treino**: **◀ ▶ ↑ ↓ J Z**. São `TouchScreenButton` nativos da Godot, com ações InputMap; é possível manter duas ações ao mesmo tempo, como mover e atacar ou ↑+Z. Os botões aparecem na exportação Web e em dispositivos touchscreen; no desktop nativo ficam ocultos. A tecla ↓ funciona como movimento relativo à plataforma e ↑ como pulo/modificador de ataque.
 
 Controles de toque não gastam PixelLab, não mexem na física e podem ser ocultados sem deixar ações presas quando a cena é removida. Verifique em navegador móvel o tamanho dos alvos e o comportamento em múltiplos dedos.
+
+Na exportação Web, `pointing/emulate_touch_from_mouse=true` permite testar os botões com clique de mouse no desktop. Abaixo de 667px do HUD, a seta ↓ foi posicionada sem cobrir a faixa inferior de instruções.

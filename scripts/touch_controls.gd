@@ -1,6 +1,6 @@
 extends CanvasLayer
 ## Six original Re:Dream practice controls, now native Godot multitouch.
-## Each TouchScreenButton drives InputMap without mouse-event emulation.
+## TouchScreenButton handles multitouch; Godot maps desktop mouse to touch for browser testing.
 ## A Label/Panel is visual only, so it never consumes touches intended for gameplay.
 
 const BUTTON_SIZE := Vector2(76.0, 70.0)
@@ -8,7 +8,7 @@ const BUTTON_DEFS := [
 	{"title": "◀", "action": "move_left", "position": Vector2(24, 550)},
 	{"title": "▶", "action": "move_right", "position": Vector2(186, 550)},
 	{"title": "↑", "action": "jump", "position": Vector2(105, 476)},
-	{"title": "↓", "action": "drop_platform", "position": Vector2(105, 616)},
+	{"title": "↓", "action": "drop_platform", "position": Vector2(105, 590)},
 	{"title": "J", "action": "attack_light", "position": Vector2(1030, 555)},
 	{"title": "Z", "action": "charge_skill", "position": Vector2(1130, 555)},
 ]
