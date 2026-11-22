@@ -40,3 +40,7 @@ Não há geração no PixelLab sem o segredo e crédito; o modo de simulação a
 O sprite anterior `hero/` continua íntegro como fallback, mas **não é a estética final**. O novo `vanguard/` usa um sprite-mestre original de 128×128, aparência anime de aventura, roupas claras, cachecol turquesa e magia lunar. Depois de revisar `vanguard/idle`, `vanguard/run` e `vanguard/attack` na PR, a Godot passa a preferir automaticamente esse conjunto.
 
 Na Action manual selecione **character=vanguard**, **animation_set=core** e **generate=true** somente se quiser consumir créditos PixelLab. A etapa de simulação **generate=false** é gratuita. Veja `docs/ART_DIRECTION_VANGUARD_V2.md`. Nunca substituir a antiga arte sem revisão e rollback.
+
+## Criatura mágica da floresta
+
+Novo alvo `crystal_imp`: imp de musgo e cristal original com orelhas de folhas, bastão arcano e pedra da lua. Use a Action PixelLab com `character=crystal_imp`, `animation_set=core` primeiro, depois `full` para hit. O Godot só troca o fallback após pacote consistente idle/run/attack aprovado. A geração ainda depende do segredo `PIXELLAB_API_KEY` no Re-Dream.

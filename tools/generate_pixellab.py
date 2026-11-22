@@ -22,6 +22,18 @@ API_BASE = "https://api.pixellab.ai/v2"
 ROOT = Path(__file__).resolve().parents[1] / "assets" / "pixellab"
 
 CHARACTERS = {
+    "crystal_imp": (
+        "Original whimsical magical forest imp for a bright side-view anime fantasy adventure RPG. "
+        "Small friendly-but-dangerous woodland creature with a distinctive round mint-green face, "
+        "large expressive cobalt eyes, two leaf-like pointed ears, teal moss coat, twig arms, "
+        "flexible root legs, two small translucent turquoise crystal horns and a luminous "
+        "moonstone in its chest. Holds a tiny wooden wand crowned by a cyan crystal. "
+        "Compact squat silhouette with clearly separated feet and hands, stylized 4-head height. "
+        "Vivid emerald, turquoise, periwinkle, coral-gold accents; playful mischievous expression. "
+        "Clean carefully hand-authored fantasy pixel art for a 96x96 sprite, facing RIGHT "
+        "in side-view, fully visible from crystal horns to toes, one single character centered. "
+        "Transparent background, no floor shadow, no scenery, no text, no logos, no copied characters."
+    ),
     "vanguard": (
         "ORIGINAL upbeat anime-fantasy adventurer for a colorful side-scrolling magic action RPG. "
         "One young adult moonblade explorer, full body profile facing RIGHT, 4.5-head-high "
@@ -57,6 +69,11 @@ CHARACTERS = {
     ),
 }
 MOTIONS = {
+    "crystal_imp": {
+        "run": (8, "Original crystal imp bounds quickly to the right, twig legs alternate, leaf ears bounce, moonstone chest and same crystal horns stay consistent; transparent side-view animation."),
+        "attack": (8, "Original crystal imp winds up glowing crystal-tipped staff then casts one short cyan magical crescent to the right, expressive anticipation and recovery, exact same face, leaf ears and horn layout."),
+        "hit": (4, "Original crystal imp reacts briefly to a hit then recovers, leaf ears and small crystal wand remain attached, transparent side-view, identical anatomy."),
+    },
     "vanguard": {
         "run": (8, "Energetic heroic side-view sprint to the right, springy anime-adventurer motion, teal scarf and hair trailing, natural alternating boot steps, moonstone and costume identical, no scene or camera."),
         "attack": (8, "Fast readable magical saber combo: wind-up, single sweeping turquoise arc toward the right, impact and controlled recovery, keep same ivory coat, teal scarf, chestnut hair, amulet and facial features, no background."),

@@ -40,7 +40,11 @@ func _ready() -> void:
 	collider.shape = shape
 	add_child(collider)
 	pixel_sprite = PIXEL_SPRITE.new()
-	pixel_sprite.setup("enemy")
+	# Prefer magical PixelLab creature when a coherent idle/run/attack set exists.
+	# Original raider remains a safe fallback; PNGs are never overwritten.
+	pixel_sprite.setup("crystal_imp")
+	if not pixel_sprite.has_core_animations():
+		pixel_sprite.setup("enemy")
 	pixel_sprite.scale = Vector2(1.19, 1.19) if elite else Vector2.ONE
 	add_child(pixel_sprite)
 
@@ -127,27 +131,66 @@ func _update_pixel_sprite() -> void:
 	pixel_sprite.call("show_state", state, facing)
 
 func _draw() -> void:
+	# Visual-only magical forest creature; collision and AI stay unchanged.
 	if pixel_sprite != null and pixel_sprite.visible:
 		if windup > 0.0:
-			draw_arc(Vector2(0, -9), 42.0, -1.8, 1.8, 20, Color("#ff716e"), 4.0)
-		draw_rect(Rect2(-23, -69, 46, 5), Color("#292b3c"))
-		draw_rect(Rect2(-22, -68, 44.0 * float(health) / float(max_health), 3), Color("#f16c78"))
+			draw_arc(Vector2(0, -9), 42.0, -1.8, 1.8, 20, Color("#ffa7d2"), 4.0, true)
+		draw_rect(Rect2(-23, -69, 46, 5), Color("#21384c"))
+		draw_rect(Rect2(-22, -68, 44.0 * float(health) / float(max_health), 3), Color("#78ecd4"))
 		return
 
 	var scale_factor := 1.19 if elite else 1.0
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2(scale_factor, scale_factor))
-	var stride := sin(animation_clock * 8.0) * 3.0 if absf(velocity.x) > 10.0 else 0.0
-	var body_color := Color("#9f4562") if elite else Color("#526d79")
-	draw_line(Vector2(-7, 5), Vector2(-8 + stride, 26), Color("#283343"), 7.0)
-	draw_line(Vector2(7, 5), Vector2(8 - stride, 26), Color("#283343"), 7.0)
-	draw_rect(Rect2(-16, -22, 32, 34), body_color)
-	draw_circle(Vector2(0, -35), 15.0, Color("#d6bea1"))
-	draw_colored_polygon(PackedVector2Array([Vector2(-17, -41), Vector2(-12, -56), Vector2(0, -48), Vector2(12, -56), Vector2(17, -41)]), Color("#414359"))
-	draw_circle(Vector2(6 * facing, -36), 2.3, Color("#fe7e70"))
-	draw_line(Vector2(10 * facing, -13), Vector2(25 * facing, -1), Color("#d6bea1"), 7.0)
-	draw_line(Vector2(23 * facing, -2), Vector2(38 * facing, -18), Color("#e9dca5"), 6.0)
+	var stride := sin(animation_clock * 8.0) * 4.0 if absf(velocity.x) > 10.0 else 0.0
+	var moss := Color("#6e62b3") if elite else Color("#2b8d79")
+	var leaf := Color("#c39ced") if elite else Color("#67cca0")
+	var crystal := Color("#f5b9ff") if elite else Color("#8ef5e5")
+	var bark := Color("#5b4770") if elite else Color("#4c6b5d")
+	# Enchanted aura and falling glitter make the creature read as magical.
+	draw_circle(Vector2(0.0, -23.0), 39.0, Color(0.48, 0.92, 0.92, 0.12))
+	draw_line(Vector2(-11.0, 2.0), Vector2(-12.0 + stride, 27.0), bark, 9.0, true)
+	draw_line(Vector2(11.0, 2.0), Vector2(12.0 - stride, 27.0), bark, 9.0, true)
+	# Living root body, leaf tunic, faceted luminous moonstone belly.
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-16, -26), Vector2(-23, -5), Vector2(-13, 16),
+		Vector2(12, 16), Vector2(23, -5), Vector2(16, -26)
+	]), moss)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-19, -6), Vector2(-3, -20), Vector2(20, -6),
+		Vector2(6, 19), Vector2(-9, 12)
+	]), leaf)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, -11), Vector2(11, 2), Vector2(0, 13), Vector2(-11, 2)
+	]), crystal)
+	draw_line(Vector2(0, -10), Vector2(0, 12), Color(0.96, 1.0, 0.96, 0.45), 2.0, true)
+	# Ear-like leafy spikes, expressive round face and visible bright eyes.
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-13, -41), Vector2(-30, -54), Vector2(-22, -29), Vector2(-9, -28)
+	]), leaf)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(13, -41), Vector2(29, -54), Vector2(23, -28), Vector2(9, -28)
+	]), leaf)
+	draw_circle(Vector2(0, -34), 17.0, Color("#adedd1") if not elite else Color("#e3c7f7"))
+	draw_circle(Vector2(-6, -35), 4.3, Color("#25475b"))
+	draw_circle(Vector2(7, -35), 4.3, Color("#25475b"))
+	draw_circle(Vector2(-4.6, -36), 1.3, Color.WHITE)
+	draw_circle(Vector2(8.2, -36), 1.3, Color.WHITE)
+	draw_arc(Vector2(0, -31), 5.0, 0.15, PI - 0.15, 9, bark, 2.0, true)
+	# Two small moon crystals grown instead of a steel helmet.
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-8, -48), Vector2(-6, -67), Vector2(1, -54), Vector2(0, -46)
+	]), crystal)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(4, -48), Vector2(13, -61), Vector2(13, -46), Vector2(8, -43)
+	]), crystal)
+	# Crystal staff/hand channels a warning arc during wind-up.
+	draw_line(Vector2(12 * facing, -13), Vector2(27 * facing, -8), leaf, 7.0, true)
+	draw_line(Vector2(27 * facing, -8), Vector2(36 * facing, -30), bark, 5.0, true)
+	draw_circle(Vector2(36 * facing, -33), 7.0, crystal)
 	if windup > 0.0:
-		draw_arc(Vector2(0, -9), 42.0, -1.8, 1.8, 20, Color("#ff716e"), 4.0)
-	draw_rect(Rect2(-23, -69, 46, 5), Color("#292b3c"))
-	draw_rect(Rect2(-22, -68, 44.0 * float(health) / float(max_health), 3), Color("#f16c78"))
+		draw_arc(Vector2(0, -9), 45.0, -1.8, 1.8, 28, Color("#ffd2a6"), 5.0, true)
+		draw_circle(Vector2(36 * facing, -33), 13.0, Color(0.9, 0.8, 1.0, 0.26))
+	# Existing health bar semantics are preserved.
+	draw_rect(Rect2(-23, -74, 46, 5), Color("#21384c"))
+	draw_rect(Rect2(-22, -73, 44.0 * float(health) / float(max_health), 3), Color("#78ecd4"))
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)

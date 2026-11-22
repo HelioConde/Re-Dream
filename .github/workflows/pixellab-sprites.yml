@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - vanguard
+          - crystal_imp
           - hero
           - enemy
         default: vanguard

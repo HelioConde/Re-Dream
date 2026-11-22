@@ -11,6 +11,8 @@ class PixelLabPipelineTests(unittest.TestCase):
     def test_supported_characters_have_animations(self):
         self.assertIn("hero", CHARACTERS)
         self.assertIn("vanguard", CHARACTERS)
+        self.assertIn("crystal_imp", CHARACTERS)
+        self.assertIn("moonstone", CHARACTERS["crystal_imp"].lower())
         self.assertIn("moonblade", CHARACTERS["vanguard"].lower())
         self.assertIn("transparent background", CHARACTERS["vanguard"].lower())
         self.assertIn("enemy", CHARACTERS)
@@ -43,6 +45,18 @@ class PixelLabPipelineTests(unittest.TestCase):
         self.assertIn('pixel_sprite.has_core_animations()', content)
         sprite = (root / "scripts/pixel_sprite.gd").read_text(encoding="utf-8")
         self.assertIn('sprite_frames.has_animation("run") and sprite_frames.has_animation("attack")', sprite)
+
+    def test_magical_enemy_assets_are_optional_with_original_fallback(self):
+        from pathlib import Path
+        with mock.patch("tools.generate_pixellab.api_request", side_effect=AssertionError("unexpected paid call")):
+            with mock.patch.dict("os.environ", {}, clear=True):
+                plan = generate("crystal_imp", "core", dry_run=True)
+        self.assertEqual(plan["target"], "crystal_imp")
+        self.assertTrue(set(plan["motions_needed"]).issubset({"run", "attack"}))
+        foe_code = (Path(__file__).resolve().parents[1] / "scripts/foe.gd").read_text(encoding="utf-8")
+        self.assertIn('pixel_sprite.setup("crystal_imp")', foe_code)
+        self.assertIn('if not pixel_sprite.has_core_animations():', foe_code)
+        self.assertIn('pixel_sprite.setup("enemy")', foe_code)
 
     def test_committed_frames_are_pngs_and_contain_transparency(self):
         idle = ROOT / "hero/idle/000.png"

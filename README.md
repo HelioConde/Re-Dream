@@ -72,3 +72,7 @@ A estética anterior de guerreiro sombrio foi considerada inadequada para o mund
 - **Acerto aéreo após launcher:** mantém inimigos suspensos por até três levantamentos, depois os acertos continuam causando dano mas não permitem juggle infinito.
 
 Os ataques usam a mesma arte PixelLab com fallback até serem aprovadas animações específicas. A sensação do combate precisa de avaliação manual além dos smoke tests.
+
+## Inimigos de fantasia
+
+Os adversários sem PNG passaram a usar uma criatura original da floresta: **Crystal Imp**, com chifres de cristal, folhas e bastão de magia, incluindo variação elite violeta. O pipeline PixelLab também suporta `crystal_imp` e preserva a arte antiga como fallback até aprovação de idle, corrida e ataque. A chave `PIXELLAB_API_KEY` ainda é necessária para realizar geração paga no Re-Dream.
