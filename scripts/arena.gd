@@ -41,6 +41,7 @@ func _setup_input() -> void:
 	_map_keys("move_left", [KEY_A, KEY_LEFT])
 	_map_keys("move_right", [KEY_D, KEY_RIGHT])
 	_map_keys("jump", [KEY_W, KEY_UP, KEY_SPACE])
+	_map_keys("drop_platform", [KEY_S, KEY_DOWN])
 	_map_keys("attack_light", [KEY_J])
 	_map_keys("attack_heavy", [KEY_K])
 	_map_keys("dash", [KEY_SHIFT])
@@ -63,6 +64,8 @@ func _create_world() -> void:
 func _add_solid(center: Vector2, size: Vector2, one_way: bool) -> void:
 	var body := StaticBody2D.new()
 	body.position = center
+	if one_way:
+		body.add_to_group("one_way_platforms")
 	body.collision_layer = 1
 	body.collision_mask = 0
 	var shape := RectangleShape2D.new()
@@ -141,7 +144,7 @@ func _create_hud() -> void:
 	alert_label = _add_label(layer, Vector2(270, 185), "", 25, Color("#ffe9c0"))
 	alert_label.size = Vector2(740, 50)
 	alert_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(layer, Vector2(18, 667), "A/D: MOVER   ESPAÇO: PULAR   J: COMBO   K: FORTE   SHIFT: DASH   L: ESPECIAL", 18, Color("#ffffff"))
+	_add_label(layer, Vector2(18, 667), "A/D: MOVER/2x DASH+CORRIDA   ESPAÇO: PULAR   S: DESCER   J: COMBO   K: FORTE   SHIFT: DASH   L: ESPECIAL", 18, Color("#ffffff"))
 
 func _add_label(layer: CanvasLayer, pos: Vector2, value: String, font_size: int, color: Color) -> Label:
 	var result := Label.new()

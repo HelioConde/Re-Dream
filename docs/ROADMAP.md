@@ -10,7 +10,8 @@
 
 ## Etapa 2 — Paridade de controles Re:Dream e qualidade do combate
 - [ ] Ajustar hitstop, cancelamento de combo e janelas de esquiva.
-- [ ] Adicionar coyote time, jump buffer e ataque aéreo.
+- [x] Adicionar coyote time, jump buffer, dash por duplo toque e comando ↓ em plataformas one-way.
+- [ ] Adicionar ataque aéreo e cancels mais avançados.
 - [ ] Ampliar IA: alcance, prioridade, flanqueamento e antecipação de movimentos.
 - [ ] Acrescentar efeitos sonoros, animações, partículas e feedback de impacto.
 - [ ] Escrever testes de dano, colisão e recargas em Godot.

@@ -4,12 +4,12 @@
 
 | Sistema anterior do Re:Dream | Estado inicial no Godot | Pendente |
 | --- | --- | --- |
-| Correr, andar e pular | Implementado com `CharacterBody2D` | QA de resposta |
-| Dash duplo toque → corrida | Dash por Shift; paridade pendente | Duplo toque e cancelar corrida |
+| Correr, andar e pular | Implementado + coyote time (0,12s) e jump buffer (0,14s) | QA de resposta |
+| Dash duplo toque → corrida | Portado (0,27s entre toques, corrida após dash enquanto segura) | Testar sensibilidade em dispositivos |
 | J/Z golpes e 4 combos | Combo de 3 golpes por J | Combos extras/cancel |
 | Heavy, especial | Golpe pesado e habilidade de área | MP1/2/3 carregados |
 | Rocket, Shadow, Otto, launcher, juggle | Não portado | FSM aérea |
-| ↓ atravessar plataforma | Colisores one-way, tecla ↓ pendente | Input e teste |
+| ↓ atravessar plataforma | Portado: S/↓ atravessa plataforma one-way com exceção de colisão individual | QA de física real em plataformas empilhadas |
 | Cenários desenhados e animações SVG | Não importados para o motor novo | Novos sprites e backgrounds PixelLab |
 | 19 PNGs PixelLab do GameTeste | Importados e consumidos pelo Godot | Mais estados e inimigos |
 | Missões com ondas e chefão | Ondas e elite disponíveis | Chefão com fases |
