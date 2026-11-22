@@ -1,9 +1,8 @@
-node_modules/
-dist/
-.env
-.env.local
-.env.*.local
+.godot/
+.import/
+*.tmp
+*.bak
 .DS_Store
-.vite/
-coverage/
-*.log
+Thumbs.db
+exports/
+build/

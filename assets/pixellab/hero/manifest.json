@@ -1,0 +1,55 @@
+{
+  "generator": "PixelLab API v2",
+  "description": "Original heroic fantasy swordsman for an action platformer, side-view full-body pixel art, facing right, feet visible, ready stance, flowing deep violet cape, navy-blue plate armor, dark messy hair, silver sword with gold hilt, clean readable silhouette, restrained 32-color palette, handcrafted 16-bit console pixel art, crisp pixels, one character only, no landscape, no shadows on floor, no text.",
+  "target": "hero",
+  "frames": {
+    "idle": [
+      "2bf9577e9b49038f8c66eab7389b5887062016c23c2fb976f49e300b25bcd19b"
+    ],
+    "run": [
+      "2bf9577e9b49038f8c66eab7389b5887062016c23c2fb976f49e300b25bcd19b",
+      "d8f0e456bdf9b41a221f404d924440a44971be9949d35746f6f47130c842e518",
+      "56a8d008db5fd75954f59be2dda1db45a97d3cf1d2b0a901ef1a7eb805dce682",
+      "ea62ebc46a8adc4589bea86a00813a3616a9c120c631ae40b0578f75e1b77ec8",
+      "b2110617b01306aa14cbc79d52973362b7c3bb10496a8559378e78ca089034f8",
+      "325bc2da5ec53a1921f56ef477d272cad1763b43b381db2e9bbcff6b50719058",
+      "54050338bb9f44eefdbbbc94670d33769fa842cb0d774c5cc2bfd65d40cf97d5",
+      "fcfc2279c60c757e4e8a53901b54a0e0da079f29c6959d85646fdb041991e0c6",
+      "a18a6b900543acd52e3189bb77b13a2eab5a2991b8b5ebe8436ab60e8ca81fae"
+    ],
+    "attack": [
+      "2bf9577e9b49038f8c66eab7389b5887062016c23c2fb976f49e300b25bcd19b",
+      "70d05c913030c31d3a17209e66be90e3ecca838bdefcae38c10c18a5ec4a7a2f",
+      "e4739edbaced83f0cd3a97c10116f3d0fe7fc2c7fa39de80d94e7da8d4165be1",
+      "2bb6a02affec5f066647b443e316f71304eb3bd8bad1095a493d842cfae69725",
+      "d5b18af8865438e08a260fca905675c6535eb0704a8687485c014f0d52ec80e6",
+      "2ad76bdd7a31e43e58046d5a67605300863d6ddb8664a7f7798cbac68d7f191c",
+      "e53cfb2f47078c58ba8c80ee05fd022686d8a020594fddb56b645ce2c7c89937",
+      "93d9bdf53b69bbde07dde8d34862da9a18406a3047f4fe0c9b0d5bd01e4394b0",
+      "e3552fe38af115d16a8422913a091dd4592a59d773db3ec83f9b0b4fc9b31ea8"
+    ]
+  },
+  "jobs": {
+    "idle": {
+      "endpoint": "create-image-pixen",
+      "usage": {
+        "type": "generations",
+        "generations": 1.0
+      }
+    },
+    "run": {
+      "endpoint": "animate-with-text-v3",
+      "job_id": "3134f0d5-204c-480e-b38f-334bb3562bae",
+      "prompt": "Side-view looping running cycle moving toward the right, sword and cape follow motion, feet clearly alternate, no camera changes, same character outfit.",
+      "frames": 9,
+      "usage": null
+    },
+    "attack": {
+      "endpoint": "animate-with-text-v3",
+      "job_id": "9be646fb-1938-45bc-a618-fe1ae54627b3",
+      "prompt": "Side-view action platform game attack, one readable rightward sword slash then return to ready stance, retain same helmet, cape and clothes, no camera motion.",
+      "frames": 9,
+      "usage": null
+    }
+  }
+}

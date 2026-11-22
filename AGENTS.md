@@ -1,26 +1,22 @@
-# Re:Dream — instruções para agentes de programação
+# Eclipse Vanguard — instruções para agentes
 
-Este repositório contém um jogo **original** de ação/plataformas 2D. O cliente usa React, TypeScript, Phaser 4 e Vite; o servidor multijogador usa Node.js e WebSocket.
+O jogo do repositório `Re-Dream` agora é **Eclipse Vanguard em Godot 4.7.2**. A versão Phaser/React/WebSocket anterior está guardada em `archive/redream-phaser-before-godot-20261122`. `HelioConde/GameTeste` é a fonte histórica Godot/PixelLab, não a branch principal deste jogo.
 
-## Leia antes de alterar código
-1. `docs/GDD_RE_DREAM.md`: visão, escopo, regras implementadas versus propostas.
-2. `docs/AI_GAME_STUDIO.md`: catálogo de nove skills locais e fluxo de trabalho.
-3. `docs/BACKLOG_RE_DREAM.md`: ordem de implementação e critérios.
-4. `docs/GAMEPLAY_ARCADE_REFERENCE.md`: descrição do protótipo de combate (verifique contra o código; pode estar desatualizado).
+## Ler antes de editar
+1. `README.md`
+2. `docs/RE_DREAM_MIGRATION.md`
+3. `docs/ROADMAP.md`
+4. `assets/pixellab/README.md`
 
-## Regras obrigatórias
-- **Re:Dream apenas**: não tocar em outros repositórios, especialmente Slimekeepers, sem pedido explícito.
-- **Nunca copiar** códigos, artes, áudio, logotipos, personagens ou mapas de Grand Chase ou outros jogos. Referências servem para *feel*, não para reprodução de propriedade intelectual.
-- O modo `#praticar` roda simulação local em `apps/web/src/practiceSimulation.ts`; o multiplayer usa `apps/server/src/sim.ts`. Não levar regras offline para o servidor sem planejamento, validação de autoridade e testes de rede.
-- **Combate offline**: Z é a única tecla de conjuração; segurar e **soltar** Z carrega/ativa magia de MP 1/2/3. A/S/D/K nunca disparam magia no modo Praticar.
-- Preservar duplo toque de direção → dash; segurar o segundo toque → corrida; Rocket/Shadow Step, Otto, launcher e juggle quando alterar controles.
-- No treino, pressionar ↓ sozinho sobre plataforma vazada atravessa após uma breve janela de prioridade para ↓+Z/J (Otto); chão sólido não permite passagem, ↓ no ar continua Shadow Step. ↓+Espaço é opcional.
-- Prefira alterações pequenas, com critérios observáveis, testes e rollback possível. Nunca afirmar que uma animação/feature está funcional sem executar verificações adequadas.
-- Após alterações em TypeScript: `npm test` e `npm run build`. Em mudanças visuais, testar no navegador e conservar evidência visual; testes unitários não validam aparência nem *game feel*.
-- Não introduzir banco de dados/backend obrigatório no modo Praticar ou no GitHub Pages; páginas estáticas não executam WebSocket server.
-- Não inventar benchmarks, métricas de FPS, qualidade de gameplay nem licenças de assets.
+## Regras
+- Usar **Godot GDScript** no projeto principal; não recolocar Phaser/React no runtime.
+- Nunca modificar GameTeste sem solicitação específica.
+- Não copiar marcas, sons, sprites, personagens ou código de jogos protegidos; produzir arte autoral via PixelLab.
+- Manter os PNGs PixelLab existentes, com manifesto e hashes; arte nova requer revisão de fidelidade, transparência e pose.
+- Não declarar como migrados o multiplayer Phaser, os 23 estados SVG do Aren ou suas técnicas avançadas enquanto não estiverem implementadas no Godot.
+- Após editar scripts, rodar importação headless + smoke test. Para imagens, rodar testes PNG e export Web.
+- Não consumir créditos PixelLab sem workflow manual e `generate=true` explícito.
+- GitHub Pages hospeda o jogo WebAssembly em `/Re-Dream/`, mas não um servidor multiplayer.
 
-## Fluxo recomendado
-`gdd-dinamico` → `backlog-gameplay` → `gameplay-fsm` ou `gameplay-events` → implementação → `debug-stacktrace` / `perf-audit` → QA / análise jogável → PR.
-
-As skills compatíveis com Claude Code ficam em `.claude/skills/<nome>/SKILL.md`. No Codex/ChatGPT, leia o arquivo da skill e aplique seu procedimento como instrução do projeto; não presuma que o comando `/nome` será registrado automaticamente.
+## Próximos marcos
+Portar controles avançados do Re:Dream → melhorar sprites e animações → finalizar cenários e chefes → avaliar cooperativo com arquitetura de Godot.
