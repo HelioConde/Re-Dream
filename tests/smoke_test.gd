@@ -49,6 +49,9 @@ func _check_game() -> void:
 		if bound_keys.size() != expected[action].size():
 			_fail("Botões extras inesperados no comando: " + action)
 			return
+	if not bool(ProjectSettings.get_setting("input_devices/pointing/emulate_touch_from_mouse", false)):
+		_fail("Controles do navegador não aceitam clique do mouse como toque.")
+		return
 	# Toques usam ações Godot nativas, para permitir combinações e multitouch.
 	var touch_layer := arena.get_node_or_null("TouchControls")
 	if touch_layer == null:
