@@ -36,6 +36,9 @@ jobs:
       - name: Verificar cena e combate
         run: godot --headless --path . --script res://tests/smoke_test.gd
 
+      - name: Testar interrupção da carga Z
+        run: godot --headless --path . --script res://tests/charge_interrupt_test.gd
+
       - name: Exportar para navegador
         run: |
           mkdir -p dist
