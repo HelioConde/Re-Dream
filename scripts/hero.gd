@@ -11,6 +11,8 @@ const MAX_CHARGE_SECONDS := CHARGE_BAR_SECONDS * 3.0
 const ROCKET_DURATION := 0.52
 const ROCKET_SPEED := 475.0
 const CHASE_JUMP_VELOCITY := -760.0
+const DIVE_FALL_SPEED := 820.0
+const DIVE_PLATFORM_SECONDS := 0.60
 const PIXEL_SPRITE = preload("res://scripts/pixel_sprite.gd")
 
 var max_health := 100
@@ -36,6 +38,11 @@ var rocket_time := 0.0
 var rocket_direction := 1
 var shadow_time := 0.0
 var chase_window := 0.0
+# Down+Z/J on an one-way ledge performs Otto; airborne performs a dive.
+var dive_passthrough_time := 0.0
+var dive_platforms: Array[CollisionObject2D] = []
+var air_juggle_chain := 0
+var air_juggle_window := 0.0
 var jump_buffer := 0.0
 var coyote_time := 0.0
 var drop_timer := 0.0
@@ -92,6 +99,13 @@ func _physics_process(delta: float) -> void:
 	rocket_time = maxf(0.0, rocket_time - delta)
 	shadow_time = maxf(0.0, shadow_time - delta)
 	chase_window = maxf(0.0, chase_window - delta)
+	air_juggle_window = maxf(0.0, air_juggle_window - delta)
+	if air_juggle_window <= 0.0:
+		air_juggle_chain = 0
+	if dive_passthrough_time > 0.0:
+		dive_passthrough_time = maxf(0.0, dive_passthrough_time - delta)
+		if dive_passthrough_time <= 0.0:
+			_clear_dive_passthrough()
 	if is_on_floor():
 		rocket_time = 0.0
 		shadow_time = 0.0
@@ -162,7 +176,9 @@ func _physics_process(delta: float) -> void:
 		var down_pressed := Input.is_action_just_pressed("drop_platform")
 		var shadowed := down_pressed and rocket_time > 0.0 and not is_on_floor() and _start_shadow_step()
 		var drop_confirmed := Input.is_action_pressed("drop_platform") and Input.is_action_just_pressed("drop_confirm")
-		var dropped := (down_pressed or drop_confirmed) and not shadowed and _try_drop_platform()
+		# ↓+Z/J takes priority over platform drop when pressed together.
+		var combo_pressed := light_pressed or charge_pressed
+		var dropped := (down_pressed or drop_confirmed) and not shadowed and not combo_pressed and _try_drop_platform()
 		if not dropped and not launcher_requested:
 			_try_buffered_jump()
 		if light_pressed:
@@ -191,6 +207,9 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, 2400.0 * delta)
 
 	move_and_slide()
+	# The solid ground remains collidable during a downward finisher.
+	if is_on_floor() and dive_passthrough_time > 0.0:
+		_clear_dive_passthrough()
 	position.x = clampf(position.x, 30.0, 3170.0)
 	run_clock += delta * absf(velocity.x) / RUN_SPEED
 	_update_pixel_sprite()
@@ -265,7 +284,47 @@ func _try_drop_platform() -> bool:
 	return false
 
 
+func _is_one_way_edge_position(hero_at: Vector2, platform_at: Vector2) -> bool:
+	# Collision capsule is 60px tall; one-way stone platforms are 24px tall.
+	var feet_y := hero_at.y + 30.0
+	var stone_top := platform_at.y - 12.0
+	var side := absf(hero_at.x - platform_at.x)
+	return absf(feet_y - stone_top) <= 20.0 and side >= 78.0 and side <= 130.0
+
+
+func _at_one_way_edge() -> bool:
+	if not is_on_floor():
+		return false
+	for platform in get_tree().get_nodes_in_group("one_way_platforms"):
+		if platform is CollisionObject2D and _is_one_way_edge_position(global_position, platform.global_position):
+			return true
+	return false
+
+
+func _enable_dive_passthrough() -> void:
+	_clear_dive_passthrough()
+	for platform in get_tree().get_nodes_in_group("one_way_platforms"):
+		if platform is CollisionObject2D and platform != dropped_platform:
+			var body := platform as CollisionObject2D
+			add_collision_exception_with(body)
+			dive_platforms.append(body)
+	dive_passthrough_time = DIVE_PLATFORM_SECONDS
+
+
+func _clear_dive_passthrough() -> void:
+	for body in dive_platforms:
+		if is_instance_valid(body):
+			remove_collision_exception_with(body)
+	dive_platforms.clear()
+	dive_passthrough_time = 0.0
+
+
 func _choose_light_attack() -> String:
+	if Input.is_action_pressed("drop_platform"):
+		if is_on_floor() and _at_one_way_edge():
+			return "otto"
+		if not is_on_floor():
+			return "dive"
 	if is_on_floor() and (Input.is_action_pressed("launcher_modifier") or Input.is_action_pressed("jump")):
 		return "launcher"
 	if dash_time > 0.0 and is_on_floor():
@@ -276,12 +335,23 @@ func _choose_light_attack() -> String:
 
 
 func _begin_attack(kind: String) -> void:
-	if kind not in ["light", "heavy", "launcher", "air", "dash_attack"]:
+	if kind not in ["light", "heavy", "launcher", "air", "dash_attack", "otto", "dive"]:
 		return
 	if not alive or stagger > 0.0 or attack_time > 0.0:
 		return
 	if dash_time > 0.0 and kind != "dash_attack":
 		return
+	if kind == "otto":
+		# Edge-only Otto uses existing individual collision exception.
+		if not _at_one_way_edge() or not _try_drop_platform():
+			return
+		velocity.y = maxf(velocity.y, 220.0)
+	elif kind == "dive":
+		# Dive crosses one-way ledges but never solid floor.
+		velocity.y = maxf(velocity.y, DIVE_FALL_SPEED)
+		rocket_time = 0.0
+		shadow_time = 0.0
+		_enable_dive_passthrough()
 	if kind == "dash_attack":
 		# O golpe cancela o dash e não provoca um segundo deslocamento automático.
 		dash_time = 0.0
@@ -301,6 +371,10 @@ func _begin_attack(kind: String) -> void:
 				attack_time = 0.42
 			"dash_attack":
 				attack_time = 0.35
+			"otto":
+				attack_time = 0.27
+			"dive":
+				attack_time = 0.43
 			_:
 				attack_time = 0.32
 
@@ -329,6 +403,16 @@ func _resolve_melee() -> void:
 			damage = 28 + level * 4
 			reach = 155.0
 			vertical_impulse = -230.0
+		"otto":
+			damage = 32 + level * 3
+			reach = 155.0
+			vertical_range = 205.0
+			vertical_impulse = 180.0
+		"dive":
+			damage = 30 + level * 4
+			reach = 138.0
+			vertical_range = 180.0
+			vertical_impulse = 540.0
 	var hits := 0
 	for candidate in get_tree().get_nodes_in_group("enemies"):
 		var enemy := candidate as Node2D
@@ -336,12 +420,20 @@ func _resolve_melee() -> void:
 			continue
 		var offset := enemy.global_position - global_position
 		if absf(offset.y) <= vertical_range and offset.x * float(facing) >= -12.0 and offset.x * float(facing) <= reach:
-			enemy.call("take_hit", damage, Vector2(float(facing) * 300.0, vertical_impulse))
+			var impulse := Vector2(float(facing) * 300.0, vertical_impulse)
+			if attack_kind == "air" and enemy.has_method("take_air_juggle_hit"):
+				if bool(enemy.call("take_air_juggle_hit", damage, impulse)):
+					air_juggle_chain += 1
+					air_juggle_window = 1.15
+			else:
+				enemy.call("take_hit", damage, impulse)
 			hits += 1
 	if hits > 0:
 		mana = minf(max_mana, mana + 5.0 * float(hits))
 		if attack_kind == "launcher":
 			chase_window = 0.75
+			air_juggle_chain = 0
+			air_juggle_window = 0.0
 
 
 func _begin_charge() -> void:
@@ -397,6 +489,7 @@ func take_damage(amount: int, impulse: Vector2) -> void:
 	rocket_time = 0.0
 	shadow_time = 0.0
 	chase_window = 0.0
+	_clear_dive_passthrough()
 	velocity = impulse
 	if health == 0:
 		alive = false
@@ -429,7 +522,7 @@ func _update_pixel_sprite() -> void:
 		elif attack_kind == "air":
 			state = "air_attack"
 		else:
-			state = attack_kind if attack_kind in ["launcher", "dash_attack"] else "attack"
+			state = attack_kind if attack_kind in ["launcher", "dash_attack", "otto", "dive"] else "attack"
 	elif dash_time > 0.0:
 		state = "dash"
 	elif shadow_time > 0.0:
@@ -452,6 +545,8 @@ func _draw() -> void:
 		if charge_active:
 			var charge_radius := 32.0 + float(_charge_level()) * 9.0
 			draw_arc(Vector2(0.0, -28.0), charge_radius, 0.0, TAU, 50, Color("#adf5fc"), 3.0, true)
+		if attack_time > 0.0 and attack_kind in ["otto", "dive"]:
+			draw_line(Vector2(-20.0 * facing, -39.0), Vector2(34.0 * facing, 48.0), Color("#b8fff4"), 6.0, true)
 		if attack_time > 0.0:
 			var starting_angle := -1.45 if facing > 0 else 1.7
 			draw_arc(Vector2(13 * facing, -12), 68.0, starting_angle, starting_angle + 2.2, 22, Color("#7fd8ff"), 7.0, true)
@@ -488,6 +583,8 @@ func _draw() -> void:
 	draw_line(Vector2(14 * facing, -10), Vector2(26 * facing, -3), Color("#e9bb59"), 5.0)
 	if charge_active:
 		draw_arc(Vector2(0.0, -25.0), 32.0 + float(_charge_level()) * 9.0, 0.0, TAU, 48, Color("#adf5fc"), 3.0, true)
+	if attack_time > 0.0 and attack_kind in ["otto", "dive"]:
+		draw_line(Vector2(-20.0 * facing, -39.0), Vector2(34.0 * facing, 48.0), Color("#b8fff4"), 6.0, true)
 	if attack_time > 0.0:
 		var angle_start := -1.45 if facing > 0 else 1.7
 		draw_arc(Vector2(13 * facing, -12), 68.0, angle_start, angle_start + 2.2, 22, glow, 7.0, true)

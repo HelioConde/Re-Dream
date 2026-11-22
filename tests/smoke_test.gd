@@ -225,7 +225,56 @@ func _check_game() -> void:
 		_fail("Salto de perseguição não consumiu a janela.")
 		return
 
-	print("PASS: combo4, launcher, aereo, dash, carga Z, Rocket, Shadow e chase.")
+
+	# Otto só pode ser escolhido nas extremidades de plataformas vazadas.
+	if not bool(hero.call("_is_one_way_edge_position", Vector2(610.0, 463.0), Vector2(520.0, 505.0))):
+		_fail("O detector de borda não reconheceu a extremidade da plataforma.")
+		return
+	if bool(hero.call("_is_one_way_edge_position", Vector2(520.0, 463.0), Vector2(520.0, 505.0))):
+		_fail("O detector de borda ativou Otto no centro da plataforma.")
+		return
+	if bool(hero.call("_is_one_way_edge_position", Vector2(610.0, 420.0), Vector2(520.0, 505.0))):
+		_fail("O detector de borda ignorou a altura.")
+		return
+
+	# Dive atravessa apenas one-ways, nunca altera o chão sólido.
+	hero.set("attack_time", 0.0)
+	hero.set("dash_time", 0.0)
+	hero.set("velocity", Vector2.ZERO)
+	hero.call("_begin_attack", "dive")
+	if str(hero.get("attack_kind")) != "dive":
+		_fail("Estocada ↓+Z/J não ativou o estado de mergulho.")
+		return
+	var dive_velocity: Vector2 = hero.get("velocity")
+	if dive_velocity.y < 819.0:
+		_fail("Estocada não iniciou descida acelerada.")
+		return
+	if (hero.get("dive_platforms") as Array).size() != 5:
+		_fail("A estocada não atravessa todas as cinco plataformas one-way.")
+		return
+	hero.call("_clear_dive_passthrough")
+	if (hero.get("dive_platforms") as Array).size() != 0 or float(hero.get("dive_passthrough_time")) != 0.0:
+		_fail("Exceções de colisão da estocada não foram liberadas.")
+		return
+
+	# Air juggle permite no máximo três novos levantamentos por alvo.
+	var juggle_enemy: Node2D = foes[1]
+	juggle_enemy.set("velocity", Vector2(0.0, -480.0))
+	var health_before_juggle := int(juggle_enemy.get("health"))
+	for i in range(5):
+		var lifted := bool(juggle_enemy.call("take_air_juggle_hit", 1, Vector2(10.0, -180.0)))
+		if lifted != (i < 3):
+			_fail("Limite de três levantamentos aéreos não foi respeitado.")
+			return
+	if int(juggle_enemy.get("air_juggle_hits")) != 3:
+		_fail("Contador de juggle do inimigo incorreto.")
+		return
+	if int(juggle_enemy.get("health")) != health_before_juggle - 5:
+		_fail("Acertos após o limite de juggle deixaram de causar dano.")
+		return
+
+	print("PASS: Otto edge, dive, one-way cleanup, juggle3, combo4, launcher, Rocket, Shadow e MP.")
+
 	quit(0)
 
 func _fail(reason: String) -> void:

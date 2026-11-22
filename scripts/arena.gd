@@ -133,7 +133,7 @@ func _process(delta: float) -> void:
 		"OK" if hero.dash_cooldown <= 0.0 else "%.1fs" % hero.dash_cooldown,
 		"OK" if hero.skill_cooldown <= 0.0 else "%.1fs" % hero.skill_cooldown
 	]
-	charge_label.text = ("Z CARGA MP%d/3 — SOLTE PARA LANÇAR" % hero._charge_level()) if hero.charge_active else "↑+Z/J LANÇADOR  |  Z/J NO AR ATAQUE  |  DASH+↑ ROCKET  |  ↓ SHADOW  |  Z MP"
+	charge_label.text = ("Z CARGA MP%d/3 — SOLTE PARA LANÇAR" % hero._charge_level()) if hero.charge_active else ("AIR JUGGLE x%d   ↓+Z/J NO AR: ESTOCADA" % hero.air_juggle_chain if hero.air_juggle_chain > 0 else "↑+Z/J LANÇADOR | ↓+Z/J ESTOCADA | ↓+Z/J NA BORDA OTTO | DASH+↑ ROCKET")
 	if game_over:
 		if Input.is_action_just_pressed("restart"):
 			get_tree().reload_current_scene()

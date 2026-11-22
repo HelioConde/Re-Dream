@@ -64,3 +64,11 @@ Esta é uma **conversão inicial jogável**, não uma migração completa e já 
 ## Redesign da direção de arte
 
 A estética anterior de guerreiro sombrio foi considerada inadequada para o mundo mágico de aventura. O protagonista **Aren, Explorador da Lua**, ganhará uma versão PixelLab original mais expressiva, colorida e com elementos mágicos, acompanhada de cenário mais vibrante. A Action manual já tem alvo `vanguard` com sprite-mestre 128×128 e animações derivadas dele. **O novo PNG ainda precisa ser gerado e revisado antes de substituir o personagem atual.** Confira a [Bíblia visual V2](docs/ART_DIRECTION_VANGUARD_V2.md).
+
+## Combate aéreo (Godot)
+
+- **↓+Z ou ↓+J no ar:** estocada/mergulho mágico, atravessa temporariamente plataformas vazadas; o chão sólido continua bloqueando.
+- **↓+Z ou ↓+J junto à borda de plataforma vazada:** Otto de borda, golpe descendente que usa a mesma passagem de plataforma do comando ↓.
+- **Acerto aéreo após launcher:** mantém inimigos suspensos por até três levantamentos, depois os acertos continuam causando dano mas não permitem juggle infinito.
+
+Os ataques usam a mesma arte PixelLab com fallback até serem aprovadas animações específicas. A sensação do combate precisa de avaliação manual além dos smoke tests.

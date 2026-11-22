@@ -3,6 +3,7 @@ extends CharacterBody2D
 signal defeated(experience_points: int)
 
 const GRAVITY := 1350.0
+const MAX_AIR_JUGGLE := 3
 const PIXEL_SPRITE = preload("res://scripts/pixel_sprite.gd")
 
 var wave_level := 1
@@ -16,6 +17,7 @@ var alive := true
 var cooldown := 0.75
 var windup := 0.0
 var stagger := 0.0
+var air_juggle_hits := 0
 var animation_clock := 0.0
 var pixel_sprite: Node2D
 
@@ -76,8 +78,24 @@ func _physics_process(delta: float) -> void:
 			cooldown = 1.35
 
 	move_and_slide()
+	if is_on_floor() and velocity.y >= 0.0:
+		air_juggle_hits = 0
 	_update_pixel_sprite()
 	queue_redraw()
+
+func take_air_juggle_hit(amount: int, impulse: Vector2) -> bool:
+	if not alive:
+		return false
+	var airborne := not is_on_floor() or velocity.y < -70.0
+	var can_lift := airborne and air_juggle_hits < MAX_AIR_JUGGLE
+	if can_lift:
+		air_juggle_hits += 1
+	# After three lifts, the same confirmed overlap still deals damage,
+	# but cannot indefinitely suspend the enemy in the air.
+	var resolved_impulse := Vector2(impulse.x, minf(impulse.y, -340.0) if can_lift else maxf(impulse.y, 155.0))
+	take_hit(amount, resolved_impulse)
+	return can_lift
+
 
 func take_hit(amount: int, impulse: Vector2) -> void:
 	if not alive:
