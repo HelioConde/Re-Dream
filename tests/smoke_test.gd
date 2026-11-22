@@ -119,7 +119,20 @@ func _check_game() -> void:
 	if int(enemy.get("health")) >= initial_health - 5:
 		_fail("Combo não atingiu o inimigo na frente do herói.")
 		return
+	# Receber dano durante um golpe deve cancelar hit pendente e dash.
+	hero.set("attack_time", 0.22)
+	hero.set("attack_kind", "heavy")
+	hero.set("attack_hit", false)
+	hero.set("dash_time", 0.12)
+	hero.set("combo_window", 0.50)
+	hero.set("combo_step", 2)
 	hero.call("take_damage", 8, Vector2.ZERO)
+	if float(hero.get("attack_time")) > 0.0 or str(hero.get("attack_kind")) != "" or float(hero.get("dash_time")) > 0.0:
+		_fail("Dano não interrompeu golpe pendente e dash.")
+		return
+	if float(hero.get("combo_window")) > 0.0 or int(hero.get("combo_step")) != 0 or bool(hero.get("attack_hit")):
+		_fail("Dano preservou combo ou hit pendente.")
+		return
 	if int(hero.get("health")) != 92:
 		_fail("O herói não recebeu dano corretamente.")
 		return

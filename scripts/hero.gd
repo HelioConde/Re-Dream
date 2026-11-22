@@ -501,6 +501,13 @@ func take_damage(amount: int, impulse: Vector2) -> void:
 	charge_active = false
 	charge_time = 0.0
 	buffered_light_time = 0.0
+	# Dano interrompe também golpes pendentes: não aplicar hit após stagger.
+	attack_time = 0.0
+	attack_kind = ""
+	attack_hit = false
+	combo_step = 0
+	combo_window = 0.0
+	dash_time = 0.0
 	rocket_time = 0.0
 	shadow_time = 0.0
 	chase_window = 0.0
