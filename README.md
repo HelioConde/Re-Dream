@@ -1,80 +1,125 @@
-# Eclipse Vanguard
+<div align="center">
 
-**Eclipse Vanguard** é um jogo independente de ação, combate e plataformas 2D, desenvolvido no navegador com **Phaser 4, React, TypeScript e WebSocket**. Este repositório evolui o antigo Re:Dream, preservando o combate existente e adotando a identidade de Eclipse Vanguard.
+<h1>✨ Re:Dream</h1>
 
-🎮 **[Jogar a pré-alfa no GitHub Pages](https://helioconde.github.io/Re-Dream/)**
+<strong>O recomeço de um sonho — RPG de ação e plataformas 2D cooperativo para navegador</strong>
 
-> O endereço continua `/Re-Dream/` para não quebrar os links publicados. O título do jogo dentro do site é Eclipse Vanguard. A edição Godot independente permanece em `HelioConde/GameTeste`.
+<p>Personagens, combate em tempo real, salas de até quatro jogadores e um mundo de fantasia em desenvolvimento.</p>
 
-## O que está jogável
+<a href="https://helioconde.github.io/Re-Dream/"><img alt="Versão web" src="https://img.shields.io/badge/JOGAR%20NO%20NAVEGADOR-Pr%C3%A9--alfa-64748b?style=for-the-badge"></a>
+<a href="https://github.com/HelioConde/Re-Dream"><img alt="TypeScript e Phaser" src="https://img.shields.io/badge/TypeScript%20%2B%20Phaser-3178C6?style=for-the-badge"></a>
 
-- Treino offline com controle lateral, plataformas vazadas, dash, corrida, salto, Rocket/Shadow Step, Otto, combos, launcher, juggle e habilidades com energia.
-- Salas WebSocket cooperativas de até quatro jogadores, com ondas e chefe de demonstração; o servidor exige hospedagem separada do GitHub Pages.
-- Aren, espadachim original, é o protagonista selecionável. O pipeline de arte suporta PNGs PixelLab sem destruir as 23 ações SVG que servem de fallback.
-- Visual do portal em tema lunar/eclipse, navegação, seleção de personagem, mapa de missões e HUD.
+<p><a href="https://helioconde.github.io/Re-Dream/"><strong>Abrir frontend</strong></a> · <a href="#como-executar"><strong>Executar localmente</strong></a> · <a href="docs/REDESIGN_GAME_UI.md"><strong>Documentação da interface</strong></a></p>
 
-**Estado:** pré-alfa. Novos cenários, inimigos, sistemas de progressão e arte final ainda estão em desenvolvimento. Não há persistência de inventário nem backend embutido no GitHub Pages.
+</div>
 
-## PixelLab: sprites reais na versão web
+---
 
-A integração inicial importa **19 PNGs originais** (idle: 1, run: 9, attack: 9) gerados anteriormente pelo PixelLab para o protótipo Eclipse Vanguard. O importador usa um commit fixo de `HelioConde/GameTeste`, valida SHA-256 de cada arquivo contra o manifesto de geração e copia os PNGs para `apps/web/src/assets/pixellab/hero/`.
+## O que é Re:Dream?
 
-O CI executa:
+**Re:Dream** é um jogo independente inspirado na vontade de retomar um projeto antigo e transformá-lo em uma experiência original. A ideia é unir a ação de um RPG de plataforma com cooperação online e sistemas que possam crescer por etapas.
 
-```sh
-python scripts/import_eclipse_pixellab.py --apply
+**Estado:** **pré-alfa jogável**, com conteúdo de demonstração. O elenco foi reiniciado e agora só **Aren, Buscador de Sonhos**, pode ser escolhido. Ele possui 23 ações/estados animados e 151 quadros vetoriais originais gerados no build; o acabamento ilustrado final ainda está em desenvolvimento. Não há inventário persistente, economia online ou rede multi-instância de produção.
+
+## Jogabilidade atual
+
+- **Salas cooperativas:** crie uma sala, compartilhe o código e convide até três outros jogadores.
+- **Combate:** movimente-se, pule, ataque e use uma habilidade especial.
+- **Missão inicial:** masmorra de demonstração com ondas de inimigos e chefe, conforme implementação documentada.
+- **Lobby:** reúne participantes antes do início da partida.
+- **Controles touch:** botões para telas menores no frontend.
+- **Regras online:** o servidor WebSocket controla movimento e dano, enquanto o cliente oferece resposta visual imediata.
+
+| Controle | Ação |
+| --- | --- |
+| `A` / `D` ou setas | Mover |
+| `W` ou `Espaço` | Pular |
+| `↓` | Descer de plataformas vazadas (treino; servidor online atualizado necessário) |
+| `J` ou `Z` | Atacar |
+| `K` ou `X` | Habilidade |
+
+## Como executar
+
+Requisitos: **Node.js 22+** e npm.
+
+```bash
+git clone https://github.com/HelioConde/Re-Dream.git
+cd Re-Dream
 npm install
-npm test
-npm run build
-```
-
-Durante o build, Vite inclui os PNGs presentes; Phaser os usa nos estados de repouso, corrida e ataques básicos. A seleção e o HUD também mostram o herói PixelLab. Caso não exista um estado importado, **a animação vetorial original é mantida**. A importação por CI não substitui nem apaga arte antiga.
-
-Para inspecionar a origem e os hashes, consulte [o guia da migração](docs/ECLIPSE_VANGUARD.md). Não são necessárias credenciais PixelLab para **reutilizar** os sprites já gerados. Para **gerar novos** sprites diretamente pela API, é preciso uma chave PixelLab válida e créditos de geração; a execução deve ser deliberada e revisada.
-
-## Executar localmente
-
-Requer Node.js 22+ e npm:
-
-```sh
-npm install
-python scripts/import_eclipse_pixellab.py --apply   # precisa da rede, não consome créditos
 npm run dev
 ```
 
-O app roda em `http://localhost:5173`, o servidor em `ws://localhost:3001/ws`. Para checar:
+O desenvolvimento inicia **frontend e servidor**. Abra `http://localhost:5173`; a conexão WebSocket local usa `ws://localhost:3001/ws`.
 
-```sh
+```bash
 npm test
 npm run build
+npm run start:server
 ```
 
-O treino funciona sem servidor. Salas online dependem de `VITE_WS_URL` configurado para um servidor WebSocket público com `wss://`. GitHub Pages hospeda somente o frontend.
+O último comando inicia o servidor já compilado, não substitui automaticamente o frontend.
 
-## Controles
+## Tecnologias e estrutura
 
-| Tecla | Ação |
+| Parte | Tecnologia |
 | --- | --- |
-| A / D, ← / → | Andar; duplo toque inicia dash, segurar mantém corrida |
-| W, ↑ ou Espaço | Pular |
-| ↓ | Atravessar plataformas vazadas no treino |
-| J / Z | Ataque básico (conforme o modo) |
-| Segurar e soltar Z | MP1/MP2/MP3 no treino offline |
-| K / X | Habilidade no multiplayer |
-| Touch | Controles adaptados para celulares |
+| Interface, lobby e HUD | React · TypeScript · Vite |
+| Cena e movimentação 2D | Phaser |
+| Multiplayer | Node.js · WebSocket (`ws`) |
+| Publicação da interface | GitHub Pages · GitHub Actions |
 
-**Observação:** o treino offline e as salas online possuem diferenças de comandos e regras; elas não foram unificadas por esta migração.
+```text
+apps/web/                Interface, personagens e Phaser
+apps/server/             Salas, simulação e regras multiplayer
+docs/                    Design de interface e auditorias de assets
+scripts/                 Testes e verificações
+.github/workflows/       CI e publicação
+```
 
-## Estrutura
+## Online: o que funciona e o que exige infraestrutura
 
-- `apps/web/`: jogo Phaser e interface React.
-- `apps/server/`: salas online e simulação autoritativa.
-- `apps/web/src/eclipsePixellab.ts`: catálogo e seleção das animações PixelLab.
-- `scripts/import_eclipse_pixellab.py`: importação reprodutível e verificação SHA-256.
-- `docs/ECLIPSE_VANGUARD.md`: especificação e roadmap da migração.
-- `docs/`: documentos históricos e skills de desenvolvimento do Re:Dream.
-- `.github/workflows/pages.yml`: testes e publicação.
+O endereço do GitHub Pages hospeda **apenas o frontend estático**. Mudanças de controles online, incluindo **↓ para descer plataformas**, só funcionam após o servidor WebSocket remoto executar a versão correspondente; publicar somente o GitHub Pages não atualiza o servidor. O serviço WebSocket precisa rodar em hospedagem separada que suporte conexão persistente via **`wss://`**; o GitHub Pages não executa esse servidor.
 
-O projeto é **autoral**. Inspirar-se na sensação de jogos de ação/plataforma não permite copiar marcas, sprites, áudio, personagens, mapas ou código protegidos de outras franquias.
+Ao publicar uma instância própria:
 
-Criado por [Hélio Conde](https://github.com/HelioConde).
+1. Configure o servidor Node com origem autorizada e porta da plataforma.
+2. Disponibilize o endpoint público `wss://...`.
+3. Configure a variável de build **`VITE_WS_URL`** com a URL pública do WebSocket.
+4. Recompile o frontend e faça o deploy.
+
+Salas e combates ficam **em memória de uma única instância do servidor**. Uma reinicialização apaga as salas. Preferências e pequenos dados de perfil local ficam no navegador, não sincronizados entre dispositivos. **Não há autenticação nem salvamento online permanente.**
+
+## AI Game Studio — skills de desenvolvimento
+
+O projeto inclui um conjunto **enxuto de 9 skills para IA** em `.claude/skills/`, adaptado ao fluxo Phaser + TypeScript do Re:Dream: GDD, backlog, FSM, Event Bus, conversão de engine, stack traces, performance, shaders e prompts de assets.
+
+- [Guia de uso e catálogo](docs/AI_GAME_STUDIO.md)
+- [Aren V7: redesign do protagonista](docs/AREN_V7_CHARACTER_REDESIGN.md), [Bosque V6: profundidade e relevo](docs/FOREST_V6_ART_REVIEW.md), [Aren V5: proporções e QA a partir da screenshot](docs/AREN_V5_SCALE_QA.md), [Aren Art V4: poses e finalização lunar](docs/AREN_V4_VISUAL_QA.md), [Visual V3: profundidade e impactos](docs/VISUAL_V3.md), [Aren V2 e ateliê de movimentos](docs/AREN_V2_VISUAL_QA.md), [reboot de Aren, com lista de 23 movimentos](docs/AREN_REBOOT.md), [GDD vivo](docs/GDD_RE_DREAM.md), [direção de arte 2D](docs/ART_DIRECTION_RE_DREAM.md), [FSM de locomoção](docs/LOCOMOTION_FSM.md), [Event Bus do treino](docs/PRACTICE_EVENTS.md) e [backlog técnico](docs/BACKLOG_RE_DREAM.md)
+- [Instruções para Codex e outros agentes](AGENTS.md)
+
+No Claude Code, abra a **raiz** do repositório e use, por exemplo, `/gdd-dinamico` ou `/backlog-gameplay`. No ChatGPT/Codex, leia o `AGENTS.md` e a skill correspondente; o registro de comandos não ocorre automaticamente nesses clientes. A validação estrutural é executada com `npm run test:skills` e também em `npm test`.
+
+As skills são **instruções de desenvolvimento**, não plugins de execução do jogo. Nenhuma engine ou mecânica do multiplayer foi substituída.
+
+## Próximos marcos
+
+| Já existe como base | Ainda precisa evoluir |
+| --- | --- |
+| Aren único com 23 ações vetoriais | Arte ilustrada final, atlas otimizado e mais cenários autorais |
+| Sala online e cooperação local/testável | Reconexão e infraestrutura escalável |
+| Movimentação e combate | Mais animações, golpes e inimigos |
+| Dungeon demonstrativa | Mundo, regiões e progressão persistente |
+
+O foco é deixar a jogabilidade agradável **antes** de expandir a história e a quantidade de conteúdo.
+
+## Artes, licenças e créditos
+
+Re:Dream é um projeto **independente e original**, sem afiliação com Grand Chase. A inspiração de gênero não autoriza redistribuir personagens, logotipos, música ou assets protegidos de terceiros.
+
+Alguns pacotes presentes no repositório são **materiais de estudo ou referência**. Confira a licença individual antes de reutilizar ou distribuir qualquer recurso.
+
+[**Arquitetura e redesenho da UI**](docs/REDESIGN_GAME_UI.md) · [**Inventário de assets**](docs/ASSET_INVENTORY.md) · [**Documentação detalhada anterior**](docs/README_REFERENCE_2026-10-25.md)
+
+---
+
+<div align="center"><strong>Criado por <a href="https://github.com/HelioConde">Hélio Conde</a></strong></div>

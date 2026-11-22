@@ -224,7 +224,7 @@ export default function App() {
   return (
     <div className="app app-reboot">
       {(isLobby || isPlaying || Boolean(selectionIntent) || practiceActive) && <header className="site-header">
-        <a className="brand" href="#inicio" aria-label="Eclipse Vanguard — início"><span className="brand-mark">✧</span><span>Eclipse <span className="brand-accent">Vanguard</span></span></a>
+        <a className="brand" href="#inicio" aria-label="Re:Dream — início"><span className="brand-mark">✧</span><span>Re<span className="brand-accent">:</span>Dream</span></a>
         <nav aria-label="Navegação principal">
           <a href="#inicio">Início</a><a href="#universo">Universo</a>
           <button type="button" onClick={() => openCharacterSelect('create')} disabled={Boolean(room)} aria-label="Abrir seleção de personagens">Personagens</button>
@@ -238,7 +238,7 @@ export default function App() {
         <main className="lobby-page" id="jogar">
           <div className="lobby-ambient" aria-hidden="true">✧</div>
           <div className="lobby-eyebrow">✦ PORTAL DE AVENTUREIROS</div>
-          <h1>Salão da Vanguarda</h1>
+          <h1>Salão dos Sonhos</h1>
           <p className="lobby-subtitle">Reúna sua equipe antes de atravessar o portal da masmorra.</p>
           <section className="lobby-panel">
             <div className="lobby-topbar">
@@ -270,7 +270,7 @@ export default function App() {
             </div>
             <div className="lobby-quest">
               <span className="lobby-quest-icon">♜</span>
-              <div><h3>Bosque do Eclipse</h3><p>3 ondas de monstros · 1 chefão · Até 4 jogadores</p></div>
+              <div><h3>Bosque dos Sonhos</h3><p>3 ondas de monstros · 1 chefão · Até 4 jogadores</p></div>
               <span className="lobby-difficulty">Iniciante</span>
             </div>
             {error && <p className="form-error" role="alert">{error}</p>}
@@ -286,20 +286,20 @@ export default function App() {
       ) : isPlaying ? (
         <main className="session" id="jogar">
           <div className="session-top">
-            <div><span className="eyebrow">✦ MASMORRA COOPERATIVA</span><h1>Bosque do Eclipse</h1><p>Etapa {snapshot?.wave || 1} / 3 · {snapshot?.players.length || 1}/4 aventureiros</p></div>
+            <div><span className="eyebrow">✦ MASMORRA COOPERATIVA</span><h1>Bosque dos Sonhos</h1><p>Etapa {snapshot?.wave || 1} / 3 · {snapshot?.players.length || 1}/4 aventureiros</p></div>
             <div className="session-actions">
               <button className="room-chip" onClick={() => navigator.clipboard?.writeText(room)} title="Copiar código da sala">SALA {room} ⧉</button>
               <button className="button button-ghost" onClick={disconnect}>Sair da sala</button>
             </div>
           </div>
-          <section className="game-shell" aria-label="Jogo Eclipse Vanguard">
+          <section className="game-shell" aria-label="Jogo Re:Dream">
             <div className="rd-game-hud" aria-label="Informações da missão">
               <div className="rd-hud-player"><span className="rd-hud-face" aria-hidden="true">✧</span><div className="rd-hud-info"><strong>{me?.name || 'Aventureiro'}</strong><div className="rd-hud-health"><span style={{ width: Math.max(0, Math.min(100, me?.hp ?? 0)) + '%' }}/></div><small>HP {me?.hp ?? 0} / 100</small></div></div>
-              <div className="rd-hud-objective"><strong>✦ Bosque do Eclipse</strong><span>Onda {snapshot?.wave ?? 1}/3 · {snapshot?.remaining ?? 0} inimigos</span></div>
+              <div className="rd-hud-objective"><strong>✦ Bosque dos Sonhos</strong><span>Onda {snapshot?.wave ?? 1}/3 · {snapshot?.remaining ?? 0} inimigos</span></div>
             </div>
             <GameCanvas snapshotRef={snapshotRef} playerId={playerId} sendInput={sendInput} mobileRef={mobileRef} />
-            {snapshot?.status === 'victory' && <div className="game-outcome"><h2>Missão concluída! ✦</h2><p>A vanguarda conteve a ameaça do eclipse.</p><button className="button button-primary" onClick={disconnect}>Voltar ao início</button></div>}
-            {snapshot?.status === 'defeat' && <div className="game-outcome"><h2>A escuridão avança...</h2><p>Reúna seus aliados e tente novamente.</p><button className="button button-primary" onClick={disconnect}>Voltar ao início</button></div>}
+            {snapshot?.status === 'victory' && <div className="game-outcome"><h2>Missão concluída! ✦</h2><p>O Bosque dos Sonhos voltou a brilhar.</p><button className="button button-primary" onClick={disconnect}>Voltar ao início</button></div>}
+            {snapshot?.status === 'defeat' && <div className="game-outcome"><h2>Os sonhos resistem...</h2><p>Reúna seus aliados e tente novamente.</p><button className="button button-primary" onClick={disconnect}>Voltar ao início</button></div>}
           </section>
           <div className="game-bottom">
             <div className="stats"><span>♥ VIDA <strong>{me?.hp ?? 100}/100</strong></span><span>✧ PONTOS <strong>{me?.score ?? 0}</strong></span><span>⚔ INIMIGOS <strong>{snapshot?.remaining ?? 0}</strong></span></div>
@@ -340,7 +340,7 @@ export default function App() {
           onClearLocal={resetLocalHistory}
         />
       )}
-      {(isLobby || isPlaying || Boolean(selectionIntent) || practiceActive) && <footer><span className="brand"><span className="brand-mark">✧</span> Eclipse <span className="brand-accent">Vanguard</span></span><span>Projeto independente em desenvolvimento · pré-alfa</span><a href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">Código no GitHub ↗</a></footer>}
+      {(isLobby || isPlaying || Boolean(selectionIntent) || practiceActive) && <footer><span className="brand"><span className="brand-mark">✧</span> Re<span className="brand-accent">:</span>Dream</span><span>Projeto independente em desenvolvimento · pré-alfa</span><a href="https://github.com/HelioConde/Re-Dream" target="_blank" rel="noreferrer">Código no GitHub ↗</a></footer>}
     </div>
   );
 }

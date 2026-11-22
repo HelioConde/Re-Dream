@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { eclipseHeroPreviewUrl } from './eclipsePixellab';
 import { characterName, getCharacter } from './characters';
 import type { LocalProfile } from './localProfile';
 import type { CharacterId } from './protocol';
@@ -16,7 +15,7 @@ type Props = {
 };
 
 const REGIONS = [
-  { id: 'bosque', name: 'Bosque do Eclipse', subtitle: 'Primeira missão · 3 ondas e 1 chefe', x: 23, y: 62, status: 'Disponível', icon: '✦' },
+  { id: 'bosque', name: 'Bosque dos Sonhos', subtitle: 'Primeira missão · 3 ondas e 1 chefe', x: 23, y: 62, status: 'Disponível', icon: '✦' },
   { id: 'vale', name: 'Vale do Crepúsculo', subtitle: 'Nova região em desenvolvimento', x: 46, y: 40, status: 'Em breve', icon: '◆' },
   { id: 'fortaleza', name: 'Fortaleza Celeste', subtitle: 'Nova região em desenvolvimento', x: 72, y: 27, status: 'Em breve', icon: '♜' },
   { id: 'ruinas', name: 'Ruínas da Aurora', subtitle: 'Nova região em desenvolvimento', x: 78, y: 69, status: 'Em breve', icon: '✧' },
@@ -94,30 +93,30 @@ export default function AdventureHub({ profile, characterId, onlineConfigured, o
   const region = REGIONS.find(item => item.id === selectedRegion) || REGIONS[0];
   const character = getCharacter(characterId);
   const previewStyle = {
-    backgroundImage: 'url(' + (eclipseHeroPreviewUrl || import.meta.env.BASE_URL + character.preview) + ')',
-    backgroundSize: eclipseHeroPreviewUrl ? 'contain' : character.artSize,
+    backgroundImage: 'url(' + import.meta.env.BASE_URL + character.preview + ')',
+    backgroundSize: character.artSize,
     backgroundPosition: character.previewPosition || '0 0',
   };
 
   if (page === 'welcome') return <main className="rd-welcome">
     <SkyRealm/>
-    <div className="rd-welcome-top"><span>✦ ECLIPSE VANGUARD</span><span>VERSÃO PRÉ-ALFA · WEB</span></div>
+    <div className="rd-welcome-top"><span>✦ RE:DREAM</span><span>VERSÃO PRÉ-ALFA · WEB</span></div>
     <section className="rd-welcome-center">
-      <p className="rd-overline">O ECLIPSE SE APROXIMA</p>
-      <h1>Eclipse <span>Vanguard</span></h1>
-      <p className="rd-welcome-tagline">A Vanguarda Contra a Escuridão</p>
+      <p className="rd-overline">UM NOVO MUNDO ESTÁ DESPERTANDO</p>
+      <h1>Re<span>:</span>Dream</h1>
+      <p className="rd-welcome-tagline">O Recomeço de um Sonho</p>
       <div className="rd-welcome-line"/>
-      <p className="rd-welcome-description">Ação e plataformas 2D: defenda a fronteira lunar, domine seus combos e enfrente as forças do eclipse com aliados.</p>
+      <p className="rd-welcome-description">Um RPG de ação 2D para explorar, lutar e despertar novos caminhos com seus amigos.</p>
       <button type="button" className="rd-action rd-action-gold rd-action-xl" onClick={() => setPage('portal')}>ENTRAR NO JOGO <span aria-hidden="true">➜</span></button>
       <p className="rd-welcome-note">Experiência em desenvolvimento · navegador e dispositivos móveis</p>
     </section>
-    <div className="rd-welcome-bottom"><span>✧ UM UNIVERSO ORIGINAL</span><span>ECLIPSE VANGUARD © PRÉ-ALFA</span></div>
+    <div className="rd-welcome-bottom"><span>✧ UM UNIVERSO ORIGINAL</span><span>RE:DREAM © PRÉ-ALFA</span></div>
   </main>;
 
   return <main className={'rd-client rd-page-' + page}>
     <SkyRealm/>
     <header className="rd-client-bar">
-      <button className="rd-client-brand" onClick={() => setPage('portal')} aria-label="Eclipse Vanguard, voltar ao portal">✦ <strong>Eclipse <span>Vanguard</span></strong></button>
+      <button className="rd-client-brand" onClick={() => setPage('portal')} aria-label="Re:Dream, voltar ao portal">✦ <strong>Re<span>:</span>Dream</strong></button>
       <nav aria-label="Áreas do jogo" className="rd-client-nav">
         <button type="button" className={page === 'portal' ? 'active' : ''} aria-pressed={page === 'portal'} onClick={() => setPage('portal')}>⌂ <span>Início</span></button>
         <button type="button" className={page === 'world' ? 'active' : ''} aria-pressed={page === 'world'} onClick={() => setPage('world')}>⚑ <span>Missões</span></button>
@@ -127,12 +126,12 @@ export default function AdventureHub({ profile, characterId, onlineConfigured, o
     </header>
 
     {page === 'portal' && <section className="rd-portal-content">
-      <div className="rd-portal-heading"><span className="rd-overline">PORTAL DOS AVENTUREIROS</span><h1>Bem-vindo ao <span>Eclipse Vanguard</span></h1><p>Seu próximo capítulo começa aqui.</p></div>
+      <div className="rd-portal-heading"><span className="rd-overline">PORTAL DOS AVENTUREIROS</span><h1>Bem-vindo ao <span>Re:Dream</span></h1><p>Seu próximo capítulo começa aqui.</p></div>
       <div className="rd-notice-frame">
         <div className="rd-notice-top"><span>✧ NOVIDADES DO REINO</span><span className="rd-pill">EM DESENVOLVIMENTO</span></div>
         <div className="rd-notice-body">
           <div className="rd-notice-illustration"><i className="rd-notice-moon"/><i className="rd-notice-tree"/><i className="rd-notice-floor"/><span className="rd-notice-rune">✧</span></div>
-          <div className="rd-notice-copy"><span className="rd-overline">PRIMEIRA AVENTURA</span><h2>O Bosque do Eclipse</h2><p>Entre em uma masmorra cooperativa. Enfrente três ondas de monstros e um chefe ao lado dos seus aliados.</p><button onClick={() => setPage('world')} type="button">Ver mapa de missões →</button></div>
+          <div className="rd-notice-copy"><span className="rd-overline">PRIMEIRA AVENTURA</span><h2>O Bosque dos Sonhos</h2><p>Entre em uma masmorra cooperativa. Enfrente três ondas de monstros e um chefe ao lado dos seus aliados.</p><button onClick={() => setPage('world')} type="button">Ver mapa de missões →</button></div>
         </div>
         <div className="rd-notice-pagination"><span className="active"/><span/><span/></div>
       </div>
@@ -150,7 +149,7 @@ export default function AdventureHub({ profile, characterId, onlineConfigured, o
           </button>)}
           <span className="rd-map-wind" aria-hidden="true">✧</span>
         </div>
-        <aside className="rd-mission-sidebar"><span className="rd-overline">MISSÃO SELECIONADA</span><h2>{region.name}</h2><span className={'rd-mission-tag ' + (region.id === 'bosque' ? 'available' : '')}>{region.status}</span><p>{region.subtitle}</p><div className="rd-mission-divider"/><h3>{region.id === 'bosque' ? 'Bosque do Eclipse' : 'Região futura'}</h3><p>{region.id === 'bosque' ? 'Uma aventura cooperativa com inimigos e um chefão. A missão já está implementada nesta versão de teste.' : 'Esta região aparece apenas como prévia do mapa. Ainda não existe uma missão jogável.'}</p><div className="rd-mission-meta"><span>◈ Modo</span><b>{region.id === 'bosque' ? 'Cooperativo' : 'Indisponível'}</b></div><div className="rd-mission-meta"><span>♜ Equipe</span><b>{region.id === 'bosque' ? '1–4 jogadores' : '—'}</b></div><button type="button" className="rd-action rd-action-gold" onClick={onPlay} disabled={region.id !== 'bosque'}>{region.id === 'bosque' ? 'ESCOLHER PERSONAGEM →' : 'EM BREVE'}</button></aside>
+        <aside className="rd-mission-sidebar"><span className="rd-overline">MISSÃO SELECIONADA</span><h2>{region.name}</h2><span className={'rd-mission-tag ' + (region.id === 'bosque' ? 'available' : '')}>{region.status}</span><p>{region.subtitle}</p><div className="rd-mission-divider"/><h3>{region.id === 'bosque' ? 'Bosque dos Sonhos' : 'Região futura'}</h3><p>{region.id === 'bosque' ? 'Uma aventura cooperativa com inimigos e um chefão. A missão já está implementada nesta versão de teste.' : 'Esta região aparece apenas como prévia do mapa. Ainda não existe uma missão jogável.'}</p><div className="rd-mission-meta"><span>◈ Modo</span><b>{region.id === 'bosque' ? 'Cooperativo' : 'Indisponível'}</b></div><div className="rd-mission-meta"><span>♜ Equipe</span><b>{region.id === 'bosque' ? '1–4 jogadores' : '—'}</b></div><button type="button" className="rd-action rd-action-gold" onClick={onPlay} disabled={region.id !== 'bosque'}>{region.id === 'bosque' ? 'ESCOLHER PERSONAGEM →' : 'EM BREVE'}</button></aside>
       </div>
     </section>}
 
@@ -164,10 +163,10 @@ export default function AdventureHub({ profile, characterId, onlineConfigured, o
         </div><div className="rd-inventory-summary"><strong>{characterName(characterId)}</strong><span>Protagonista original · arte vetorial animada</span></div>
           <div className="rd-progress-list"><div><span>Vitórias locais</span><b>{profile.victories}</b></div><div><span>Derrotas locais</span><b>{profile.defeats}</b></div><div><span>Última sala</span><b>{profile.lastRoom || '—'}</b></div></div>
         </section>
-        <section className="rd-inventory-bag"><div className="rd-inventory-section-title">▦ MOCHILA <span>0 ITENS · PROTÓTIPO</span></div><div className="rd-inventory-toolbar"><span>Todos os itens</span><span>✧ Slot de equipamento</span></div><div className="rd-bag-grid" aria-label="Espaços vazios no inventário">{Array.from({ length: 35 }, (_, i) => <span className="rd-bag-slot" key={i}/>)}</div><div className="rd-inventory-message"><strong>Equipamentos modulares em preparação</strong><p>Aren lidera a vanguarda. PixelLab é usado em repouso, corrida e ataques quando as imagens estão disponíveis; os movimentos restantes mantêm a arte original. Seus movimentos já usam poses vetoriais diferentes; equipamentos modulares ainda precisam de sprites próprios. Nenhum item fictício foi adicionado ao inventário.</p></div><div className="rd-inventory-actions"><button type="button" className="rd-action rd-action-blue" onClick={onPlay}>Selecionar personagem</button><button type="button" className="rd-text-button" onClick={onClearLocal}>Limpar histórico local</button></div></section>
+        <section className="rd-inventory-bag"><div className="rd-inventory-section-title">▦ MOCHILA <span>0 ITENS · PROTÓTIPO</span></div><div className="rd-inventory-toolbar"><span>Todos os itens</span><span>✧ Slot de equipamento</span></div><div className="rd-bag-grid" aria-label="Espaços vazios no inventário">{Array.from({ length: 35 }, (_, i) => <span className="rd-bag-slot" key={i}/>)}</div><div className="rd-inventory-message"><strong>Equipamentos modulares em preparação</strong><p>Aren é o novo protagonista original do Re:Dream. Seus movimentos já usam poses vetoriais diferentes; equipamentos modulares ainda precisam de sprites próprios. Nenhum item fictício foi adicionado ao inventário.</p></div><div className="rd-inventory-actions"><button type="button" className="rd-action rd-action-blue" onClick={onPlay}>Selecionar personagem</button><button type="button" className="rd-text-button" onClick={onClearLocal}>Limpar histórico local</button></div></section>
       </div>
     </section>}
 
-    <footer className="rd-client-footer"><span>ECLIPSE VANGUARD · O RECOMEÇO DE UM SONHO</span><span>Protótipo independente · Não utiliza recursos visuais de Grand Chase</span></footer>
+    <footer className="rd-client-footer"><span>RE:DREAM · O RECOMEÇO DE UM SONHO</span><span>Protótipo independente · Não utiliza recursos visuais de Grand Chase</span></footer>
   </main>;
 }

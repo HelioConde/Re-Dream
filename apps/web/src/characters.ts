@@ -8,9 +8,9 @@ export type CharacterDef = {
 export const CHARACTERS: readonly CharacterDef[] = [{
   id:'aren',
   name:'Aren',
-  subtitle:'Espadachim da Vanguarda · Guardião Lunar',
-  description:'Herói original do Eclipse Vanguard. Sprites PixelLab para repouso, corrida e ataques; as outras 23 ações de movimentação e combate permanecem com animações autorais anteriores até receberem novos sprites.',
-  origin:'Arte original Eclipse Vanguard. PNGs PixelLab importados do protótipo autoral GameTeste com hashes verificados; animações SVG anteriores mantidas como fallback. Sem copiar sprites de franquias externas.',
+  subtitle:'Buscador de Sonhos · Espadachim da Lua',
+  description:'Novo protagonista original do Re:Dream. Capa teal e cabelo azul-noturno, espada de luz crescente. Animações vetoriais próprias: parado, caminhada, corrida, dash, salto, queda, Rocket/Shadow, quatro golpes, ataques aéreos, Otto, carga Z e magias MP1, MP2 e MP3.',
+  origin:'Arte original Re:Dream — personagem procedimental construído do zero. Ficha conceitual é uma referência, não spritesheets extraídos de ilustrações.',
   preview:'art/aren/idle-0.svg',
   artSize:'100% 100%',
 }] as const;
