@@ -6,9 +6,9 @@
 | --- | --- | --- |
 | Correr, andar e pular | Implementado + coyote time (0,12s) e jump buffer (0,14s) | QA de resposta |
 | Dash duplo toque → corrida | Portado (0,27s entre toques, corrida após dash enquanto segura) | Testar sensibilidade em dispositivos |
-| J/Z golpes e 4 combos | Combo de 3 golpes por J | Combos extras/cancel |
-| Heavy, especial | Golpe pesado e habilidade de área | MP1/2/3 carregados |
-| Rocket, Shadow, Otto, launcher, juggle | Não portado | FSM aérea |
+| J/Z golpes e 4 combos | J tem combo de 3; Z dá golpe inicial e carrega magia | 4º golpe e buffer/cancel de combo |
+| Heavy, especial | Golpe pesado, L habilidade simples e Z carregado MP1/MP2/MP3 | Ajustar balanceamento e VFX PixelLab próprios |
+| Rocket, Shadow, Otto, launcher, juggle | Launcher (↑+J), ataque aéreo (J no ar), golpe do dash (J no dash) portados | Juggle avançado, Otto, Rocket/Shadow Step e perseguição aérea ainda pendentes |
 | ↓ atravessar plataforma | Portado: S/↓ atravessa plataforma one-way com exceção de colisão individual | QA de física real em plataformas empilhadas |
 | Cenários desenhados e animações SVG | Não importados para o motor novo | Novos sprites e backgrounds PixelLab |
 | 19 PNGs PixelLab do GameTeste | Importados e consumidos pelo Godot | Mais estados e inimigos |
