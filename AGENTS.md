@@ -1,26 +1,25 @@
-# Re:Dream — instruções para agentes de programação
+# Eclipse Vanguard — instruções para agentes
 
-Este repositório contém um jogo **original** de ação/plataformas 2D. O cliente usa React, TypeScript, Phaser 4 e Vite; o servidor multijogador usa Node.js e WebSocket.
+Este repositório é a evolução do antigo Re:Dream em **Eclipse Vanguard**. O cliente mantém React, TypeScript, Phaser 4 e Vite; o servidor de partidas usa Node.js + WebSocket. **Não migrar a engine para Godot neste repositório sem tarefa explícita.** O protótipo original de Eclipse Vanguard em `HelioConde/GameTeste` permanece separado e é usado como origem de sprites PixelLab autorais.
 
-## Leia antes de alterar código
-1. `docs/GDD_RE_DREAM.md`: visão, escopo, regras implementadas versus propostas.
-2. `docs/AI_GAME_STUDIO.md`: catálogo de nove skills locais e fluxo de trabalho.
-3. `docs/BACKLOG_RE_DREAM.md`: ordem de implementação e critérios.
-4. `docs/GAMEPLAY_ARCADE_REFERENCE.md`: descrição do protótipo de combate (verifique contra o código; pode estar desatualizado).
+## Ler antes de programar
+1. `docs/ECLIPSE_VANGUARD.md` — escopo, arte e sequência da migração.
+2. `docs/GDD_RE_DREAM.md` — especificação histórica, mecânicas existentes.
+3. `docs/AI_GAME_STUDIO.md` e `.claude/skills/` — nove skills locais.
+4. `docs/BACKLOG_RE_DREAM.md` — backlog anterior; não tratar propostas como implementadas.
 
-## Regras obrigatórias
-- **Re:Dream apenas**: não tocar em outros repositórios, especialmente Slimekeepers, sem pedido explícito.
-- **Nunca copiar** códigos, artes, áudio, logotipos, personagens ou mapas de Grand Chase ou outros jogos. Referências servem para *feel*, não para reprodução de propriedade intelectual.
-- O modo `#praticar` roda simulação local em `apps/web/src/practiceSimulation.ts`; o multiplayer usa `apps/server/src/sim.ts`. Não levar regras offline para o servidor sem planejamento, validação de autoridade e testes de rede.
-- **Combate offline**: Z é a única tecla de conjuração; segurar e **soltar** Z carrega/ativa magia de MP 1/2/3. A/S/D/K nunca disparam magia no modo Praticar.
-- Preservar duplo toque de direção → dash; segurar o segundo toque → corrida; Rocket/Shadow Step, Otto, launcher e juggle quando alterar controles.
-- No treino, pressionar ↓ sozinho sobre plataforma vazada atravessa após uma breve janela de prioridade para ↓+Z/J (Otto); chão sólido não permite passagem, ↓ no ar continua Shadow Step. ↓+Espaço é opcional.
-- Prefira alterações pequenas, com critérios observáveis, testes e rollback possível. Nunca afirmar que uma animação/feature está funcional sem executar verificações adequadas.
-- Após alterações em TypeScript: `npm test` e `npm run build`. Em mudanças visuais, testar no navegador e conservar evidência visual; testes unitários não validam aparência nem *game feel*.
-- Não introduzir banco de dados/backend obrigatório no modo Praticar ou no GitHub Pages; páginas estáticas não executam WebSocket server.
-- Não inventar benchmarks, métricas de FPS, qualidade de gameplay nem licenças de assets.
+## Limites obrigatórios
+- Editar **somente este repositório**. GameTeste é uma fonte pública de leitura para importar arte original já gerada.
+- Não copiar arte, áudio, código, marcas, personagens ou mapas de Grand Chase ou outras franquias.
+- Tratar PixelLab como **assets originais**. Usar hash SHA-256, origem, manifesto, versões e revisão humana das animações geradas; nunca divulgar tokens.
+- Manter fallback SVG para estados sem PNG; não apagar as 23 animações do Aren nem alterar hitbox e física durante trabalho puramente visual.
+- Preservar duplo toque → dash, segurar segundo toque → corrida, Rocket/Shadow Step, Otto, launcher, juggle e descida por ↓ no treino.
+- **Somente no treino offline**, segurar/soltar Z carrega MP1/MP2/MP3; não transformar A/S/D em magia. O multiplayer tem simulação diferente e exige testes de rede.
+- Não assumir GitHub Pages hospeda servidor WebSocket. `VITE_WS_URL` aponta a servidor externo.
+- Não considerar build sem erros uma validação visual. Conferir em navegador desktop/celular e registrar diferenças de proporção/física.
+- Após alteração TypeScript, rodar `npm test`, `npm run build`; em mudança gráfica, QA com imagem real. Não inventar métricas.
 
-## Fluxo recomendado
-`gdd-dinamico` → `backlog-gameplay` → `gameplay-fsm` ou `gameplay-events` → implementação → `debug-stacktrace` / `perf-audit` → QA / análise jogável → PR.
+## Ordem sugerida
+Validar CI → importar PixelLab com hashes → verificar movimento e animações visuais → corrigir descontinuidades de estilo → gerar novos estados PixelLab de forma incremental → ampliar fases e conteúdos sem quebrar o gameplay.
 
-As skills compatíveis com Claude Code ficam em `.claude/skills/<nome>/SKILL.md`. No Codex/ChatGPT, leia o arquivo da skill e aplique seu procedimento como instrução do projeto; não presuma que o comando `/nome` será registrado automaticamente.
+As skills são procedimentos de desenvolvimento, não runtime do jogo.

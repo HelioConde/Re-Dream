@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import GameCanvas from './GameCanvas';
 import ArenAnimationInspector from './ArenAnimationInspector';
+import { eclipseHeroPreviewUrl } from './eclipsePixellab';
 import { PracticeArena, type TrainingStats } from './practiceSimulation';
 import { EMPTY_CONTROLS, type CharacterId, type Control, type PracticeInput, type Snapshot } from './protocol';
 import { characterName } from './characters';
@@ -114,7 +115,7 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
 
   return <main className="session practice-page" id="praticar">
     <div className="session-top">
-      <div><span className="eyebrow">✦ BOSQUE DAS CONSTELAÇÕES · AREN V7 · PERSONAGEM REFINADO</span><h1>Campo de Prática</h1>
+      <div><span className="eyebrow">✦ FRONTEIRA DO ECLIPSE · COMBATE ORIGINAL · PIXELLAB</span><h1>Campo de Prática</h1>
         <p>{characterName(characterId)} · Arena de fantasia 2D com cenário original, movimento avançado e treino de combos.</p></div>
       <div className="session-actions">
         <button type="button" className="button button-outline" onClick={togglePause} aria-pressed={paused}>
@@ -132,12 +133,12 @@ export default function PracticeMode({ characterId, nickname, onExit }: Props) {
         <button type="button" className="button button-ghost" onClick={onExit}>← Seleção</button>
       </div>
     </div>
-    <section className="game-shell" aria-label="Modo praticar offline do Re:Dream">
+    <section className="game-shell" aria-label="Modo praticar offline do Eclipse Vanguard">
       <div className="rd-game-hud" aria-label="Status de treinamento">
         <div className="rd-hud-player"><span className="rd-hud-face" aria-hidden="true">
-          <img src={import.meta.env.BASE_URL + 'art/aren/idle-0.svg'} alt="" />
+          <img src={eclipseHeroPreviewUrl || import.meta.env.BASE_URL + 'art/aren/idle-0.svg'} alt="" />
         </span>
-          <div className="rd-hud-info"><strong>{nickname || 'Aren'} · Buscador de Sonhos</strong>
+          <div className="rd-hud-info"><strong>{nickname || 'Aren'} · Espadachim da Vanguarda</strong>
             <div className="rd-hud-health"><span style={{ width: '100%' }}/></div><small>HP 100 / 100 · treinamento</small></div>
         </div>
         <div className="rd-hud-objective"><strong>✦ Sentinela de Cristal</strong>
