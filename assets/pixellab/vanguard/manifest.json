@@ -27,6 +27,17 @@
       "c9ecfa25afcf7a0c03493b76baf9917e0b3157304d72938c3ad7b5228d4c6737",
       "a1a90ca0ab197b8543a7ee00e6da8bb5e9fe3292d0bc174df84d4dfb6a57bbfa",
       "fab601acc7d7ef75090e7014d80aad2b564b3104ee0014e96f7b5ac80bd8ef00"
+    ],
+    "jump": [
+      "25f06c5323490ac61045c902ce79eb5596be463ac884ebf58a1b8f995e158d35",
+      "300b3d84043472bcff8777255e727809693e341f76bf4767ff4d886e3cb8669b",
+      "eac647860a814eaaa2f1f06e15e67cd6bc0e48013de31db6afce63bc9e4edc93",
+      "2c8262d850652b6e12b0d9a7b7160e5c6c40046e6c838914448dc6c19f46ac1c",
+      "cba7ab9f5b5e8763495a9bcb219928323d27ab7dd5efdb6cb1197f992714deaf",
+      "e144cdf381f36eb543d44865e684f18628e9a93aee839c514d330cc5f21e18a6",
+      "720eee10f696f32f3ea1e746f16c392d58b5a2f92b07556ed7d99537a4ada3a5",
+      "c0c1617ce34067f56efacd7dccca5a8b341e013cf7387bab7ee32b8c17c38c86",
+      "4ec9918aecd29bc178349e77999f0eb22284b25fdaeb37f009bf4507b810b3d1"
     ]
   },
   "jobs": {
@@ -34,7 +45,7 @@
       "endpoint": "create-image-pixen",
       "usage": {
         "type": "generations",
-        "generations": 1.0
+        "generations": 1
       }
     },
     "run": {
@@ -50,6 +61,16 @@
       "prompt": "Fast readable magical saber combo: wind-up, single sweeping turquoise arc toward the right, impact and controlled recovery, keep same ivory coat, teal scarf, chestnut hair, amulet and facial features, no background.",
       "frames": 9,
       "usage": null
+    },
+    "jump": {
+      "endpoint": "animate-character",
+      "character_id": "2dd343c2-dcdb-4c90-8558-48223393f0aa",
+      "animation_group_id": "106d3e27-1350-4a75-ad2b-315c14c5cfcf",
+      "job_id": "56321a14-5263-4f2f-bc9a-98bd50903784",
+      "prompt": "Side-view heroic jump upward with compact knee tuck, land and recover. Keep Aren's chestnut hair, ivory-blue coat, turquoise scarf, moonstone and enchanted saber identical.",
+      "frames": 9,
+      "source": "vanguard_character_candidate/jump",
+      "review": "visual sample approved for first gameplay pass"
     }
   }
 }

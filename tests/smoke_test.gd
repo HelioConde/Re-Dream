@@ -84,6 +84,23 @@ func _check_game() -> void:
 		if frame_texture == null or frame_texture.get_width() != 128 or frame_texture.get_height() != 128:
 			_fail("Textura mestre do protagonista não tem 128x128.")
 			return
+	# The managed PixelLab Character jump must actually be selected by Godot.
+	if ResourceLoader.exists("res://assets/pixellab/vanguard/jump/000.png", "Texture2D"):
+		var character_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
+		if character_sprite == null or not character_sprite.sprite_frames.has_animation("jump"):
+			_fail("Character jump sprites are present but not loaded by the Godot hero.")
+			return
+		if character_sprite.sprite_frames.get_frame_count("jump") != 9:
+			_fail("Character jump must have all nine approved frames.")
+			return
+		var jump_texture := character_sprite.sprite_frames.get_frame_texture("jump", 4)
+		if jump_texture == null or jump_texture.get_width() != 188 or jump_texture.get_height() != 188:
+			_fail("Managed Character jump has unexpected canvas dimensions.")
+			return
+		character_sprite.call("show_state", "jump", 1)
+		if character_sprite.animation != "jump":
+			_fail("Jump state does not select managed PixelLab Character animation.")
+			return
 	var enemy: Node2D = foes[0]
 	var initial_health := int(enemy.get("health"))
 	enemy.call("take_hit", 5, Vector2.ZERO)
