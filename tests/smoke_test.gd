@@ -85,6 +85,9 @@ func _check_game() -> void:
 	if int(foes[1].get("health")) >= target_health or launch_velocity.y > -400.0:
 		_fail("Launcher não causou dano e impulso vertical.")
 		return
+	if float(hero.get("chase_window")) <= 0.0:
+		_fail("Launcher não habilitou janela de perseguição aérea.")
+		return
 
 	# Ataque aéreo deve alcançar um adversário abaixo do herói.
 	hero.set("attack_time", 0.0)
@@ -127,7 +130,61 @@ func _check_game() -> void:
 		_fail("MP3 foi executado sem energia suficiente.")
 		return
 
-	print("PASS: combate, launcher, aereo, dash attack, carga Z MP2, mana e cooldown.")
+	# O quarto golpe existe, mas a sequência reinicia quando a janela acaba.
+	hero.set("combo_step", 0)
+	hero.set("combo_window", 0.0)
+	for stage in range(1, 5):
+		hero.set("attack_time", 0.0)
+		hero.set("dash_time", 0.0)
+		hero.call("_begin_attack", "light")
+		if int(hero.get("combo_step")) != stage:
+			_fail("Combo de quatro golpes interrompido no passo %d." % stage)
+			return
+	hero.set("attack_time", 0.0)
+	hero.set("combo_window", 0.0)
+	hero.call("_begin_attack", "light")
+	if int(hero.get("combo_step")) != 1:
+		_fail("Combo não reiniciou após janela encerrada.")
+		return
+
+	# Pulo no dash cria Rocket Step, preservando um único impulso horizontal.
+	hero.set("attack_time", 0.0)
+	hero.set("chase_window", 0.0)
+	hero.set("dash_time", 0.14)
+	hero.set("jump_buffer", 0.12)
+	hero.set("coyote_time", 0.12)
+	if not bool(hero.call("_try_buffered_jump")):
+		_fail("Rocket Step não iniciou pulo durante dash.")
+		return
+	var rocket_velocity: Vector2 = hero.get("velocity")
+	if float(hero.get("rocket_time")) <= 0.0 or rocket_velocity.y >= -650.0 or float(hero.get("dash_time")) > 0.0:
+		_fail("Rocket Step não aplicou velocidade e cancelamento corretos.")
+		return
+
+	# ↓ durante Rocket transforma o salto em Shadow Step descendente.
+	if not bool(hero.call("_start_shadow_step")):
+		_fail("Shadow Step não iniciou durante Rocket.")
+		return
+	var shadow_velocity: Vector2 = hero.get("velocity")
+	if float(hero.get("shadow_time")) <= 0.0 or float(hero.get("rocket_time")) > 0.0 or shadow_velocity.y < 600.0:
+		_fail("Shadow Step não converteu impulso vertical.")
+		return
+
+	# Launcher confirmado permite um único salto de perseguição mais alto.
+	hero.set("shadow_time", 0.0)
+	hero.set("chase_window", 0.65)
+	hero.set("dash_time", 0.0)
+	hero.set("jump_buffer", 0.10)
+	hero.set("coyote_time", 0.10)
+	if not bool(hero.call("_try_buffered_jump")):
+		_fail("Salto de perseguição após launcher bloqueado.")
+		return
+	var chase_velocity: Vector2 = hero.get("velocity")
+	if chase_velocity.y > -735.0 or float(hero.get("chase_window")) > 0.0:
+		_fail("Salto de perseguição não consumiu a janela.")
+		return
+
+	print("PASS: combo4, launcher, aereo, dash, carga Z, Rocket, Shadow e chase.")
 	quit(0)
 
 func _fail(reason: String) -> void:

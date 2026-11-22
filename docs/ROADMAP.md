@@ -13,7 +13,8 @@
 - [x] Adicionar coyote time, jump buffer, dash por duplo toque e comando ↓ em plataformas one-way.
 - [x] Adicionar ataques aéreos, launcher e ataque durante dash (cancelamento de dash para golpear).
 - [x] Carga Z e magias MP1/MP2/MP3 por tempo segurado e energia disponível.
-- [ ] Portar Otto, Rocket/Shadow Step, air chase, combos de quatro golpes e cancels adicionais.
+- [x] Portar combo de quatro golpes, Rocket Step, Shadow Step e salto de perseguição após launcher.
+- [ ] Portar Otto, juggling avançado e cancels adicionais.
 - [ ] Ampliar IA: alcance, prioridade, flanqueamento e antecipação de movimentos.
 - [ ] Acrescentar efeitos sonoros, animações, partículas e feedback de impacto.
 - [ ] Escrever testes de dano, colisão e recargas em Godot.
