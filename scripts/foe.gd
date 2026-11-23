@@ -4,6 +4,7 @@ signal defeated(experience_points: int)
 
 const GRAVITY := 1350.0
 const MAX_AIR_JUGGLE := 3
+const HIT_FLASH_SECONDS := 0.13
 const PIXEL_SPRITE = preload("res://scripts/pixel_sprite.gd")
 
 var wave_level := 1
@@ -17,6 +18,7 @@ var alive := true
 var cooldown := 0.75
 var windup := 0.0
 var stagger := 0.0
+var hit_flash := 0.0
 var air_juggle_hits := 0
 var animation_clock := 0.0
 var pixel_sprite: Node2D
@@ -52,6 +54,7 @@ func _physics_process(delta: float) -> void:
 	if not alive:
 		return
 	animation_clock += delta
+	hit_flash = maxf(0.0, hit_flash - delta)
 	cooldown = maxf(0.0, cooldown - delta)
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
@@ -116,10 +119,13 @@ func take_hit(amount: int, impulse: Vector2) -> void:
 		queue_free()
 		return
 	stagger = 0.20
+	# Realce arcano rápido para confirmar o acerto sem criar sprites novos.
+	hit_flash = HIT_FLASH_SECONDS
 	if pixel_sprite != null and pixel_sprite.visible:
 		pixel_sprite.call("show_state", "hit", facing)
 	windup = 0.0
 	velocity = impulse
+	_update_pixel_sprite()
 	queue_redraw()
 
 func _update_pixel_sprite() -> void:
@@ -133,8 +139,16 @@ func _update_pixel_sprite() -> void:
 	elif absf(velocity.x) > 15.0:
 		state = "run"
 	pixel_sprite.call("show_state", state, facing)
+	# Aplicar a cor sobre qualquer sprite PixelLab aprovado ou fallback.
+	pixel_sprite.modulate = (Color(1.0, 0.78, 1.0) if elite else Color(0.63, 1.0, 0.92)) if hit_flash > 0.0 else Color.WHITE
 
 func _draw() -> void:
+	# Pulso de cristal visível também quando o PNG ainda não foi aprovado.
+	if hit_flash > 0.0:
+		var strength := hit_flash / HIT_FLASH_SECONDS
+		var radius := 36.0 + (1.0 - strength) * 16.0
+		var tint := Color(1.0, 0.72, 1.0, 0.62 * strength) if elite else Color(0.61, 1.0, 0.89, 0.62 * strength)
+		draw_arc(Vector2(0.0, -24.0), radius, 0.0, TAU, 40, tint, 4.0, true)
 	# Visual-only magical forest creature; collision and AI stay unchanged.
 	if pixel_sprite != null and pixel_sprite.visible:
 		if windup > 0.0:
