@@ -137,6 +137,23 @@ func _check_game() -> void:
 	if int(enemy.get("health")) >= initial_health - 5:
 		_fail("Combo não atingiu o inimigo na frente do herói.")
 		return
+	# Inimigos atingidos precisam perder impulso horizontal durante stagger,
+	# sem inverter o knockback ou alterar a gravidade e o air-juggle.
+	enemy.set("velocity", Vector2(300.0, -120.0))
+	enemy.set("stagger", 0.20)
+	enemy.call("_physics_process", 0.05)
+	var foe_knockback: Vector2 = enemy.get("velocity")
+	if foe_knockback.x < -0.01 or foe_knockback.x >= 299.0:
+		_fail("Inimigo não desacelerou knockback durante stagger.")
+		return
+	enemy.set("velocity", Vector2(-40.0, 0.0))
+	enemy.set("stagger", 0.20)
+	enemy.call("_physics_process", 0.10)
+	var foe_stop: Vector2 = enemy.get("velocity")
+	if absf(foe_stop.x) > 0.01:
+		_fail("Amortecimento do inimigo inverteu o knockback ao cruzar zero.")
+		return
+
 	# Receber dano durante um golpe deve cancelar hit pendente e dash.
 	hero.set("attack_time", 0.22)
 	hero.set("attack_kind", "heavy")
