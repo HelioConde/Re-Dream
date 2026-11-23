@@ -43,6 +43,18 @@ class PixelLabPipelineTests(unittest.TestCase):
         )
         self.assertEqual(plan["base_needed"], not (source / "idle/000.png").exists())
 
+    def test_new_monsters_have_original_prompts_and_free_dry_run(self):
+        for enemy in ("root_goblin", "lunar_moth"):
+            self.assertIn(enemy, CHARACTERS)
+            self.assertIn("96x96", CHARACTERS[enemy])
+            self.assertIn("transparent", CHARACTERS[enemy].lower())
+            self.assertTrue({"run", "attack", "hit"}.issubset(MOTIONS[enemy]))
+            with mock.patch("tools.generate_pixellab.api_request", side_effect=AssertionError("unexpected PixelLab billing")):
+                with mock.patch.dict("os.environ", {}, clear=True):
+                    plan = generate(enemy, "core", dry_run=True)
+            self.assertEqual(plan["target"], enemy)
+            self.assertTrue(set(plan["motions_needed"]).issubset({"run", "attack"}))
+
     def test_switch_requires_complete_vanguard_core(self):
         from pathlib import Path
         root = Path(__file__).resolve().parents[1]
