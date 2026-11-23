@@ -446,10 +446,9 @@ func _resolve_melee() -> void:
 				if bool(enemy.call("take_air_juggle_hit", damage, impulse)):
 					air_juggle_chain += 1
 					air_juggle_window = 1.15
-					hits += 1
 			else:
 				enemy.call("take_hit", damage, impulse)
-				hits += 1
+			hits += 1
 	if hits > 0:
 		mana = minf(max_mana, mana + 5.0 * float(hits))
 		if attack_kind == "launcher":
