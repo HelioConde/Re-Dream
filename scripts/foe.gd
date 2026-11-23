@@ -58,7 +58,11 @@ func _physics_process(delta: float) -> void:
 
 	var hero := get_tree().get_first_node_in_group("player") as Node2D
 	if stagger > 0.0:
-		stagger -= delta
+		stagger = maxf(0.0, stagger - delta)
+		# Frear o knockback horizontal durante a reação ao impacto.
+		# Sem amortecimento o Crystal Imp desliza sem resistência por 0,20 s.
+		# O impulso vertical e o limite de air-juggle continuam intactos.
+		velocity.x = move_toward(velocity.x, 0.0, 1500.0 * delta)
 	elif hero != null and int(hero.get("health")) > 0:
 		var offset := hero.global_position - global_position
 		if absf(offset.x) > 76.0 and absf(offset.x) < 850.0 and absf(offset.y) < 180.0:
