@@ -71,6 +71,8 @@ func restart_light_attack(duration: float) -> void:
 		return
 	speed_scale = 0.31 / duration
 	play("attack")
+	# play() não reinicia a mesma animação já em execução no Godot.
+	set_frame_and_progress(0, 0.0)
 
 
 func show_state(requested: String, facing: int) -> void:
