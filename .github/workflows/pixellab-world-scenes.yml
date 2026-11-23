@@ -1,0 +1,101 @@
+name: PixelLab — cenários originais para revisão
+
+on:
+  workflow_dispatch:
+    inputs:
+      world:
+        description: "Cenário candidato do Eclipse Vanguard"
+        required: true
+        type: choice
+        options:
+          - crystal_forest
+          - lunar_ruins
+        default: crystal_forest
+      generate:
+        description: "Gerar pelo PixelLab (usa créditos); desmarcado = simulação grátis"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: pixellab-world-${{ inputs.world }}
+  cancel-in-progress: false
+
+jobs:
+  world-candidate:
+    if: ${{ github.repository == 'HelioConde/Re-Dream' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Pillow
+        run: python -m pip install "Pillow>=11,<13"
+
+      - name: Validar assets e pipeline sem usar créditos
+        run: python -m unittest discover -s tests -p 'test_pixellab*.py' -v
+
+      - name: Visualizar plano e prompt sem usar créditos
+        env:
+          WORLD: ${{ inputs.world }}
+        run: python -m tools.generate_pixellab_world --world "$WORLD"
+
+      - name: Exigir segredo PixelLab antes de uma geração real
+        if: ${{ inputs.generate }}
+        env:
+          PIXELLAB_API_KEY: ${{ secrets.PIXELLAB_API_KEY }}
+        run: |
+          if [ -z "$PIXELLAB_API_KEY" ]; then
+            echo "::error::PIXELLAB_API_KEY ausente nos segredos do repositório"
+            exit 1
+          fi
+
+      - name: Gerar um background PixelLab original
+        if: ${{ inputs.generate }}
+        env:
+          PIXELLAB_API_KEY: ${{ secrets.PIXELLAB_API_KEY }}
+          WORLD: ${{ inputs.world }}
+        run: python -m tools.generate_pixellab_world --world "$WORLD" --generate
+
+      - name: Guardar candidato e manifesto para revisão
+        if: ${{ always() && inputs.generate }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixellab-world-${{ inputs.world }}-${{ github.run_id }}
+          path: assets/pixellab/world_candidates/${{ inputs.world }}/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Isolar novo candidato em branch e abrir PR de arte
+        if: ${{ inputs.generate }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WORLD: ${{ inputs.world }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          BRANCH="assets/pixellab-world-${WORLD}-${RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add "assets/pixellab/world_candidates/$WORLD/"
+          if git diff --staged --quiet; then
+            echo "Candidato já registrado; não criar PR duplicada."
+            exit 0
+          fi
+          git commit -m "art: cenário PixelLab candidato $WORLD ($RUN_ID)"
+          git push origin "$BRANCH"
+          if ! gh pr create --draft --base main --head "$BRANCH" \
+            --title "art: revisar cenário PixelLab $WORLD" \
+            --body "Background ORIGINAL gerado no PixelLab API v2 (run #$RUN_ID). Candidato isolado em assets/pixellab/world_candidates/$WORLD, com SHA-256 e origem. Não alterar Godot nem integrar antes de QA visual, parallax e teste Web."; then
+            echo "::warning::Branch enviada, mas PR automática falhou; abra manualmente."
+          fi

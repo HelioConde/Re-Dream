@@ -34,6 +34,28 @@ CHARACTERS = {
         "in side-view, fully visible from crystal horns to toes, one single character centered. "
         "Transparent background, no floor shadow, no scenery, no text, no logos, no copied characters."
     ),
+    "root_goblin": (
+        "Original root goblin from Eclipse Vanguard Crystal Forest, one single full-body "
+        "small sprite, side-view facing RIGHT. Distinct from the Crystal Imp: olive-green "
+        "mischievous woodland goblin face with two short tusks, large leaf ears, curved "
+        "root-and-bark shoulder guards, lime leaf mantle and a sturdy knotted wooden club "
+        "with ONE turquoise crystal embedded. Short wide legs, grounded readable stance, "
+        "bold expressive eyes, no giant crystal horns. Vibrant emerald, ivory, copper "
+        "and cyan highlights; original magical anime adventure pixel art at 96x96, "
+        "crisp clusters and strong 2D action-game silhouette. Transparent background, "
+        "full feet and club visible, no scenery, no text, no trademarks."
+    ),
+    "lunar_moth": (
+        "Original lunar moth enemy for Eclipse Vanguard Moon Ruins, one single full-body "
+        "flying sprite, side-view facing RIGHT. Expressive moon-white masked face, "
+        "lavender fluffy body, FOUR elegant but compact indigo and violet moth wings "
+        "with pale crescent patterns, small cyan crystal ornaments and tiny luminous "
+        "antennae; clear silhouette and wing separation suitable for animation at "
+        "96x96. Smaller and less elaborate than a boss; cute mysterious but menacing "
+        "nocturnal magical creature, refined moonlit anime fantasy pixel art, clean "
+        "pixel clusters, cobalt/violet/cyan/ivory/gold highlights. Transparent "
+        "background, full wings visible, no scenery, no text, no copied designs."
+    ),
     "vanguard": (
         "ORIGINAL upbeat anime-fantasy adventurer for a colorful side-scrolling magic action RPG. "
         "One young adult moonblade explorer, full body profile facing RIGHT, 4.5-head-high "
@@ -73,6 +95,16 @@ MOTIONS = {
         "run": (8, "Original crystal imp bounds quickly to the right, twig legs alternate, leaf ears bounce, moonstone chest and same crystal horns stay consistent; transparent side-view animation."),
         "attack": (8, "Original crystal imp winds up glowing crystal-tipped staff then casts one short cyan magical crescent to the right, expressive anticipation and recovery, exact same face, leaf ears and horn layout."),
         "hit": (4, "Original crystal imp reacts briefly to a hit then recovers, leaf ears and small crystal wand remain attached, transparent side-view, identical anatomy."),
+    },
+    "root_goblin": {
+        "run": (8, "The same root goblin bounds sideways to the RIGHT, roots and leaf shoulder armor bounce, legs alternate, club remains in the hand, identical face, tusks and single crystal; transparent."),
+        "attack": (8, "The same root goblin winds up and swings its wooden crystal club once toward the RIGHT, clear anticipation, impact and recovery, identical leaves, face and proportions; transparent."),
+        "hit": (4, "The same root goblin recoils briefly, keeping club, ears, feet and all roots attached, then recovers without blood; transparent."),
+    },
+    "lunar_moth": {
+        "run": (8, "The same lunar moth gently flaps its FOUR wings while hovering and moving RIGHT, preserve moon patterns, crystal pendants, face and lavender silhouette; transparent."),
+        "attack": (8, "The same lunar moth briefly gathers cyan lunar glow then releases one small crescent magic pulse toward RIGHT, wings recoil and return, identity and ornaments preserved; transparent."),
+        "hit": (4, "The same lunar moth flinches during flight then stabilizes with four wings intact, moon patterns unchanged, no blood; transparent."),
     },
     "vanguard": {
         "run": (8, "Energetic heroic side-view sprint to the right, springy anime-adventurer motion, teal scarf and hair trailing, natural alternating boot steps, moonstone and costume identical, no scene or camera."),
