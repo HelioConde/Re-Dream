@@ -28,3 +28,5 @@ jobs:
         run: godot --headless --editor --path . --quit --verbose
       - name: Executar teste de combate
         run: godot --headless --path . --script res://tests/smoke_test.gd
+      - name: Validar fallback visual PixelLab do Aren
+        run: godot --headless --path . --script res://tests/sprite_fallback_test.gd

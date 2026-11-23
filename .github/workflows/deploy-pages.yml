@@ -39,6 +39,9 @@ jobs:
       - name: Testar interrupção da carga Z
         run: godot --headless --path . --script res://tests/charge_interrupt_test.gd
 
+      - name: Validar fallback visual PixelLab do Aren
+        run: godot --headless --path . --script res://tests/sprite_fallback_test.gd
+
       - name: Exportar para navegador
         run: |
           mkdir -p dist
