@@ -4,12 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       character:
-        description: "vanguard = herói anime de fantasia mágica (arte V2)"
+        description: "Herói ou monstro original de fantasia mágica"
         required: true
         type: choice
         options:
           - vanguard
           - crystal_imp
+          - root_goblin
+          - lunar_moth
           - hero
           - enemy
         default: vanguard
