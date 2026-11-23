@@ -126,12 +126,17 @@ func _check_game() -> void:
 	hero.set("dash_time", 0.12)
 	hero.set("combo_window", 0.50)
 	hero.set("combo_step", 2)
+	# Uma magia recém-lançada ainda pode ter brilho ativo quando o golpe chega.
+	hero.set("skill_flash", 0.40)
 	hero.call("take_damage", 8, Vector2.ZERO)
 	if float(hero.get("attack_time")) > 0.0 or str(hero.get("attack_kind")) != "" or float(hero.get("dash_time")) > 0.0:
 		_fail("Dano não interrompeu golpe pendente e dash.")
 		return
 	if float(hero.get("combo_window")) > 0.0 or int(hero.get("combo_step")) != 0 or bool(hero.get("attack_hit")):
 		_fail("Dano preservou combo ou hit pendente.")
+		return
+	if float(hero.get("skill_flash")) > 0.0:
+		_fail("O brilho da magia anterior permaneceu ativo após receber dano.")
 		return
 	if int(hero.get("health")) != 92:
 		_fail("O herói não recebeu dano corretamente.")
