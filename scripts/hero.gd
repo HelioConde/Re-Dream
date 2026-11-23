@@ -505,6 +505,8 @@ func take_damage(amount: int, impulse: Vector2) -> void:
 	charge_active = false
 	charge_time = 0.0
 	buffered_light_time = 0.0
+	# O brilho de uma magia anterior não deve encobrir a reação ao impacto.
+	skill_flash = 0.0
 	# Dano interrompe também golpes pendentes: não aplicar hit após stagger.
 	attack_time = 0.0
 	attack_kind = ""
