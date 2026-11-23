@@ -192,6 +192,14 @@ func _check_game() -> void:
 	if int(hero.get("health")) != 92:
 		_fail("O herói não recebeu dano corretamente.")
 		return
+	# Durante stagger, hit tem prioridade; sem PNG hit, usar attack aprovado.
+	var hurt_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
+	if hurt_sprite != null and hurt_sprite.visible:
+		hero.call("_update_pixel_sprite")
+		var expected_hurt := "hit" if hurt_sprite.sprite_frames.has_animation("hit") else "attack"
+		if hurt_sprite.animation != expected_hurt:
+			_fail("Dano não exibiu reação PixelLab nem fallback de ataque.")
+			return
 
 	# Dano repetido durante a janela de invulnerabilidade não pode drenar vida.
 	var health_after_hit := int(hero.get("health"))
