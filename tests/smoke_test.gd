@@ -137,6 +137,27 @@ func _check_game() -> void:
 		_fail("O herói não recebeu dano corretamente.")
 		return
 
+	# A reação de dano tem prioridade visual sobre o brilho de uma magia anterior.
+	var hit_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
+	if hit_sprite != null and hit_sprite.visible:
+		hero.set("skill_flash", 0.4)
+		hero.call("_update_pixel_sprite")
+		var expected_hit_state := "hit" if hit_sprite.sprite_frames.has_animation("hit") else "idle"
+		if hit_sprite.animation != expected_hit_state:
+			_fail("Dano não priorizou a animação hit (ou seu fallback) durante stagger.")
+			return
+		# Ao terminar o stagger, o próximo ataque deve recuperar seu estado visual.
+		hero.set("stagger", 0.0)
+		hero.set("skill_flash", 0.0)
+		hero.set("attack_time", 0.20)
+		hero.set("attack_kind", "light")
+		hero.call("_update_pixel_sprite")
+		if hit_sprite.animation != "attack":
+			_fail("A animação de ataque não voltou após o fim do stagger.")
+			return
+		hero.set("attack_time", 0.0)
+		hero.set("attack_kind", "")
+
 	# Dano repetido durante a janela de invulnerabilidade não pode drenar vida.
 	var health_after_hit := int(hero.get("health"))
 	hero.call("take_damage", 30, Vector2(200.0, -200.0))

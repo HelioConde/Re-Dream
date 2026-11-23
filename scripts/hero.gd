@@ -534,7 +534,8 @@ func _update_pixel_sprite() -> void:
 	if pixel_sprite == null or not pixel_sprite.visible:
 		return
 	var state := "idle"
-	if not alive:
+	if not alive or stagger > 0.0:
+		# Priorizar reação ao dano sobre magia e ataque enquanto recupera.
 		state = "hit"
 	elif skill_flash > 0.0:
 		state = "skill_%d" % last_skill_level
