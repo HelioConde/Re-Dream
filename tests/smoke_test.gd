@@ -130,6 +130,22 @@ func _check_game() -> void:
 	if int(enemy.get("health")) != initial_health - 5:
 		_fail("Dano ao inimigo não foi aplicado.")
 		return
+	# O impacto mágico deve ser imediato e cessar após a janela curta, com
+	# sprites PixelLab ou desenho procedural, sem alterar dano ou física.
+	if float(enemy.get("hit_flash")) <= 0.0:
+		_fail("Crystal Imp não iniciou o realce mágico após receber dano.")
+		return
+	var impact_sprite := enemy.get("pixel_sprite") as CanvasItem
+	if impact_sprite != null and impact_sprite.visible and impact_sprite.modulate == Color.WHITE:
+		_fail("Sprite PixelLab não recebeu realce de impacto.")
+		return
+	enemy.call("_physics_process", 0.15)
+	if float(enemy.get("hit_flash")) > 0.001:
+		_fail("Realce mágico do inimigo não terminou no tempo previsto.")
+		return
+	if impact_sprite != null and impact_sprite.visible and impact_sprite.modulate != Color.WHITE:
+		_fail("Sprite PixelLab manteve a cor de impacto após a recuperação.")
+		return
 	hero.global_position = enemy.global_position + Vector2(-60, 0)
 	hero.set("facing", 1)
 	hero.call("_begin_attack", "light")
