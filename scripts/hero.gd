@@ -379,6 +379,9 @@ func _begin_attack(kind: String) -> void:
 		combo_step = (combo_step % 4) + 1 if combo_window > 0.0 else 1
 		combo_window = 0.83
 		attack_time = 0.39 if combo_step == 4 else 0.31
+		# Mesmo sprite em cada estágio: reiniciar a pose e ajustar o tempo do finalizador.
+		if pixel_sprite != null and pixel_sprite.visible:
+			pixel_sprite.call("restart_light_attack", attack_time)
 	else:
 		combo_step = 0
 		combo_window = 0.0
