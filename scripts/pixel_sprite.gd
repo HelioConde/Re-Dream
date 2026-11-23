@@ -25,7 +25,29 @@ func setup(kind: String) -> void:
 			continue
 		created.add_animation(action)
 		created.set_animation_loop(action, action in ["idle", "run"])
-		created.set_animation_speed(action, 12.0 if action in ["attack", "heavy", "skill"] else 10.0)
+		# Um golpe leve dura 0,31 s no hero.gd. A velocidade antiga de 12 fps
+		# exibia só ~4 dos 9 quadros PixelLab antes de voltar a idle.
+		# Usar a duração do estado para exibir o ciclo completo sem alterar hitboxes.
+		var duration := 0.0
+		match action:
+			"attack":
+				duration = 0.31
+			"heavy":
+				duration = 0.48
+			"launcher":
+				duration = 0.42
+			"dash_attack":
+				duration = 0.35
+			"otto":
+				duration = 0.27
+			"dive":
+				duration = 0.43
+			"air_attack":
+				duration = 0.32
+		if duration > 0.0:
+			created.set_animation_speed(action, float(textures.size()) / duration)
+		else:
+			created.set_animation_speed(action, 12.0 if action.begins_with("skill") else 10.0)
 		for texture in textures:
 			created.add_frame(action, texture)
 	sprite_frames = created
