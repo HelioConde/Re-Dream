@@ -106,6 +106,24 @@ func _check_game() -> void:
 		if character_sprite.animation != "jump":
 			_fail("Jump state does not select managed PixelLab Character animation.")
 			return
+	# A animação PixelLab de ataque deve exibir todos os frames antes do
+	# término dos 310 ms do golpe leve; antes só ~4/9 apareciam a 12 fps.
+	var timing_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
+	if timing_sprite != null and timing_sprite.sprite_frames.has_animation("attack"):
+		var attack_frames := timing_sprite.sprite_frames.get_frame_count("attack")
+		var attack_fps := timing_sprite.sprite_frames.get_animation_speed("attack")
+		if attack_frames <= 0 or not is_equal_approx(float(attack_frames) / attack_fps, 0.31):
+			_fail("Animação PixelLab de ataque não acompanha os 310 ms do golpe leve.")
+			return
+		# Também proteger a duração visual dos outros golpes se houver PNGs.
+		var action_durations := {"heavy": 0.48, "launcher": 0.42, "dash_attack": 0.35, "otto": 0.27, "dive": 0.43, "air_attack": 0.32}
+		for action in action_durations:
+			if timing_sprite.sprite_frames.has_animation(action):
+				var frames := timing_sprite.sprite_frames.get_frame_count(action)
+				var fps := timing_sprite.sprite_frames.get_animation_speed(action)
+				if frames <= 0 or not is_equal_approx(float(frames) / fps, float(action_durations[action])):
+					_fail("Duração visual incorreta do golpe: " + action)
+					return
 	var enemy: Node2D = foes[0]
 	var initial_health := int(enemy.get("health"))
 	enemy.call("take_hit", 5, Vector2.ZERO)
