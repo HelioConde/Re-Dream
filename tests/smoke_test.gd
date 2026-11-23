@@ -308,8 +308,9 @@ func _check_game() -> void:
 			_fail("Velocidade alterada do finalizador vazou para idle.")
 			return
 		hero.set("attack_time", 0.0)
-		hero.set("combo_window", 0.0)
-		hero.set("combo_step", 0)
+		hero.set("combo_window", 0.83)
+		hero.set("combo_step", 1)
+		hero.set("attack_kind", "light")
 
 	# J pressionado cedo não pode pular a animação atual nem antecipar o combo.
 	hero.set("attack_time", 0.24)
