@@ -14,6 +14,9 @@ func _check() -> void:
 		_fail("Pacote principal PixelLab não carregou.")
 		return
 	sprite.call("show_state", "dash", -1)
+	if not sprite.visible or sprite.sprite_frames.get_frame_count(sprite.animation) == 0:
+		_fail("Fallback do dash deixou o Aren invisível ou sem quadros.")
+		return
 	if not sprite.flip_h:
 		_fail("Dash para esquerda perdeu orientação.")
 		return
@@ -28,6 +31,9 @@ func _check() -> void:
 		_fail("Skill sem PNG aprovado não usou ataque como fallback.")
 		return
 	sprite.call("show_state", "hit", 1)
+	if not sprite.visible or sprite.sprite_frames.get_frame_count(sprite.animation) == 0:
+		_fail("Fallback do dano deixou o Aren invisível ou sem quadros.")
+		return
 	if not sprite.sprite_frames.has_animation("hit") and sprite.animation != "idle":
 		_fail("Dano sem PNG aprovado não retornou ao idle seguro.")
 		return
