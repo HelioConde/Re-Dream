@@ -144,6 +144,25 @@ func _check_game() -> void:
 		_fail("Invulnerabilidade não bloqueou o segundo golpe consecutivo.")
 		return
 
+	# Knockback de dano deve perder velocidade enquanto o herói está atordoado.
+	# Sem amortecimento, o impulso horizontal permanece constante por vários frames.
+	hero.set("velocity", Vector2(300.0, -120.0))
+	hero.set("stagger", 0.18)
+	hero.set("dash_time", 0.0)
+	hero.call("_physics_process", 0.05)
+	var knockback_after_frame: Vector2 = hero.get("velocity")
+	if knockback_after_frame.x < -0.01 or knockback_after_frame.x >= 299.0:
+		_fail("Knockback horizontal não desacelerou durante stagger.")
+		return
+	# Não deve inverter o empurrão mesmo com delta grande.
+	hero.set("velocity", Vector2(-40.0, 0.0))
+	hero.set("stagger", 0.18)
+	hero.call("_physics_process", 0.10)
+	var knockback_after_stop: Vector2 = hero.get("velocity")
+	if absf(knockback_after_stop.x) > 0.01:
+		_fail("Amortecimento do knockback ultrapassou zero e inverteu a direção.")
+		return
+
 	# Testa a transição duplo toque -> dash, sem depender da velocidade do runner.
 	hero.set("stagger", 0.0)
 	hero.set("attack_time", 0.0)
