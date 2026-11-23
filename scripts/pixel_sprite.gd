@@ -83,7 +83,7 @@ func show_state(requested: String, facing: int) -> void:
 	if not sprite_frames.has_animation(state):
 		if requested.begins_with("skill_") and sprite_frames.has_animation("skill"):
 			state = "skill"
-		elif requested in ["heavy", "skill", "air_attack", "launcher", "dash_attack", "otto", "dive"] or requested.begins_with("skill_"):
+		elif requested in ["hit", "heavy", "skill", "air_attack", "launcher", "dash_attack", "otto", "dive"] or requested.begins_with("skill_"):
 			state = "attack" if sprite_frames.has_animation("attack") else "idle"
 		elif requested in ["jump", "dash", "rocket", "shadow"] and sprite_frames.has_animation("run"):
 			state = "run"
