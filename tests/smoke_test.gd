@@ -285,6 +285,33 @@ func _check_game() -> void:
 		_fail("Combo não reiniciou após janela encerrada.")
 		return
 
+	# Cada estágio do combo deve começar do frame 0, inclusive o quarto golpe.
+	# A duração visual do finalizador precisa corresponder aos 0,39 s de recovery.
+	var combat_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
+	if combat_sprite != null and combat_sprite.visible and combat_sprite.sprite_frames.has_animation("attack"):
+		hero.set("attack_time", 0.0)
+		hero.set("combo_window", 0.0)
+		for stage in range(1, 5):
+			hero.set("attack_time", 0.0)
+			combat_sprite.set_frame_and_progress(5, 0.5)
+			hero.call("_begin_attack", "light")
+			if int(hero.get("combo_step")) != stage or combat_sprite.frame != 0:
+				_fail("O golpe %d não reiniciou o sprite PixelLab no primeiro quadro." % stage)
+				return
+			var expected_scale := 0.31 / (0.39 if stage == 4 else 0.31)
+			if absf(combat_sprite.speed_scale - expected_scale) > 0.001:
+				_fail("O golpe %d não sincronizou duração da animação com o combate." % stage)
+				return
+		# Ao voltar para idle, a velocidade padrão precisa ser restaurada.
+		combat_sprite.call("show_state", "idle", 1)
+		if absf(combat_sprite.speed_scale - 1.0) > 0.001:
+			_fail("Velocidade alterada do finalizador vazou para idle.")
+			return
+		hero.set("attack_time", 0.0)
+		hero.set("combo_window", 0.83)
+		hero.set("combo_step", 1)
+		hero.set("attack_kind", "light")
+
 	# J pressionado cedo não pode pular a animação atual nem antecipar o combo.
 	hero.set("attack_time", 0.24)
 	hero.call("_begin_attack", "light")
