@@ -207,6 +207,10 @@ func _physics_process(delta: float) -> void:
 		var speed_multiplier := 1.40 if sprint_after_dash else 1.0
 		var move_speed := RUN_SPEED * speed_multiplier * (0.46 if attack_time > 0.0 else 1.0)
 		velocity.x = move_toward(velocity.x, axis * move_speed, 2250.0 * delta)
+	else:
+		# Dissipar o impulso de dano enquanto os controles estão travados.
+		# Sem isso o herói desliza com velocidade constante até o fim do stagger.
+		velocity.x = move_toward(velocity.x, 0.0, 1800.0 * delta)
 	# Rocket ganha breve deslocamento horizontal; Shadow converte o voo em mergulho.
 	if rocket_time > 0.0:
 		velocity.x = float(rocket_direction) * ROCKET_SPEED
