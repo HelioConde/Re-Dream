@@ -63,6 +63,16 @@ func has_core_animations() -> bool:
 	# Não ativar pacote parcial: idle sozinho congelaria o personagem em combate.
 	return loaded and sprite_frames.has_animation("run") and sprite_frames.has_animation("attack")
 
+# Os quatro golpes usam os mesmos frames PixelLab.
+# Reiniciar no frame zero mesmo quando "attack" ainda está tocando.
+# O quarto golpe tem recovery de 0,39 s; os anteriores, 0,31 s.
+func restart_light_attack(duration: float) -> void:
+	if not loaded or not sprite_frames.has_animation("attack") or duration <= 0.0:
+		return
+	speed_scale = 0.31 / duration
+	play("attack")
+
+
 func show_state(requested: String, facing: int) -> void:
 	if not loaded:
 		return
@@ -78,6 +88,7 @@ func show_state(requested: String, facing: int) -> void:
 		else:
 			state = "idle"
 	if animation != state:
+		speed_scale = 1.0
 		play(state)
 	elif not is_playing() and state in ["idle", "run"]:
 		play(state)
