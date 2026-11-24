@@ -119,6 +119,37 @@ class ManagedCharacterTests(unittest.TestCase):
                 character.run(["jump"])
         self.assertEqual(paths, ["/characters/existing-id", "/characters/existing-id/zip"])
 
+    def test_new_idle_candidate_reuses_character_and_preserves_previous_exports(self):
+        character.save_manifest({
+            "character_id": "existing-id",
+            "reference_sha256": character.reference_hash(),
+            "stage": "candidate_ready",
+            "animations": {"jump": {"stage": "done"}},
+            "exports": {"jump": {"frames": 9}},
+        })
+        calls = []
+        def fake_request(_token, path, payload=None, binary=False):
+            calls.append((path, payload))
+            if path == "/characters/existing-id":
+                return {"rotation_urls": {"east": "https://example.invalid/east.png"}}
+            if path == "/animate-character":
+                return {"background_job_ids": ["idle-job"], "animation_group_id": "idle-group"}
+            if path.endswith("/zip"):
+                return mock_zip(["idle_v2"])
+            raise AssertionError(path)
+        with mock.patch.dict("os.environ", {"PIXELLAB_API_KEY": "test"}, clear=True):
+            with mock.patch.object(character, "request", side_effect=fake_request):
+                with mock.patch.object(character, "wait_job"):
+                    character.run(["idle_v2"])
+        payload = next(payload for path, payload in calls if path == "/animate-character")
+        self.assertEqual(payload["character_id"], "existing-id")
+        self.assertEqual(payload["animation_name"], "idle_v2")
+        self.assertEqual(payload["directions"], ["east"])
+        self.assertFalse(any(path == "/create-character-pro" for path, _ in calls))
+        self.assertEqual(character.read_manifest()["exports"]["jump"]["frames"], 9)
+        self.assertEqual(character.read_manifest()["exports"]["idle_v2"]["frames"], 5)
+        self.assertTrue(character.MASTER.exists())
+
     def test_source_change_blocks_resume_without_api_call(self):
         character.save_manifest({
             "character_id": "existing-id", "reference_sha256": "old", "stage": "ready", "animations": {}
