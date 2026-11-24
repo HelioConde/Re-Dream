@@ -133,7 +133,7 @@ func _process(delta: float) -> void:
 		"OK" if hero.dash_cooldown <= 0.0 else "%.1fs" % hero.dash_cooldown,
 		"OK" if hero.skill_cooldown <= 0.0 else "%.1fs" % hero.skill_cooldown
 	]
-	charge_label.text = ("Z CARGA MP%d/3 — SOLTE PARA LANÇAR" % hero._charge_level()) if hero.charge_active else ("AIR JUGGLE x%d   ↓+Z/J NO AR: ESTOCADA" % hero.air_juggle_chain if hero.air_juggle_chain > 0 else "↑+Z/J LANÇADOR | ↓+Z/J ESTOCADA | ↓+Z/J NA BORDA OTTO | DASH+↑ ROCKET")
+	charge_label.text = ("Z CARGA MP%d/3 — SOLTE PARA LANÇAR" % hero._charge_level()) if hero.charge_active else ("AIR JUGGLE x%d   S+Z/J NO AR: ESTOCADA" % hero.air_juggle_chain if hero.air_juggle_chain > 0 else "W+Z/J LANÇADOR | S+Z/J ESTOCADA | S+Z/J NA BORDA OTTO | DASH+W ROCKET")
 	if game_over:
 		if Input.is_action_just_pressed("restart"):
 			get_tree().reload_current_scene()
@@ -162,7 +162,7 @@ func _create_hud() -> void:
 	alert_label = _add_label(layer, Vector2(270, 185), "", 25, Color("#ffe9c0"))
 	alert_label.size = Vector2(740, 50)
 	alert_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(layer, Vector2(18, 667), "←/→: ANDAR/2x DASH   ↑/W: PULAR   ↓: DESCER   J: COMBO   Z: ATAQUE/CARGA MP   K/X: SKILL", 18, Color("#ffffff"))
+	_add_label(layer, Vector2(18, 667), "A/D: ANDAR/2x DASH   W: PULAR   S: DESCER   J: COMBO   Z: ATAQUE/CARGA MP   K/X: SKILL", 18, Color("#ffffff"))
 
 func _add_label(layer: CanvasLayer, pos: Vector2, value: String, font_size: int, color: Color) -> Label:
 	var result := Label.new()
