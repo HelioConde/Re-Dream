@@ -525,6 +525,7 @@ func take_damage(amount: int, impulse: Vector2) -> void:
 	if health == 0:
 		alive = false
 		died.emit()
+	_update_pixel_sprite()
 
 func grant_reward(points: int) -> void:
 	if not alive:
@@ -543,7 +544,7 @@ func _update_pixel_sprite() -> void:
 	if pixel_sprite == null or not pixel_sprite.visible:
 		return
 	var state := "idle"
-	if not alive:
+	if not alive or stagger > 0.0:
 		state = "hit"
 	elif skill_flash > 0.0:
 		state = "skill_%d" % last_skill_level
@@ -565,6 +566,11 @@ func _update_pixel_sprite() -> void:
 	elif absf(velocity.x) > 18.0:
 		state = "run"
 	pixel_sprite.call("show_state", state, facing)
+	# The approved idle stays intact. Until a dedicated hit animation is reviewed,
+	# a brief backward tilt provides readable recoil without moving the hitbox.
+	var animated := pixel_sprite as AnimatedSprite2D
+	var fallback_hit := alive and stagger > 0.0 and not animated.sprite_frames.has_animation("hit")
+	animated.rotation = -float(facing) * deg_to_rad(12.0) * clampf(stagger / 0.18, 0.0, 1.0) if fallback_hit else 0.0
 	pixel_sprite.modulate.a = 0.42 if invulnerability > 0.0 and int(invulnerability * 16.0) % 2 == 0 else 1.0
 
 func _draw() -> void:
