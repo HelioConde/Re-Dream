@@ -23,8 +23,8 @@ Na experiência multiplayer anterior, `K/X` eram botões de skill. Na versão Go
 
 ## Mobile e navegador
 
-A camada `scripts/touch_controls.gd` desenha os **seis botões originais do treino**: **◀ ▶ ↑ ↓ J Z**. São `TouchScreenButton` nativos da Godot, com ações InputMap; é possível manter duas ações ao mesmo tempo, como mover e atacar ou ↑+Z. Os botões aparecem na exportação Web e em dispositivos touchscreen; no desktop nativo ficam ocultos. A tecla ↓ funciona como movimento relativo à plataforma e ↑ como pulo/modificador de ataque.
+A camada `scripts/touch_controls.gd` desenha os **seis botões originais do treino**: **◀ ▶ ↑ ↓ J Z**. São `TouchScreenButton` nativos da Godot, com ações InputMap; é possível manter duas ações ao mesmo tempo, como mover e atacar ou ↑+Z. Os botões aparecem em dispositivos touchscreen, inclusive na exportação Web quando o navegador informa pontos de toque físicos. No desktop sem touchscreen ficam ocultos; os comandos de teclado permanecem ativos. As quatro setas são desenhadas como geometria para evitar glifos ausentes. A tecla ↓ funciona como movimento relativo à plataforma e ↑ como pulo/modificador de ataque.
 
 Controles de toque não gastam PixelLab, não mexem na física e podem ser ocultados sem deixar ações presas quando a cena é removida. Verifique em navegador móvel o tamanho dos alvos e o comportamento em múltiplos dedos.
 
-Na exportação Web, `pointing/emulate_touch_from_mouse=true` permite testar os botões com clique de mouse no desktop. Abaixo de 667px do HUD, a seta ↓ foi posicionada sem cobrir a faixa inferior de instruções.
+Na exportação Web, `pointing/emulate_touch_from_mouse=true` permanece configurado, mas não força a exibição da camada em desktops sem touchscreen. O HUD usa as teclas equivalentes A/D/W/S para não depender de glifos de setas. Abaixo de 667px do HUD, a seta ↓ foi posicionada sem cobrir a faixa inferior de instruções.
