@@ -2,8 +2,22 @@ extends AnimatedSprite2D
 
 # Load sprites PNG exported by PixelLab automatically. Fallback remains procedural.
 var loaded := false
+var idle_phase := 0.0
+
+# Motion for the approved single-frame idle until a real Character idle cycle is approved.
+# Offset only the sprite; never move the collision body or camera.
+func _process(delta: float) -> void:
+	if loaded and animation == "idle" and sprite_frames.get_frame_count("idle") == 1:
+		idle_phase = fmod(idle_phase + delta * 2.8, TAU)
+		offset.y = -0.75 * (1.0 - cos(idle_phase))
+	else:
+		idle_phase = 0.0
+		offset.y = 0.0
+
 
 func setup(kind: String) -> void:
+	idle_phase = 0.0
+	offset = Vector2.ZERO
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	centered = true
 	# A versão de fantasia usa 128px; ajustar a escala visual, não a hitbox.
@@ -90,6 +104,8 @@ func show_state(requested: String, facing: int) -> void:
 		else:
 			state = "idle"
 	if animation != state:
+		idle_phase = 0.0
+		offset.y = 0.0
 		speed_scale = 1.0
 		play(state)
 	elif not is_playing() and state in ["idle", "run"]:
