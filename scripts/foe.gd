@@ -5,6 +5,7 @@ signal defeated(experience_points: int)
 const GRAVITY := 1350.0
 const MAX_AIR_JUGGLE := 3
 const HIT_FLASH_SECONDS := 0.13
+const ATTACK_WINDUP_SECONDS := 0.42
 const PIXEL_SPRITE = preload("res://scripts/pixel_sprite.gd")
 
 var wave_level := 1
@@ -75,7 +76,7 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0.0, 950.0 * delta)
 		if absf(offset.x) < 82.0 and absf(offset.y) < 72.0 and cooldown <= 0.0 and windup <= 0.0:
 			facing = 1 if offset.x > 0 else -1
-			windup = 0.42
+			windup = ATTACK_WINDUP_SECONDS
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, 700.0 * delta)
 
@@ -138,7 +139,17 @@ func _update_pixel_sprite() -> void:
 		state = "hit"
 	elif absf(velocity.x) > 15.0:
 		state = "run"
+	var animated := pixel_sprite as AnimatedSprite2D
 	pixel_sprite.call("show_state", state, facing)
+	# Enemy windup is longer than the hero's light attack. Fit the approved
+	# frames to the enemy's own timing without changing the shared SpriteFrames.
+	if state == "attack" and animated.animation == "attack":
+		var frames := animated.sprite_frames.get_frame_count("attack")
+		var fps := animated.sprite_frames.get_animation_speed("attack")
+		if frames > 0 and fps > 0.0:
+			animated.speed_scale = float(frames) / (fps * ATTACK_WINDUP_SECONDS)
+	else:
+		animated.speed_scale = 1.0
 	# Aplicar a cor sobre qualquer sprite PixelLab aprovado ou fallback.
 	pixel_sprite.modulate = (Color(1.0, 0.78, 1.0) if elite else Color(0.63, 1.0, 0.92)) if hit_flash > 0.0 else Color.WHITE
 
