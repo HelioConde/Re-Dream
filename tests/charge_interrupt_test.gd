@@ -21,7 +21,20 @@ func _run() -> void:
 	if not bool(hero.get("charge_active")):
 		_fail("Z charge did not start")
 		return
+	# Uma carga pode coexistir com buffer de combo e deslocamento rápido.
+	# O impacto deve limpar todos esses estados, evitando ataques fantasmas.
+	hero.set("buffered_light_time", 0.12)
+	hero.set("dash_time", 0.10)
+	hero.set("attack_time", 0.20)
+	hero.set("attack_kind", "light")
+	hero.set("attack_hit", false)
 	hero.call("take_damage", 8, Vector2.ZERO)
+	if float(hero.get("buffered_light_time")) > 0.0 or float(hero.get("dash_time")) > 0.0:
+		_fail("Damage left buffered combo or dash active")
+		return
+	if float(hero.get("attack_time")) > 0.0 or str(hero.get("attack_kind")) != "":
+		_fail("Damage left a pending attack active")
+		return
 	if bool(hero.get("charge_active")) or float(hero.get("charge_time")) != 0.0:
 		_fail("Taking damage must cancel charge and reset timer")
 		return
