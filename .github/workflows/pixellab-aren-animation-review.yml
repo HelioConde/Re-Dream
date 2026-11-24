@@ -1,0 +1,66 @@
+name: PixelLab — animações do Aren V2 (revisão)
+
+on:
+  workflow_dispatch:
+    inputs:
+      animation:
+        description: Movimento candidato
+        required: true
+        type: choice
+        default: idle_v2
+        options:
+          - idle_v2
+          - dash_v2
+          - hit_v2
+      generate:
+        description: Autorizar consumo de créditos PixelLab (false = simulação)
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pixellab-aren-v2-candidates
+  cancel-in-progress: false
+
+jobs:
+  candidate:
+    if: github.repository == 'HelioConde/Re-Dream'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANIMATION: ${{ inputs.animation }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install "Pillow>=11,<13"
+      - name: Testes e simulação gratuitos
+        run: |
+          python -m unittest discover -s tests -p 'test_pixellab*.py' -v
+          python -m tools.pixellab_managed_character --actions "$ANIMATION" --dry-run
+          python -c 'from tools.pixellab_managed_character import read_manifest, reference_hash; m = read_manifest(); assert m.get("character_id") and m.get("reference_sha256") == reference_hash(), "Missing original Character checkpoint"'
+      - name: Gerar somente o movimento autorizado
+        if: inputs.generate == true
+        env:
+          PIXELLAB_API_KEY: ${{ secrets.PIXELLAB_API_KEY }}
+        run: python -m tools.pixellab_managed_character --actions "$ANIMATION"
+      - name: Preservar checkpoint em caso de falha
+        if: always() && inputs.generate == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: aren-candidate-${{ inputs.animation }}-${{ github.run_id }}
+          path: assets/pixellab/vanguard_character_candidate/
+      - name: Guardar alterações em branch de revisão
+        if: always() && inputs.generate == true
+        run: |
+          git add assets/pixellab/vanguard_character_candidate/
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "assets/aren-$ANIMATION-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git commit -m "art: candidato PixelLab $ANIMATION para revisão"
+          git push origin HEAD
