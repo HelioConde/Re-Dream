@@ -213,6 +213,29 @@ func _check_game() -> void:
 		_fail("O herói não recebeu dano corretamente.")
 		return
 
+	# O atordoamento deve ter prioridade visual sobre corrida, magia e salto.
+	var recoil_sprite := hero.get("pixel_sprite") as AnimatedSprite2D
+	if recoil_sprite != null and recoil_sprite.visible:
+		var expected_hit := "hit" if recoil_sprite.sprite_frames.has_animation("hit") else "idle"
+		if recoil_sprite.animation != expected_hit:
+			_fail("O herói não exibiu a reação de dano imediatamente.")
+			return
+		if expected_hit == "idle" and recoil_sprite.rotation >= -0.01:
+			_fail("Fallback de dano não inclinou o sprite para trás.")
+			return
+		hero.set("skill_flash", 0.2)
+		hero.call("_update_pixel_sprite")
+		if recoil_sprite.animation != expected_hit:
+			_fail("A magia mascarou a reação visual de dano.")
+			return
+		hero.set("skill_flash", 0.0)
+		hero.set("stagger", 0.0)
+		hero.call("_update_pixel_sprite")
+		if absf(recoil_sprite.rotation) > 0.001:
+			_fail("Inclinação de dano permaneceu após recuperação.")
+			return
+		hero.set("stagger", 0.18)
+
 	# Dano repetido durante a janela de invulnerabilidade não pode drenar vida.
 	var health_after_hit := int(hero.get("health"))
 	hero.call("take_damage", 30, Vector2(200.0, -200.0))
