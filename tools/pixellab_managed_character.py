@@ -29,6 +29,9 @@ MASTER = REPO_ROOT / "assets/pixellab/vanguard/idle/000.png"
 CANDIDATE = REPO_ROOT / "assets/pixellab/vanguard_character_candidate"
 MANIFEST = CANDIDATE / "character.json"
 ACTIONS = {
+    "idle_v2": ("Seamless side-view idle loop for the exact approved Aren: both feet planted, subtle breathing and shoulder movement, gentle hair and turquoise scarf sway, sword held steadily, first and last pose match. No camera, no effects, transparent background.", 8),
+    "dash_v2": ("Expressive side-view dash cycle, strong forward lean, distinct alternating foot poses, low center of gravity, scarf trails behind, controlled recovery. Exact approved Aren and saber; no effects, no camera, transparent background.", 8),
+    "hit_v2": ("Short side-view damage flinch: torso recoils, knees bend, sword stays in hand, recovery to original stance. Exact approved Aren, no attack, no red arcs or magical effects, no camera, transparent background.", 8),
     "jump": ("Side-view heroic jump upward with compact knee tuck, land and recover. Keep Aren's chestnut hair, ivory-blue coat, turquoise scarf, moonstone and enchanted saber identical.", 8),
     "dash": ("Fast side-view dash to the right with a forward lean and fluttering turquoise scarf. Preserve the exact character design and crystal saber, no scene or camera.", 8),
     "hit": ("Aren briefly flinches from impact, pulls the enchanted sword close, then recovers. Same face, ivory coat, golden crescent hair ornament, transparent background.", 8),
@@ -203,7 +206,7 @@ def run(actions: list[str], dry_run: bool = False) -> dict:
     for action in actions:
         submit_or_resume_animation(token, manifest, action)
     image_zip = request(token, "/characters/" + manifest["character_id"] + "/zip", binary=True)
-    manifest["exports"] = extract_export(image_zip, actions)
+    manifest.setdefault("exports", {}).update(extract_export(image_zip, actions))
     manifest["stage"] = "candidate_ready"
     save_manifest(manifest)
     print("Character candidate ready:", manifest["character_id"], "actions:", actions, flush=True)
