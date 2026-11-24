@@ -71,6 +71,26 @@ func _check_game() -> void:
 			_fail("Botão móvel ausente ou duplicado: " + action)
 			return
 
+	# A camada de toque precisa ocultar também os hitboxes, não apenas o desenho.
+	var overlay_before := bool(touch_layer.get("visible"))
+	for enabled in [false, true]:
+		touch_layer.call("_set_overlay_visible", enabled)
+		for node in touch_layer.get_children():
+			if node is TouchScreenButton or node is Control:
+				if bool(node.visible) != enabled:
+					_fail("Visibilidade do controle móvel não acompanha a camada.")
+					return
+	touch_layer.call("_set_overlay_visible", overlay_before)
+	var touch_visuals := touch_layer.get_node("TouchVisuals")
+	var arrow_count := 0
+	for panel in touch_visuals.get_children():
+		for child in panel.get_children():
+			if child is Polygon2D:
+				arrow_count += 1
+	if arrow_count != 4:
+		_fail("Esperadas quatro setas gráficas sem dependência da fonte Web.")
+		return
+
 	if get_nodes_in_group("one_way_platforms").size() != 5:
 		_fail("Esperadas cinco plataformas atravessáveis individualmente.")
 		return
