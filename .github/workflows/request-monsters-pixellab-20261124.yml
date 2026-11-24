@@ -1,0 +1,34 @@
+name: Solicitação pontual — monstros PixelLab 24-11
+on:
+  push:
+    branches:
+      - art/request-monsters-pixellab-20261124
+    paths:
+      - .github/workflows/request-monsters-pixellab-20261124.yml
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: request-monsters-pixellab-20261124
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    if: github.repository == 'HelioConde/Re-Dream' && github.run_attempt == 1 && github.event.head_commit.message == 'art: solicitar explicitamente sprites PixelLab dos tres monstros'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Disparar workflow manual existente com generate=true autorizado pelo criador
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Pedido pontual: não agendar, não repetir, não alterar segredos ou publicar arte.
+          # O workflow manual existente continua responsável por gerar, testar e guardar candidatos.
+          for target in crystal_imp root_goblin lunar_moth; do
+            gh workflow run pixellab-sprites.yml --repo "$GITHUB_REPOSITORY" --ref main -f character="$target" -f animation_set=full -f generate=true
+            echo "Solicitação de geração enviada: $target"
+          done
