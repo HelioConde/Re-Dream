@@ -14,8 +14,6 @@ const BUTTON_DEFS := [
 ]
 
 func _ready() -> void:
-	# The web version keeps the buttons available even if touch is detected late.
-	visible = OS.has_feature("web") or DisplayServer.is_touchscreen_available()
 	layer = 12
 	var visuals := Control.new()
 	visuals.name = "TouchVisuals"
@@ -24,6 +22,20 @@ func _ready() -> void:
 	add_child(visuals)
 	for definition in BUTTON_DEFS:
 		_create_button(visuals, str(definition["title"]), str(definition["action"]), definition["position"])
+	var has_touch := DisplayServer.is_touchscreen_available()
+	if OS.has_feature("web"):
+		# Mouse-to-touch emulation must not make a keyboard PC look like a phone.
+		var points = JavaScriptBridge.eval("Number(navigator.maxTouchPoints || 0)", true)
+		if points != null:
+			has_touch = int(points) > 0
+	_set_overlay_visible(has_touch)
+
+
+func _set_overlay_visible(enabled: bool) -> void:
+	visible = enabled
+	for child in get_children():
+		if child is TouchScreenButton or child is Control:
+			child.visible = enabled
 
 
 func _create_button(visuals: Control, title: String, action: String, top_left: Vector2) -> void:
@@ -39,15 +51,30 @@ func _create_button(visuals: Control, title: String, action: String, top_left: V
 	panel.add_theme_stylebox_override("panel", surface)
 	visuals.add_child(panel)
 
-	var caption := Label.new()
-	caption.text = title
-	caption.size = BUTTON_SIZE
-	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	caption.add_theme_font_size_override("font_size", 34)
-	caption.add_theme_color_override("font_color", Color("#edffff"))
-	panel.add_child(caption)
+	# Draw the directional icons as geometry: the Web fallback font lacks arrow glyphs.
+	if action in ["move_left", "move_right", "jump", "drop_platform"]:
+		var arrow := Polygon2D.new()
+		arrow.polygon = PackedVector2Array([Vector2(-15, -5), Vector2(2, -5), Vector2(2, -15), Vector2(19, 0), Vector2(2, 15), Vector2(2, 5), Vector2(-15, 5)])
+		arrow.position = BUTTON_SIZE * 0.5
+		arrow.color = Color("#edffff")
+		match action:
+			"move_left":
+				arrow.rotation = PI
+			"jump":
+				arrow.rotation = -PI * 0.5
+			"drop_platform":
+				arrow.rotation = PI * 0.5
+		panel.add_child(arrow)
+	else:
+		var caption := Label.new()
+		caption.text = title
+		caption.size = BUTTON_SIZE
+		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		caption.add_theme_font_size_override("font_size", 34)
+		caption.add_theme_color_override("font_color", Color("#edffff"))
+		panel.add_child(caption)
 
 	var touch := TouchScreenButton.new()
 	touch.name = "Touch_" + action
