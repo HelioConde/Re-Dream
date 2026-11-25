@@ -145,6 +145,37 @@ func _check_game() -> void:
 					_fail("Duração visual incorreta do golpe: " + action)
 					return
 	var enemy: Node2D = foes[0]
+	# Exercise timing even when the magical monster PNG package is absent.
+	var enemy_sprite := enemy.get("pixel_sprite") as AnimatedSprite2D
+	if enemy_sprite != null:
+		var original_frames := enemy_sprite.sprite_frames
+		var original_visible := enemy_sprite.visible
+		var synthetic := SpriteFrames.new()
+		synthetic.add_animation("idle")
+		synthetic.add_animation("attack")
+		synthetic.set_animation_speed("attack", 30.0)
+		var texture := PlaceholderTexture2D.new()
+		synthetic.add_frame("idle", texture)
+		for index in range(9):
+			synthetic.add_frame("attack", texture)
+		var original_loaded := bool(enemy_sprite.get("loaded"))
+		enemy_sprite.sprite_frames = synthetic
+		enemy_sprite.set("loaded", true)
+		enemy_sprite.visible = true
+		enemy.set("windup", 0.42)
+		enemy.call("_update_pixel_sprite")
+		if enemy_sprite.animation != "attack" or not is_equal_approx(9.0 / (30.0 * enemy_sprite.speed_scale), 0.42):
+			_fail("Ataque do inimigo não acompanha os 420 ms de preparação.")
+			return
+		enemy.set("windup", 0.0)
+		enemy.call("_update_pixel_sprite")
+		if not is_equal_approx(enemy_sprite.speed_scale, 1.0):
+			_fail("Velocidade do ataque persistiu após preparação.")
+			return
+		enemy_sprite.sprite_frames = original_frames
+		enemy_sprite.set("loaded", original_loaded)
+		enemy_sprite.visible = original_visible
+		enemy.call("_update_pixel_sprite")
 	var initial_health := int(enemy.get("health"))
 	enemy.call("take_hit", 5, Vector2.ZERO)
 	if int(enemy.get("health")) != initial_health - 5:
