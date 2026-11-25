@@ -161,6 +161,27 @@ func _check_game() -> void:
 			return
 	enemy.set("facing", original_facing)
 	enemy.set("windup", original_windup)
+	# A committed attack cannot hit behind the advertised direction.
+	for direction in [-1, 1]:
+		enemy.set("facing", direction)
+		if not bool(enemy.call("_attack_reaches", Vector2(60 * direction, 0))) or bool(enemy.call("_attack_reaches", Vector2(-60 * direction, 0))) or bool(enemy.call("_attack_reaches", Vector2(90 * direction, 0))):
+			_fail("Alcance direcional do ataque inimigo incorreto.")
+			return
+	var saved_hero_position := hero.global_position
+	var saved_enemy_position := enemy.global_position
+	var saved_velocity: Vector2 = enemy.get("velocity")
+	enemy.set("facing", 1)
+	enemy.set("windup", 0.42)
+	hero.global_position = enemy.global_position + Vector2(-150, 0)
+	enemy.call("_physics_process", 0.05)
+	if int(enemy.get("facing")) != 1:
+		_fail("Inimigo virou durante a preparação do golpe.")
+		return
+	hero.global_position = saved_hero_position
+	enemy.global_position = saved_enemy_position
+	enemy.set("velocity", saved_velocity)
+	enemy.set("facing", original_facing)
+	enemy.set("windup", original_windup)
 	# Exercise timing even when the magical monster PNG package is absent.
 	var enemy_sprite := enemy.get("pixel_sprite") as AnimatedSprite2D
 	if enemy_sprite != null:
