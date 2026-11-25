@@ -145,6 +145,22 @@ func _check_game() -> void:
 					_fail("Duração visual incorreta do golpe: " + action)
 					return
 	var enemy: Node2D = foes[0]
+	# Telegraph must mirror facing and fill across the existing 420 ms windup.
+	var original_facing := int(enemy.get("facing"))
+	var original_windup := float(enemy.get("windup"))
+	for direction in [-1, 1]:
+		enemy.set("facing", direction)
+		var expected_center := PI if direction < 0 else 0.0
+		if not is_equal_approx(float(enemy.call("_windup_arc_center")), expected_center):
+			_fail("Aviso de ataque não acompanha a direção do inimigo.")
+			return
+	for remaining in [0.42, 0.21, 0.0]:
+		enemy.set("windup", remaining)
+		if not is_equal_approx(float(enemy.call("_windup_progress")), 1.0 - float(remaining) / 0.42):
+			_fail("Aviso de ataque não acompanha a preparação do golpe.")
+			return
+	enemy.set("facing", original_facing)
+	enemy.set("windup", original_windup)
 	# Exercise timing even when the magical monster PNG package is absent.
 	var enemy_sprite := enemy.get("pixel_sprite") as AnimatedSprite2D
 	if enemy_sprite != null:
