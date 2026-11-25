@@ -153,6 +153,21 @@ func _update_pixel_sprite() -> void:
 	# Aplicar a cor sobre qualquer sprite PixelLab aprovado ou fallback.
 	pixel_sprite.modulate = (Color(1.0, 0.78, 1.0) if elite else Color(0.63, 1.0, 0.92)) if hit_flash > 0.0 else Color.WHITE
 
+func _windup_progress() -> float:
+	return clampf(1.0 - windup / ATTACK_WINDUP_SECONDS, 0.0, 1.0)
+
+func _windup_arc_center() -> float:
+	return 0.0 if facing > 0 else PI
+
+func _draw_windup_warning(radius: float, tint: Color) -> void:
+	var center := _windup_arc_center()
+	var progress := _windup_progress()
+	var start := center - 1.35
+	var finish := center + 1.35
+	draw_arc(Vector2(0, -9), radius, start, finish, 28, Color(tint, 0.25), 3.0, true)
+	if progress > 0.0:
+		draw_arc(Vector2(0, -9), radius, start, lerpf(start, finish, progress), 28, tint, 5.0, true)
+
 func _draw() -> void:
 	# Pulso de cristal visível também quando o PNG ainda não foi aprovado.
 	if hit_flash > 0.0:
@@ -163,7 +178,7 @@ func _draw() -> void:
 	# Visual-only magical forest creature; collision and AI stay unchanged.
 	if pixel_sprite != null and pixel_sprite.visible:
 		if windup > 0.0:
-			draw_arc(Vector2(0, -9), 42.0, -1.8, 1.8, 20, Color("#ffa7d2"), 4.0, true)
+			_draw_windup_warning(42.0, Color("#ffa7d2"))
 		draw_rect(Rect2(-23, -69, 46, 5), Color("#21384c"))
 		draw_rect(Rect2(-22, -68, 44.0 * float(health) / float(max_health), 3), Color("#78ecd4"))
 		return
@@ -217,7 +232,7 @@ func _draw() -> void:
 	draw_line(Vector2(27 * facing, -8), Vector2(36 * facing, -30), bark, 5.0, true)
 	draw_circle(Vector2(36 * facing, -33), 7.0, crystal)
 	if windup > 0.0:
-		draw_arc(Vector2(0, -9), 45.0, -1.8, 1.8, 28, Color("#ffd2a6"), 5.0, true)
+		_draw_windup_warning(45.0, Color("#ffd2a6"))
 		draw_circle(Vector2(36 * facing, -33), 13.0, Color(0.9, 0.8, 1.0, 0.26))
 	# Existing health bar semantics are preserved.
 	draw_rect(Rect2(-23, -74, 46, 5), Color("#21384c"))
