@@ -67,6 +67,9 @@ func _physics_process(delta: float) -> void:
 		# Sem amortecimento o Crystal Imp desliza sem resistência por 0,20 s.
 		# O impulso vertical e o limite de air-juggle continuam intactos.
 		velocity.x = move_toward(velocity.x, 0.0, 1500.0 * delta)
+	elif windup > 0.0:
+		# Commit to the advertised direction; do not chase during the tell.
+		velocity.x = move_toward(velocity.x, 0.0, 950.0 * delta)
 	elif hero != null and int(hero.get("health")) > 0:
 		var offset := hero.global_position - global_position
 		if absf(offset.x) > 76.0 and absf(offset.x) < 850.0 and absf(offset.y) < 180.0:
@@ -85,7 +88,7 @@ func _physics_process(delta: float) -> void:
 		if windup <= 0.0:
 			if hero != null and is_instance_valid(hero):
 				var difference := hero.global_position - global_position
-				if absf(difference.x) < 90.0 and absf(difference.y) < 75.0:
+				if _attack_reaches(difference):
 					hero.call("take_damage", damage, Vector2(float(facing) * 230.0, -115.0))
 			cooldown = 1.35
 
@@ -152,6 +155,9 @@ func _update_pixel_sprite() -> void:
 		animated.speed_scale = 1.0
 	# Aplicar a cor sobre qualquer sprite PixelLab aprovado ou fallback.
 	pixel_sprite.modulate = (Color(1.0, 0.78, 1.0) if elite else Color(0.63, 1.0, 0.92)) if hit_flash > 0.0 else Color.WHITE
+
+func _attack_reaches(offset: Vector2) -> bool:
+	return offset.x * float(facing) >= 0.0 and absf(offset.x) < 90.0 and absf(offset.y) < 75.0
 
 func _windup_progress() -> float:
 	return clampf(1.0 - windup / ATTACK_WINDUP_SECONDS, 0.0, 1.0)
